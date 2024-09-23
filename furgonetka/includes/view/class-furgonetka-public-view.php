@@ -54,21 +54,25 @@ class Furgonetka_Public_View
     }
 
     /**
-     * Render package information
+     * Render point information
      *
-     * @param mixed $order_information - order info.
+     * @param mixed $point_information
      *
-     * @since 1.0.9
+     * @since 1.4.6
      */
-    public function render_package_information( $order_information )
+    public function render_point_information( $service, $point )
     {
         ?>
         <section class="woocommerce-order-details">
             <h2 class="woocommerce-order-details__title">
                 <?php esc_attr_e( 'Pickup point', 'furgonetka' ); ?>
             </h2>
-            <p class="woocommerce-notice woocommerce-notice--success woocommerce-thankyou-order-received">
-                <?php echo esc_html( $order_information ); ?>
+            <p class="woocommerce-order-details__point">
+                <strong>
+                    <? echo esc_html( $service ); ?>
+                </strong>
+                <br>
+                <? echo esc_html( $point ); ?>
             </p>
         </section>
         <?php

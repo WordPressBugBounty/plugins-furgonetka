@@ -74,52 +74,8 @@ class furgonetka_admin_metaboxes
         $service    = esc_html( $order->get_meta( '_furgonetkaService' ) );
 
         if ( $service ) {
-            echo esc_html( $this->get_name_of_service( $service ) ) . '<br/>' . ( esc_html( $point_name ) ? esc_html( $point_name ) : esc_html( $point ) );
+            echo esc_html( Furgonetka_Public::get_name_of_service( $service ) ) . '<br/>' . ( esc_html( $point_name ) ? esc_html( $point_name ) : esc_html( $point ) );
         }
-    }
-
-    /**
-     * Get name of service
-     *
-     * @param string $service - service slug.
-     *
-     * @return string
-     */
-    public function get_name_of_service( string $service )
-    {
-        $result = '';
-        switch ( $service ) {
-            case 'inpost':
-                $result = 'Inpost paczkomat';
-                break;
-            case 'poczta':
-                $result = 'Poczta';
-                break;
-            case 'kiosk':
-                $result = 'Paczka w ruchu';
-                break;
-            case 'uap':
-                $result = 'UPS Access Point';
-                break;
-            case 'dpd':
-                $result = 'DPD Pickup';
-                break;
-            case 'dhl':
-                $result = 'DHL Parcel';
-                break;
-            case 'fedex':
-                $result = 'FedEx Punkt';
-                break;
-            case 'gls':
-                $result = 'GLS Szybka Paczka';
-                break;
-            case 'orlen':
-                $result = 'ORLEN Paczka';
-                break;
-            default:
-                break;
-        }
-        return $result;
     }
 
     /**

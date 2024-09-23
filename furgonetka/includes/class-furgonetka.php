@@ -347,11 +347,16 @@ class Furgonetka
             2
         );
         $this->loader->add_action(
-            'woocommerce_thankyou',
+            'woocommerce_order_details_after_order_table',
             $this->plugin_public,
-            'add_package_information_to_thank_you_page',
-            20,
-            1
+            'add_point_information',
+            20
+        );
+        $this->loader->add_action(
+            'woocommerce_email_order_meta',
+            $this->plugin_public,
+            'add_point_information',
+            20
         );
 
         $this->blocks = new Furgonetka_Blocks( $this->loader, $this->plugin_public );

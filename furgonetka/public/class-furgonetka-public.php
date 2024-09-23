@@ -518,19 +518,22 @@ class Furgonetka_Public
     }
 
     /**
-     * Add package information to woocomerce thank you page
+     * Add point information to view
      *
-     * @param int $order_id - order id.
+     * @param WC_Order $order
      *
-     * @since 1.1.0
+     * @since 1.4.6
      */
-    public function add_package_information_to_thank_you_page( $order_id )
+    public function add_point_information( $order )
     {
-        $order               = wc_get_order( $order_id );
-        $package_information = $order->get_meta( '_furgonetkaPointName' );
+        $service    = esc_html( $order->get_meta( '_furgonetkaService' ) );
+        $point      = esc_html( $order->get_meta( '_furgonetkaPoint' ) );
+        $point_name = esc_html( $order->get_meta( '_furgonetkaPointName' ) );
 
-        if ( ! empty( $package_information ) ) {
-            $this->view->render_package_information( $package_information );
+        if ( ! empty( $service ) ) {
+            $service_name = self::get_name_of_service( $service );
+            $displayed_point_name = esc_html( $point_name ) ? esc_html( $point_name ) : esc_html( $point );
+            $this->view->render_point_information( $service_name, $displayed_point_name );
         }
     }
 
@@ -708,6 +711,50 @@ class Furgonetka_Public
         delete_option( $this->plugin_name . '_auth_api_nonce' );
 
         return $nonce === $stored_nonce;
+    }
+
+    /**
+     * Get name of service
+     *
+     * @param string $service
+     *
+     * @return string
+     */
+    public static function get_name_of_service( string $service )
+    {
+        $result = '';
+        switch ( $service ) {
+            case 'inpost':
+                $result = 'Inpost paczkomat';
+                break;
+            case 'poczta':
+                $result = 'Poczta';
+                break;
+            case 'kiosk':
+                $result = 'Paczka w ruchu';
+                break;
+            case 'uap':
+                $result = 'UPS Access Point';
+                break;
+            case 'dpd':
+                $result = 'DPD Pickup';
+                break;
+            case 'dhl':
+                $result = 'DHL Parcel';
+                break;
+            case 'fedex':
+                $result = 'FedEx Punkt';
+                break;
+            case 'gls':
+                $result = 'GLS Szybka Paczka';
+                break;
+            case 'orlen':
+                $result = 'ORLEN Paczka';
+                break;
+            default:
+                break;
+        }
+        return $result;
     }
 
     public function register_rest_api_endpoints()
