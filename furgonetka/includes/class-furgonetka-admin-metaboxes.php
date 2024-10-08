@@ -65,16 +65,19 @@ class furgonetka_admin_metaboxes
      */
     public function other_package_link_callback( $order_id )
     {
-        $this->other_package_link( $order_id );
+        if ( Furgonetka_Capabilities::current_user_can_manage_furgonetka() ) {
+            $this->other_package_link($order_id);
+        }
 
-        $order      = wc_get_order( $order_id );
+        $order        = wc_get_order( $order_id );
 
-        $point      = esc_html( $order->get_meta( '_furgonetkaPoint' ) );
-        $point_name = esc_html( $order->get_meta( '_furgonetkaPointName' ) );
-        $service    = esc_html( $order->get_meta( '_furgonetkaService' ) );
+        $point        = esc_html( $order->get_meta( '_furgonetkaPoint' ) );
+        $point_name   = esc_html( $order->get_meta( '_furgonetkaPointName' ) );
+        $service      = esc_html( $order->get_meta( '_furgonetkaService' ) );
+        $service_type = esc_html( $order->get_meta( '_furgonetkaServiceType' ) );
 
         if ( $service ) {
-            echo esc_html( Furgonetka_Public::get_name_of_service( $service ) ) . '<br/>' . ( esc_html( $point_name ) ? esc_html( $point_name ) : esc_html( $point ) );
+            echo esc_html( Furgonetka_Public::get_service_name( $service, $service_type ) ) . '<br/>' . ( esc_html( $point_name ) ? esc_html( $point_name ) : esc_html( $point ) );
         }
     }
 
@@ -109,7 +112,7 @@ class furgonetka_admin_metaboxes
             $order_id = $post->ID;
         }
 
-        $this->other_package_link_callback( $order_id );
+        $this->other_package_link_callback($order_id);
         $this->package_information( $order_id );
     }
 
@@ -130,6 +133,10 @@ class furgonetka_admin_metaboxes
      */
     public function other_package_link( $order_id )
     {
+        if ( ! Furgonetka_Capabilities::current_user_can_manage_furgonetka() ) {
+            return;
+        }
+
         $this->view->render_package_link(
             Furgonetka_Admin::get_plugin_admin_url(
                 Furgonetka_Admin::PAGE_FURGONETKA,
@@ -150,7 +157,10 @@ class furgonetka_admin_metaboxes
      */
     public function extra_order_column( array $columns ): array
     {
-        $columns[ $this->furgonetka_admin->get_plugin_name() ] = __( 'Furgonetka.pl', 'furgonetka' );
+        if ( Furgonetka_Capabilities::current_user_can_manage_furgonetka() ) {
+            $columns[ $this->furgonetka_admin->get_plugin_name() ] = __( 'Furgonetka.pl', 'furgonetka' );
+        }
+
         $columns['package_number']                             = __( 'Packages tracking numbers', 'furgonetka' );
         return $columns;
     }
@@ -225,5 +235,21 @@ class furgonetka_admin_metaboxes
                 }
                 break;
         }
+    }
+
+    function add_tax_id_field_to_order_details($fields, $order = null)
+    {
+        $tax_id_field = [
+            'id' => '_billing_furgonetkaTaxId',
+            'label' => __( 'Tax ID', 'furgonetka' ),
+            'show' => true,
+        ];
+
+        if ($order) {
+            $tax_id_field['value'] = $order->get_meta('_billing_furgonetkaTaxId');
+        }
+
+        $fields['furgonetkaTaxId'] = $tax_id_field;
+        return $fields;
     }
 }

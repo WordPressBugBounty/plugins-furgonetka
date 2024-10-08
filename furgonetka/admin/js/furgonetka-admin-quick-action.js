@@ -1,11 +1,11 @@
 window.FurgonetkaAdmin = {
     /**
-     * Contains handle for currently pending quick action AJAX request
+     * Contains handle for currently pending fast shipping AJAX request
      */
     quickActionAjaxHandle: null,
 
     /**
-     * Quick action handler
+     * Fast shipping handler
      *
      * @param event
      */
@@ -54,7 +54,7 @@ window.FurgonetkaAdmin = {
 
 jQuery(document).ready(function($) {
     /**
-     * Quick action modal close listener
+     * Fast shipping modal close listener
      */
     $("#furgonetka-iframe-exit").click(function (e) {
         e.preventDefault();

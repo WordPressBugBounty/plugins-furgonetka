@@ -66,6 +66,10 @@ msgstr "Zamówienie"
 msgid "Get package Form URL problem."
 msgstr "Wystąpił problem podczas pobierania formularza."
 
+#: admin/class-furgonetka-admin.php:1734
+msgid "Get fast shipping URL problem."
+msgstr "Wystąpił problem podczas wykonywania szybkiej przesyłki."
+
 #: admin/partials/furgonetka-admin-display.php:30
 msgid "API account"
 msgstr "Konto API"
@@ -224,6 +228,9 @@ msgstr "Śledzenie przesyłek:"
 msgid "Pickup point"
 msgstr "Punkt odbioru"
 
+msgid "Tax ID"
+msgstr "NIP"
+
 #~ msgid "Password"
 #~ msgstr "Hasło"
 
@@ -284,26 +291,26 @@ msgstr "Pełna szerokość"
 msgid "Portmonetka cart button custom CSS"
 msgstr "Niestandardowy CSS dla przycisku Portmonetki na karcie koszyka"
 
-msgid "Error occurred while executing quick action."
-msgstr "Wystąpił błąd podczas wykonywania szybkiej akcji."
+msgid "Error occurred while executing fast shipping."
+msgstr "Wystąpił błąd podczas wykonywania szybkiej przesyłki."
 
-msgid "Error occurred while executing quick action. Please connect module with Furgonetka.pl account."
-msgstr "Wystąpił błąd podczas wykonywania szybkiej akcji. Proszę połączyć moduł z kontem na Furgonetka.pl."
+msgid "Error occurred while executing fast shipping. Please connect module with Furgonetka.pl account."
+msgstr "Wystąpił błąd podczas wykonywania szybkiej przesyłki. Proszę połączyć moduł z kontem na Furgonetka.pl."
 
-msgid "Error occurred while executing quick action. Please reconnect module with Furgonetka.pl account."
-msgstr "Wystąpił błąd podczas wykonywania szybkiej akcji. Proszę ponownie połączyć moduł z kontem na Furgonetka.pl."
+msgid "Error occurred while executing fast shipping. Please reconnect module with Furgonetka.pl account."
+msgstr "Wystąpił błąd podczas wykonywania szybkiej przesyłki. Proszę ponownie połączyć moduł z kontem na Furgonetka.pl."
 
 msgid "Furgonetka.pl courier - Package"
 msgstr "Kurier Furgonetka.pl - Przesyłka"
 
-msgid "Furgonetka.pl courier - Quick action"
-msgstr "Kurier Furgonetka.pl - Szybka akcja"
+msgid "Furgonetka.pl courier - Fast shipping"
+msgstr "Kurier Furgonetka.pl - Szybka przesyłka"
 
 msgid "Package"
 msgstr "Przesyłka"
 
-msgid "Quick action"
-msgstr "Szybka akcja"
+msgid "Fast shipping"
+msgstr "Szybka przesyłka"
 
 msgid "Coupon is not available for this email."
 msgstr "Kupon nie jest dostępny dla tego adresu email."
@@ -344,6 +351,9 @@ msgstr "Wybrany punkt (płatność przy odbiorze)"
 msgid "Pickup point service"
 msgstr "Usługa kurierska punktu odbioru"
 
+msgid "Pickup point service type"
+msgstr "Rodzaj punktu odbioru"
+
 msgid "Pickup point code"
 msgstr "Kod punktu odbioru"
 
@@ -360,3 +370,6 @@ msgstr "Zmień punkt odbioru"
 #: public/blocks/furgonetka-pickup-point/index.js:1
 msgid "There was a problem loading the map. Please try again."
 msgstr "Wystąpił problem z załadowaniem mapy. Spróbuj ponownie."
+
+msgid "Manage Furgonetka module"
+msgstr "Zarządzanie modułem Furgonetka"

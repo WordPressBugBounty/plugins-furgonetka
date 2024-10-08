@@ -69,6 +69,24 @@ class Furgonetka_Public
     private static $hidden_class = 'furgonetka-hidden-checkout-btn';
 
     /**
+     * Point types
+     */
+    const POINT_TYPE_SERVICE_POINT  = 'service_point';
+    const POINT_TYPE_PARCEL_MACHINE = 'parcel_machine';
+
+    /**
+     * Courier services
+     */
+    const SERVICE_INPOST         = 'inpost';
+    const SERVICE_POCZTA         = 'poczta';
+    const SERVICE_DPD            = 'dpd';
+    const SERVICE_DHL            = 'dhl';
+    const SERVICE_ORLEN          = 'orlen';
+    const SERVICE_UPSACCESSPOINT = 'uap';
+    const SERVICE_GLS            = 'gls';
+    const SERVICE_FEDEX          = 'fedex';
+
+    /**
      * Initialize the class and set its properties.
      *
      * @since    1.0.0
@@ -223,12 +241,11 @@ class Furgonetka_Public
             ! $virtual_product && $normal_product ||
             $virtual_product && $normal_product
         ) {
-            $chosen_method_array = WC()->session->get( 'chosen_shipping_methods' );
-            $delivery_to_type    = get_option( FURGONETKA_PLUGIN_NAME . '_deliveryToType' );
+            $service = $this->get_selected_service_from_session();
 
-            if ( isset( $delivery_to_type[ $chosen_method_array[0] ] ) ) {
+            if ( $service ) {
                 $selected_point = $this->get_selected_point_from_session(
-                    $delivery_to_type[ $chosen_method_array[0] ],
+                    $service,
                     ( WC()->session->get( 'chosen_payment_method' ) === 'cod' )
                 );
             } else {
@@ -288,10 +305,15 @@ class Furgonetka_Public
         $order_service = $this->get_order_shipping_method_service( $order );
         $furgonetka_service = isset( $_POST['furgonetkaService'] ) ? sanitize_text_field( wp_unslash( $_POST['furgonetkaService'] ) ) : null;
 
+        if ( $this->is_woocommerce_payments_express_checkout_request() ) {
+            $furgonetka_service = $this->get_selected_service_from_session();
+        }
+
         if ( $order_service !== $furgonetka_service ) {
             $order->delete_meta_data( '_furgonetkaPoint' );
             $order->delete_meta_data( '_furgonetkaPointName' );
             $order->delete_meta_data( '_furgonetkaService' );
+            $order->delete_meta_data( '_furgonetkaServiceType' );
 
             return;
         }
@@ -299,6 +321,15 @@ class Furgonetka_Public
         /**
          * Update order
          */
+        if ( $this->is_woocommerce_payments_express_checkout_request() ) {
+            $point = $this->get_selected_point_from_session( $order_service, false );
+
+            $order->update_meta_data( '_furgonetkaPoint', $point[ 'code' ] );
+            $order->update_meta_data( '_furgonetkaPointName', $point[ 'name' ] );
+            $order->update_meta_data( '_furgonetkaService', $point[ 'service' ] );
+            $order->update_meta_data( '_furgonetkaServiceType', $point[ 'service_type' ] );
+        }
+
         //phpcs:ignore
         if ( isset( $_POST['furgonetkaPoint'] ) ) {
             //phpcs:ignore
@@ -323,6 +354,14 @@ class Furgonetka_Public
                 sanitize_text_field( wp_unslash( $_POST['furgonetkaService'] ) )
             );
         }
+        //phpcs:ignore
+        if ( isset( $_POST['furgonetkaServiceType'] ) ) {
+            //phpcs:ignore
+            $order->update_meta_data(
+                '_furgonetkaServiceType',
+                sanitize_text_field( wp_unslash( $_POST['furgonetkaServiceType'] ) )
+            );
+        }
     }
 
     /**
@@ -335,6 +374,8 @@ class Furgonetka_Public
         if ( ! check_ajax_referer( $this->plugin_name . '_setPointAction', 'security', false ) === false ) {
             $current_service = isset( $_POST['currentService'] ) ?
                 sanitize_text_field( wp_unslash( $_POST['currentService'] ) ) : '';
+            $service_type    = isset( $_POST['serviceType'] ) ?
+                sanitize_text_field( wp_unslash( $_POST['serviceType'] ) ) : '';
             $name            = isset( $_POST['name'] ) ?
                 sanitize_text_field( wp_unslash( $_POST['name'] ) ) : '';
             $code            = isset( $_POST['code'] ) ?
@@ -345,7 +386,7 @@ class Furgonetka_Public
             wp_send_json_error();
         }
 
-        $this->save_point_to_session_internal( $current_service, $code, $name, $cod === 'true' );
+        $this->save_point_to_session_internal( $current_service, $service_type, $code, $name, $cod === 'true' );
 
         wp_send_json_success();
     }
@@ -353,7 +394,7 @@ class Furgonetka_Public
     /**
      * Save selected point to WooCommerce (internal)
      */
-    public function save_point_to_session_internal( $current_service, $code, $name, $cod )
+    public function save_point_to_session_internal( $current_service, $service_type, $code, $name, $cod )
     {
         $current_selection = WC()->session->get( $this->plugin_name . '_pointTo' );
 
@@ -366,9 +407,10 @@ class Furgonetka_Public
         }
 
         $current_selection[ $current_service ] = array(
-            'service' => $current_service,
-            'name'    => $name,
-            'code'    => $code,
+            'service'      => $current_service,
+            'service_type' => $service_type,
+            'code'         => $code,
+            'name'         => $name,
         );
 
         if ( $cod ) {
@@ -393,20 +435,11 @@ class Furgonetka_Public
             wp_send_json_error();
         }
 
-        $chosen_method_array = WC()->session->get( 'chosen_shipping_methods' );
-
-        $delivery_to_type = get_option( FURGONETKA_PLUGIN_NAME . '_deliveryToType' );
-
-        $selected_point = $this->get_selected_point_from_session(
-            $delivery_to_type[ $chosen_method_array[0] ],
-            'true' === $cod
-        );
+        $service = $this->get_selected_service_from_session();
+        $selected_point = $this->get_selected_point_from_session( $service, 'true' === $cod );
 
         $data = array(
-            'button' => $this->generate_delivery_button(
-                $delivery_to_type[ $chosen_method_array[0] ],
-                'true' === $cod
-            ),
+            'button' => $this->generate_delivery_button( $service, 'true' === $cod ),
             'code'   => $selected_point['code']
         );
 
@@ -480,6 +513,7 @@ class Furgonetka_Public
     {
         $return_selection  = array(
             'service' => '',
+            'service_type' => '',
             'name'    => '',
             'code'    => '',
         );
@@ -496,21 +530,42 @@ class Furgonetka_Public
     }
 
     /**
+     * Get currently selected service based on session and configuration
+     *
+     * @return string|null
+     */
+    public function get_selected_service_from_session()
+    {
+        $delivery_to_type = get_option( FURGONETKA_PLUGIN_NAME . '_deliveryToType' );
+        $chosen_method_array = WC()->session->get( 'chosen_shipping_methods' );
+
+        if ( isset( $chosen_method_array[0], $delivery_to_type[ $chosen_method_array[0] ] ) ) {
+            return $delivery_to_type[ $chosen_method_array[0] ];
+        }
+
+        return null;
+    }
+
+    /**
      * Validate point selection in php
      *
      * @since    1.0.7
      */
     public function woocommerce_checkout_process()
     {
-        $delivery_to_type = get_option( FURGONETKA_PLUGIN_NAME . '_deliveryToType' );
+        $service = $this->get_selected_service_from_session();
 
-        $chosen_method_array = WC()->session->get( 'chosen_shipping_methods' );
-        if ( isset( $chosen_method_array[0] ) && isset( $delivery_to_type[ $chosen_method_array[0] ] ) ) {
+        if ( $service ) {
             //phpcs:ignore
             if ( isset(  $_POST['furgonetkaPoint'] ) ) {
                 //phpcs:ignore
                 $point = sanitize_text_field( wp_unslash( $_POST['furgonetkaPoint'] ) );
             }
+
+            if ( $this->is_woocommerce_payments_express_checkout_request() ) {
+                $point = $this->get_selected_point_from_session( $service, false )['code'];
+            }
+
             if ( empty( $point ) && true === WC()->cart->needs_shipping() ) {
                 wc_add_notice( __( 'Please select delivery point.', 'furgonetka' ), 'error' );
             }
@@ -526,12 +581,13 @@ class Furgonetka_Public
      */
     public function add_point_information( $order )
     {
-        $service    = esc_html( $order->get_meta( '_furgonetkaService' ) );
-        $point      = esc_html( $order->get_meta( '_furgonetkaPoint' ) );
-        $point_name = esc_html( $order->get_meta( '_furgonetkaPointName' ) );
+        $service      = esc_html( $order->get_meta( '_furgonetkaService' ) );
+        $service_type = esc_html( $order->get_meta( '_furgonetkaServiceType' ) );
+        $point        = esc_html( $order->get_meta( '_furgonetkaPoint' ) );
+        $point_name   = esc_html( $order->get_meta( '_furgonetkaPointName' ) );
 
         if ( ! empty( $service ) ) {
-            $service_name = self::get_name_of_service( $service );
+            $service_name = self::get_service_name( $service, $service_type );
             $displayed_point_name = esc_html( $point_name ) ? esc_html( $point_name ) : esc_html( $point );
             $this->view->render_point_information( $service_name, $displayed_point_name );
         }
@@ -717,43 +773,78 @@ class Furgonetka_Public
      * Get name of service
      *
      * @param string $service
+     * @param string $service_type
      *
      * @return string
      */
-    public static function get_name_of_service( string $service )
+    public static function get_service_name($service, $service_type)
+    {
+        return $service_type === self::POINT_TYPE_PARCEL_MACHINE ?
+            self::get_service_name_for_parcel_machine($service) : self::get_service_name_for_service_point($service);
+    }
+
+    private static function get_service_name_for_parcel_machine( $service )
     {
         $result = '';
+
         switch ( $service ) {
-            case 'inpost':
-                $result = 'Inpost paczkomat';
+            case self::SERVICE_INPOST:
+                $result = 'Paczkomat® 24/7';
                 break;
-            case 'poczta':
-                $result = 'Poczta';
+            case self::SERVICE_POCZTA:
+                $result = 'Pocztex AUTOMAT';
+                break;
+            case self::SERVICE_DPD:
+                $result = 'DPD Pickup Station';
+                break;
+            case self::SERVICE_DHL:
+                $result = 'DHL BOX 24/7';
+                break;
+            case self::SERVICE_ORLEN:
+                $result = 'ORLEN PACZKA Automat paczkowy';
                 break;
             case 'kiosk':
-                $result = 'Paczka w ruchu';
-                break;
-            case 'uap':
-                $result = 'UPS Access Point';
-                break;
-            case 'dpd':
-                $result = 'DPD Pickup';
-                break;
-            case 'dhl':
-                $result = 'DHL Parcel';
-                break;
-            case 'fedex':
-                $result = 'FedEx Punkt';
-                break;
-            case 'gls':
-                $result = 'GLS Szybka Paczka';
-                break;
-            case 'orlen':
-                $result = 'ORLEN Paczka';
-                break;
-            default:
+                $result = 'ORLEN PACZKA Automat paczkowy';
                 break;
         }
+
+        return $result;
+    }
+
+    private static function get_service_name_for_service_point( $service )
+    {
+        $result = '';
+
+        switch ( $service ) {
+            case self::SERVICE_INPOST:
+                $result = 'PaczkoPunkt';
+                break;
+            case self::SERVICE_POCZTA:
+                $result = 'Pocztex';
+                break;
+            case self::SERVICE_DPD:
+                $result = 'DPD Pickup';
+                break;
+            case self::SERVICE_DHL:
+                $result = 'DHL POP';
+                break;
+            case self::SERVICE_ORLEN:
+                $result = 'ORLEN PACZKA Punkt odbioru';
+                break;
+            case 'kiosk':
+                $result = 'ORLEN PACZKA Punkt odbioru';
+                break;
+            case self::SERVICE_FEDEX:
+                $result = 'FedEx Punkt';
+                break;
+            case self::SERVICE_UPSACCESSPOINT:
+                $result = 'UPS Access Point';
+                break;
+            case self::SERVICE_GLS:
+                $result = 'GLS Szybka Paczka';
+                break;
+        }
+
         return $result;
     }
 
@@ -876,6 +967,14 @@ class Furgonetka_Public
             WC()->frontend_includes();
             wc_load_cart();
         }
+    }
+
+    /**
+     * WooCommerce Payments (express checkout - Apple Pay & Google Pay) support
+     */
+    public function is_woocommerce_payments_express_checkout_request(): bool
+    {
+        return isset( $_POST[ 'wcpay-payment-method' ] );
     }
 
     public static function setup_classes() {

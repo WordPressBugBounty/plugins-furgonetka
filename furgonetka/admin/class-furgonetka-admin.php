@@ -201,7 +201,7 @@ class Furgonetka_Admin
         );
 
         /**
-         * Quick action-related assets
+         * Fast shipping-related assets
          */
         if ( $this->is_current_screen_supported( $this->get_quick_action_supported_screens() ) ) {
             /**
@@ -326,19 +326,19 @@ class Furgonetka_Admin
         add_menu_page(
             __('Furgonetka', 'furgonetka'),
             __('Furgonetka', 'furgonetka'),
-            'manage_woocommerce',
+            Furgonetka_Capabilities::CAPABILITY_MANAGE_FURGONETKA,
             self::PAGE_FURGONETKA,
             array( $this, 'furgonetka_default_page' ),
             $icon_svg,
             $menu_pos
         );
 
-        if ( self::isIntegrationActive() ) {
+        if ( self::is_integration_active() ) {
             add_submenu_page(
                 'furgonetka',
                 __('Plugin panel', 'furgonetka'),
                 __('Plugin panel', 'furgonetka'),
-                'manage_woocommerce',
+                Furgonetka_Capabilities::CAPABILITY_MANAGE_FURGONETKA,
                 self::PAGE_FURGONETKA_PANEL_SETTINGS,
                 array( $this, 'get_furgonetka_iframe' )
             );
@@ -347,7 +347,7 @@ class Furgonetka_Admin
                 'furgonetka',
                 __('To send', 'furgonetka'),
                 __('To send', 'furgonetka'),
-                'manage_woocommerce',
+                Furgonetka_Capabilities::CAPABILITY_MANAGE_FURGONETKA,
                 self::PAGE_FURGONETKA_WAITING_PACKAGES,
                 array( $this, 'get_furgonetka_iframe' )
             );
@@ -356,7 +356,7 @@ class Furgonetka_Admin
                 'furgonetka',
                 __('Ordered', 'furgonetka'),
                 __('Ordered', 'furgonetka'),
-                'manage_woocommerce',
+                Furgonetka_Capabilities::CAPABILITY_MANAGE_FURGONETKA,
                 self::PAGE_FURGONETKA_ORDERED_PACKAGES,
                 array( $this, 'get_furgonetka_iframe' )
             );
@@ -365,7 +365,7 @@ class Furgonetka_Admin
                 'furgonetka',
                 __('Shopping returns', 'furgonetka'),
                 __('Shopping returns', 'furgonetka'),
-                'manage_woocommerce',
+                Furgonetka_Capabilities::CAPABILITY_MANAGE_FURGONETKA,
                 self::PAGE_FURGONETKA_RETURNS,
                 array( $this, 'get_furgonetka_iframe' )
             );
@@ -374,7 +374,7 @@ class Furgonetka_Admin
                 'furgonetka',
                 __('Attach map', 'furgonetka'),
                 __('Attach map', 'furgonetka'),
-                'manage_woocommerce',
+                Furgonetka_Capabilities::CAPABILITY_MANAGE_FURGONETKA,
                 self::PAGE_FURGONETKA_ATTACH_MAP,
                 array( $this, 'get_furgonetka_map' )
             );
@@ -383,7 +383,7 @@ class Furgonetka_Admin
                 'furgonetka',
                 __('Advanced', 'furgonetka'),
                 __('Advanced', 'furgonetka'),
-                'manage_woocommerce',
+                Furgonetka_Capabilities::CAPABILITY_MANAGE_FURGONETKA,
                 self::PAGE_FURGONETKA_ADVANCED,
                 array( $this, 'get_furgonetka_advanced' )
             );
@@ -393,7 +393,7 @@ class Furgonetka_Admin
     }
 
     /**
-     * Quick action AJAX handler
+     * Fast shipping AJAX handler
      *
      * @return void
      */
@@ -402,10 +402,10 @@ class Furgonetka_Admin
         /**
          * Validate permissions
          */
-        if ( ! current_user_can( 'manage_woocommerce' ) ) {
+        if ( ! Furgonetka_Capabilities::current_user_can_manage_furgonetka() ) {
             wp_send_json_error(
                 array(
-                    'error_message' => __( 'You do not have sufficient permissions to access this page.', 'furgonetka' ),
+                    'error_message' => self::get_permissions_error_message(),
                 )
             );
         }
@@ -417,7 +417,7 @@ class Furgonetka_Admin
             wp_send_json_error(
                 array(
                     'redirect_url'  => static::get_plugin_admin_url(),
-                    'error_message' => __( 'Error occurred while executing quick action. Please connect module with Furgonetka.pl account.', 'furgonetka' ),
+                    'error_message' => __( 'Error occurred while executing fast shipping. Please connect module with Furgonetka.pl account.', 'furgonetka' ),
                 )
             );
         }
@@ -429,13 +429,13 @@ class Furgonetka_Admin
             wp_send_json_error(
                 array(
                     'redirect_url'  => static::get_plugin_admin_url( self::PAGE_FURGONETKA_ADVANCED ),
-                    'error_message' => __( 'Error occurred while executing quick action. Please reconnect module with Furgonetka.pl account.', 'furgonetka' ),
+                    'error_message' => __( 'Error occurred while executing fast shipping. Please reconnect module with Furgonetka.pl account.', 'furgonetka' ),
                 )
             );
         }
 
         /**
-         * Handle quick action request
+         * Handle fast shipping request
          */
         if ( isset ( $_POST['order_id'] ) ) {
             $order_id = sanitize_text_field( wp_unslash( $_POST['order_id'] ) );
@@ -455,7 +455,7 @@ class Furgonetka_Admin
          */
         wp_send_json_error(
             array(
-                'error_message' => __( 'Error occurred while executing quick action.', 'furgonetka' ),
+                'error_message' => __( 'Error occurred while executing fast shipping.', 'furgonetka' ),
             )
         );
     }
@@ -470,10 +470,10 @@ class Furgonetka_Admin
         /**
          * Validate permissions
          */
-        if ( ! current_user_can( 'manage_woocommerce' ) ) {
+        if ( ! Furgonetka_Capabilities::current_user_can_manage_furgonetka() ) {
             wp_send_json_error(
                 array(
-                    'error_message' => __( 'You do not have sufficient permissions to access this page.', 'furgonetka' ),
+                    'error_message' => self::get_permissions_error_message(),
                 )
             );
         }
@@ -629,8 +629,8 @@ class Furgonetka_Admin
         /**
          * Validate permissions
          */
-        if ( ! current_user_can( 'manage_woocommerce' ) ) {
-            wp_die( esc_html__( 'You do not have sufficient permissions to access this page.' ) );
+        if ( ! Furgonetka_Capabilities::current_user_can_manage_furgonetka() ) {
+            wp_die( self::get_permissions_error_message() );
         }
 
         /**
@@ -679,7 +679,7 @@ class Furgonetka_Admin
         }
 
         if ( ! static::is_account_active() ) {
-            $this->redirect_to_error_page( self::ERROR_CODE_INACTIVE_ACCOUNT );
+            $this->redirect_to_plugin_admin_page();
         }
 
         /**
@@ -853,8 +853,12 @@ class Furgonetka_Admin
      */
     public function render_simple_form( $viewPath, $additional_data = null )
     {
-        if ( !current_user_can( 'manage_woocommerce') && !self::isIntegrationActive() ) {
-            wp_die( esc_html__( 'You do not have sufficient permissions to access this page.' ) );
+        if ( ! Furgonetka_Capabilities::current_user_can_manage_furgonetka() ) {
+            wp_die( self::get_permissions_error_message() );
+        }
+
+        if ( ! self::is_integration_active() ) {
+            $this->redirect_to_plugin_admin_page();
         }
 
         /**
@@ -905,12 +909,12 @@ class Furgonetka_Admin
      */
     private function render_furgonetka_app_link( $full_page_name )
     {
-        if ( !current_user_can( 'manage_woocommerce' ) && !self::isIntegrationActive() ) {
-            wp_die( esc_html__( 'You do not have sufficient permissions to access this page.' ) );
+        if ( ! Furgonetka_Capabilities::current_user_can_manage_furgonetka() ) {
+            wp_die( self::get_permissions_error_message() );
         }
 
-        if ( ! self::get_integration_uuid() ) {
-            $this->redirect_to_error_page( self::ERROR_CODE_INACTIVE_ACCOUNT );
+        if ( ! self::get_integration_uuid() || ! self::is_integration_active() ) {
+            $this->redirect_to_plugin_admin_page();
         }
 
         /**
@@ -1551,6 +1555,10 @@ class Furgonetka_Admin
      */
     private function refresh_token( $client_id, $client_secret, $test_mode, $refresh_token )
     {
+        if ( empty( $refresh_token ) ) {
+            throw new Exception( 'Refresh token: is empty, refreshing canceled' );
+        }
+
         //phpcs:ignore
         $auth = base64_encode( $client_id . ':' . $client_secret );
         $url  = $test_mode ? self::TEST_API_OAUTH_URL : self::API_OAUTH_URL;
@@ -1566,7 +1574,6 @@ class Furgonetka_Admin
                 array(
                     'grant_type'    => 'refresh_token',
                     'refresh_token' => $refresh_token,
-                    'redirect_uri'  => self::get_redirect_uri(),
                 )
             ),
             'user-agent' => self::get_request_user_agent(),
@@ -1711,7 +1718,7 @@ class Furgonetka_Admin
     }
 
     /**
-     * Quick Action API
+     * Fast shipping API
      *
      * @param mixed $order_id - order ID.
      * @throws \Exception     - error
@@ -1724,7 +1731,7 @@ class Furgonetka_Admin
         $order_data = wc_get_order( $order_id );
 
         if ( ! $order_data ) {
-            throw new \Exception( __( 'Get quick action URL problem.', 'furgonetka' ) );
+            throw new \Exception( __( 'Get fast shipping URL problem.', 'furgonetka' ) );
         }
 
         $reference = $order_data->get_order_number();
@@ -1734,7 +1741,7 @@ class Furgonetka_Admin
         }
 
         /**
-         * Initialize quick action
+         * Initialize fast shipping
          */
         $data = array(
             'integrationUuid' => self::get_integration_uuid(),
@@ -1753,7 +1760,7 @@ class Furgonetka_Admin
                 throw new \Exception( $first_error->path . ': ' . $first_error->message );
             }
 
-            throw new \Exception( __( 'Get quick action URL problem.', 'furgonetka' ) );
+            throw new \Exception( __( 'Get fast shipping URL problem.', 'furgonetka' ) );
         }
 
         /**
@@ -2151,7 +2158,7 @@ class Furgonetka_Admin
     }
 
     /**
-     * Get quick action-related screens
+     * Get fast shipping-related screens
      *
      * @return array
      */
@@ -2342,7 +2349,7 @@ class Furgonetka_Admin
         );
     }
 
-    public static function isIntegrationActive()
+    public static function is_integration_active()
     {
        return self::is_account_active() && self::get_rest_customer_key() && self::get_rest_customer_secret();
     }
@@ -2401,6 +2408,14 @@ class Furgonetka_Admin
         wp_redirect( static::get_plugin_admin_url( $page, $action, $params ) );
 
         exit;
+    }
+
+    /**
+     * Get message that indicates insufficient permissions for the current user
+     */
+    private static function get_permissions_error_message(): string
+    {
+        return __( 'You do not have sufficient permissions to access this page.', 'furgonetka' );
     }
 
     /**

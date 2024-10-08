@@ -34,5 +34,7 @@ class Furgonetka_Activator
         if ( ! wp_next_scheduled( 'furgonetka_daily_event' ) ) {
             wp_schedule_event( time(), 'daily', 'furgonetka_daily_event' );
         }
+
+        Furgonetka_Capabilities::ensure_capabilities();
     }
 }

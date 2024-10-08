@@ -17,6 +17,8 @@ class Furgonetka_Migrations_Performer
         if (version_compare($previous_plugin_version, '1.2.18', '<=')) {
             $this->upgrade_to_1_2_18();
         }
+
+        Furgonetka_Capabilities::ensure_capabilities();
     }
 
     /**

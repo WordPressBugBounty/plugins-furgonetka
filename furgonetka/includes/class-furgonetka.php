@@ -146,6 +146,10 @@ class Furgonetka
          */
         require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-furgonetka-i18n.php';
         /**
+         * Capabilities support
+         */
+        require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-furgonetka-capabilities.php';
+        /**
          * The class responsible for defining all actions that occur in the admin area.
          */
         require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-furgonetka-admin.php';
@@ -264,9 +268,21 @@ class Furgonetka
             $this->plugin_admin,
             'furgonetka_connect_integration'
         );
+        $this->loader->add_filter(
+            'woocommerce_admin_billing_fields',
+            $this->metaboxes,
+            'add_tax_id_field_to_order_details',
+            1,
+            2
+        );
 
         // Init returns route.
         $this->returns->init();
+
+        /**
+         * Define capabilities hooks
+         */
+        Furgonetka_Capabilities::define_hooks();
     }
 
     /**

@@ -8,10 +8,11 @@ class Furgonetka_Blocks {
 	const FIELD_SELECTED_POINT     = 'selected_point';
 	const FIELD_SELECTED_POINT_COD = 'selected_point_cod';
 
-	const FIELD_SERVICE = 'service';
-	const FIELD_CODE    = 'code';
-	const FIELD_NAME    = 'name';
-	const FIELD_COD     = 'cod';
+	const FIELD_SERVICE      = 'service';
+	const FIELD_SERVICE_TYPE = 'service_type';
+	const FIELD_CODE         = 'code';
+	const FIELD_NAME         = 'name';
+	const FIELD_COD          = 'cod';
 
 	/**
 	 * @var Furgonetka_Loader
@@ -125,6 +126,11 @@ class Furgonetka_Blocks {
 				'type'        => 'string',
 				'readonly'    => true,
 			),
+			self::FIELD_SERVICE_TYPE => array(
+				'description' => __( 'Pickup point service type', 'furgonetka' ),
+				'type'        => 'string',
+				'readonly'    => true,
+			),
 			self::FIELD_CODE    => array(
 				'description' => __( 'Pickup point code', 'furgonetka' ),
 				'type'        => 'string',
@@ -180,14 +186,16 @@ class Furgonetka_Blocks {
 
 		return array(
 			self::FIELD_SELECTED_POINT     => array(
-				self::FIELD_SERVICE => isset( $data[ self::FIELD_SERVICE ] ) ? $data[ self::FIELD_SERVICE ] : '',
-				self::FIELD_CODE    => isset( $data[ self::FIELD_CODE ] ) ? $data[ self::FIELD_CODE ] : '',
-				self::FIELD_NAME    => isset( $data[ self::FIELD_NAME ] ) ? $data[ self::FIELD_NAME ] : '',
+				self::FIELD_SERVICE      => isset( $data[ self::FIELD_SERVICE ] ) ? $data[ self::FIELD_SERVICE ] : '',
+				self::FIELD_SERVICE_TYPE => isset( $data[ self::FIELD_SERVICE_TYPE ] ) ? $data[ self::FIELD_SERVICE_TYPE ] : '',
+				self::FIELD_CODE         => isset( $data[ self::FIELD_CODE ] ) ? $data[ self::FIELD_CODE ] : '',
+				self::FIELD_NAME         => isset( $data[ self::FIELD_NAME ] ) ? $data[ self::FIELD_NAME ] : '',
 			),
 			self::FIELD_SELECTED_POINT_COD => array(
-				self::FIELD_SERVICE => isset( $data_cod[ self::FIELD_SERVICE ] ) ? $data_cod[ self::FIELD_SERVICE ] : '',
-				self::FIELD_CODE    => isset( $data_cod[ self::FIELD_CODE ] ) ? $data_cod[ self::FIELD_CODE ] : '',
-				self::FIELD_NAME    => isset( $data_cod[ self::FIELD_NAME ] ) ? $data_cod[ self::FIELD_NAME ] : '',
+				self::FIELD_SERVICE      => isset( $data_cod[ self::FIELD_SERVICE ] ) ? $data_cod[ self::FIELD_SERVICE ] : '',
+				self::FIELD_SERVICE_TYPE => isset( $data[ self::FIELD_SERVICE_TYPE ] ) ? $data[ self::FIELD_SERVICE_TYPE ] : '',
+				self::FIELD_CODE         => isset( $data_cod[ self::FIELD_CODE ] ) ? $data_cod[ self::FIELD_CODE ] : '',
+				self::FIELD_NAME         => isset( $data_cod[ self::FIELD_NAME ] ) ? $data_cod[ self::FIELD_NAME ] : '',
 			),
 		);
 	}
@@ -201,6 +209,7 @@ class Furgonetka_Blocks {
 	public function set_extension_data( $data ) {
 		$this->public->save_point_to_session_internal(
 			isset( $data[ self::FIELD_SERVICE ] ) ? $data[ self::FIELD_SERVICE ] : '',
+			isset( $data[ self::FIELD_SERVICE_TYPE ] ) ? $data[ self::FIELD_SERVICE_TYPE ] : '',
 			isset( $data[ self::FIELD_CODE ] ) ? $data[ self::FIELD_CODE ] : '',
 			isset( $data[ self::FIELD_NAME ] ) ? $data[ self::FIELD_NAME ] : '',
 			isset( $data[ self::FIELD_COD ] ) ? $data[ self::FIELD_COD ] : ''
@@ -259,6 +268,7 @@ class Furgonetka_Blocks {
 			$order->delete_meta_data( '_furgonetkaPoint' );
 			$order->delete_meta_data( '_furgonetkaPointName' );
 			$order->delete_meta_data( '_furgonetkaService' );
+			$order->delete_meta_data( '_furgonetkaServiceType' );
 
 			return;
 		}
@@ -269,6 +279,11 @@ class Furgonetka_Blocks {
 		$order->update_meta_data(
 			'_furgonetkaService',
 			sanitize_text_field( wp_unslash( $data['service'] ) )
+		);
+
+		$order->update_meta_data(
+			'_furgonetkaServiceType',
+			sanitize_text_field( wp_unslash( $data['service_type'] ) )
 		);
 
 		$order->update_meta_data(

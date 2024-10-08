@@ -69,6 +69,10 @@ msgstr ""
 msgid "Get package Form URL problem."
 msgstr ""
 
+#: admin/class-furgonetka-admin.php:1734
+msgid "Get fast shipping URL problem."
+msgstr ""
+
 #: admin/partials/furgonetka-admin-display.php:30
 msgid "API account"
 msgstr ""
@@ -283,25 +287,25 @@ msgstr ""
 msgid "Portmonetka cart button custom CSS"
 msgstr ""
 
-msgid "Error occurred while executing quick action."
+msgid "Error occurred while executing fast shipping."
 msgstr ""
 
-msgid "Error occurred while executing quick action. Please connect module with Furgonetka.pl account."
+msgid "Error occurred while executing fast shipping. Please connect module with Furgonetka.pl account."
 msgstr ""
 
-msgid "Error occurred while executing quick action. Please reconnect module with Furgonetka.pl account."
+msgid "Error occurred while executing fast shipping. Please reconnect module with Furgonetka.pl account."
 msgstr ""
 
 msgid "Furgonetka.pl courier - Package"
 msgstr ""
 
-msgid "Furgonetka.pl courier - Quick action"
+msgid "Furgonetka.pl courier - Fast shipping"
 msgstr ""
 
 msgid "Package"
 msgstr ""
 
-msgid "Quick action"
+msgid "Fast shipping"
 msgstr ""
 
 msgid "Coupon is not available for this email."
@@ -349,6 +353,9 @@ msgstr ""
 msgid "Pickup point service"
 msgstr ""
 
+msgid "Pickup point service type"
+msgstr ""
+
 msgid "Pickup point code"
 msgstr ""
 
@@ -364,4 +371,11 @@ msgstr ""
 
 #: public/blocks/furgonetka-pickup-point/index.js:1
 msgid "There was a problem loading the map. Please try again."
+msgstr ""
+
+msgid "Manage Furgonetka module"
+msgstr ""
+
+#: furgonetka/includes/class-furgonetka-admin-metaboxes:235
+msgid "Tax ID"
 msgstr ""

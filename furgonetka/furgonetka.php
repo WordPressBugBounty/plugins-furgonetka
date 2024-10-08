@@ -8,21 +8,22 @@
  * @package Furgonetka
  *
  * @wordpress-plugin
- * Plugin Name:       Furgonetka.pl
- * Plugin URI:        https://furgonetka.pl
- * Description:       Połącz swój sklep z modułem Furgonetka.pl! Generuj etykiety, twórz szablony przesyłek, śledź statusy paczek. Nadawaj paczki szybko i tanio korzystając z 10 firm kurierskich.
- * Version:           1.4.6
- * Author:            Furgonetka.pl
- * Author URI:        https://furgonetka.pl
- * License:           GPL-2.0+
- * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
- * Developer:         codebox
- * Developer URI:     http://codebox.pl
- * Text Domain:       furgonetka
- * Domain Path:       /languages
- *
- * WC requires at least: 3.4.7
- * WC tested up to: 7.8.1
+ * Plugin Name:          Furgonetka.pl
+ * Plugin URI:           https://furgonetka.pl
+ * Description:          Połącz swój sklep z modułem Furgonetka.pl! Generuj etykiety, twórz szablony przesyłek, śledź statusy paczek. Nadawaj paczki szybko i tanio korzystając z 10 firm kurierskich.
+ * Version:              1.5.0
+ * Author:               Furgonetka.pl
+ * Author URI:           https://furgonetka.pl
+ * License:              GPL-2.0+
+ * License URI:          http://www.gnu.org/licenses/gpl-2.0.txt
+ * Developer:            codebox
+ * Developer URI:        http://codebox.pl
+ * Text Domain:          furgonetka
+ * Domain Path:          /languages
+ * Requires Plugins:     woocommerce
+ * Requires PHP:         7.0
+ * WC requires at least: 4.0
+ * WC tested up to:      9.3.3
  */
 
 // If this file is called directly, abort.
@@ -36,7 +37,7 @@ if ( ! defined( 'WPINC' ) )
  * Start at version 1.0.0 and use SemVer - https://semver.org
  * Rename this for your plugin and update it as you release new versions.
  */
-define( 'FURGONETKA_VERSION', '1.4.6' );
+define( 'FURGONETKA_VERSION', '1.5.0' );
 define( 'FURGONETKA_PLUGIN_NAME', 'furgonetka' );
 define( 'FURGONETKA_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'FURGONETKA_DEBUG', false );
@@ -55,6 +56,7 @@ function furgonetka_upgrade_completed( $upgrader_object, $options )
             $plugin_data = get_plugin_data( __FILE__ );
             Furgonetka_Admin::perform_migrations();
             Furgonetka_Admin::update_plugin_version( $plugin_data['Version'] );
+
         }
     }
 

@@ -115,6 +115,7 @@ function callbackFurgonetka( properties )
     var data = {
         action: 'savePoint',
         currentService: currentService,
+        serviceType: properties.service_type,
         name: properties.name,
         code: properties.code,
         cod: codOnly,
@@ -123,6 +124,7 @@ function callbackFurgonetka( properties )
 
     jQuery( '#furgonetkaPoint' ).val( properties.code );
     jQuery( '#furgonetkaPointName' ).val( properties.name );
+    jQuery( '#furgonetkaServiceType' ).val( properties.service_type );
     jQuery.post( settings.ajaxurl, data );
 }
 

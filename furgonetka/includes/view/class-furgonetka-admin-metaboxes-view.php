@@ -35,7 +35,7 @@ class Furgonetka_Admin_Metaboxes_View
         </a>
         <hr/>
         <a class="get-furgonetka" href="#" onclick="window.FurgonetkaAdmin.quickAction.apply(this, arguments);" data-order-id="<?php echo $order_id ; ?>">
-            <img height="16px" src="<?php echo esc_html( $img_src ); ?>" alt="<?php esc_attr_e( 'Furgonetka.pl courier - Quick action', 'furgonetka' ); ?>"> <?php esc_html_e( 'Quick action', 'furgonetka' ); ?>
+            <img height="16px" src="<?php echo esc_html( $img_src ); ?>" alt="<?php esc_attr_e( 'Furgonetka.pl courier - Fast shipping', 'furgonetka' ); ?>"> <?php esc_html_e( 'Fast shipping', 'furgonetka' ); ?>
         </a>
         <?php
     }

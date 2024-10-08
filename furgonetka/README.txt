@@ -2,9 +2,9 @@
 Contributors: Furgonetka
 Donate link: https://furgonetka.pl
 Tags: delivery, kurier, paczki, courier
-Requires at least: 3.0.1
-Tested up to: 6.2.2
-Stable tag: 1.4.6
+Requires at least: 5.0
+Tested up to: 6.6.2
+Stable tag: 1.5.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Integracja WooCommerce z Furgonetka.pl pozwoli Ci nadawać przesyłki sprawdzonymi przewoźnikami takimi jak DPD, DHL, UPS, InPost, GLS, Poczta Polska, FedEx, Meest, Ambro Express oraz Paczka w RUCHu.
@@ -198,6 +198,14 @@ Tak, wtyczka umożliwia nadawanie paczek bezpośrednio z poziomu panelu WooComme
 * Updated error handling
 1.4.6
 * Added information about the selected point in the customer's order details and email notifications
+1.5.0
+* Added individual plugin permissions
+* Added point validation for Apple Pay and Google Pay payment methods
+* Added tax ID in order details on admin panel
+* Added fix for refreshing tokens
+* Renamed quick action functionality to fast shipping
+* Updated names of carriers
+* Added minor fixes
 
 == Upgrade Notice ==
 
@@ -224,3 +232,6 @@ Added the ability for the customer to indicate international points on the map d
 
 = 1.4.2 =
 This version fixes issue with connecting account on some shops.
+
+= 1.5.0 =
+This version adds individual plugin permissions.

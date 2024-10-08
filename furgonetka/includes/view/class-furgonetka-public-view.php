@@ -49,6 +49,12 @@ class Furgonetka_Public_View
                 name="furgonetkaService"
                 value="<?php echo esc_html( $selected_point['service'] ); ?>"
         />
+        <input
+                type="hidden"
+                id="furgonetkaServiceType"
+                name="furgonetkaServiceType"
+                value="<?php echo esc_html( $selected_point['service_type'] ); ?>"
+        />
         <?php wp_nonce_field( $plugin_name . '_setPointAction', $plugin_name . '_setPoint' ); ?>
         <?php
     }
@@ -69,10 +75,10 @@ class Furgonetka_Public_View
             </h2>
             <p class="woocommerce-order-details__point">
                 <strong>
-                    <? echo esc_html( $service ); ?>
+                    <?php echo esc_html( $service ); ?>
                 </strong>
                 <br>
-                <? echo esc_html( $point ); ?>
+                <?php echo esc_html( $point ); ?>
             </p>
         </section>
         <?php
