@@ -106,6 +106,8 @@ function openFurgonetkaMap( service, city, street, countryCode, mapBounds )
 function callbackFurgonetka( properties )
 {
     jQuery( '#selected-point' ).text( properties.name );
+    var $selectedPointLabel = jQuery( '#select-point-label' );
+    $selectedPointLabel.text($selectedPointLabel.data('change-point-label'));
     var codOnly = false;
 
     if ( jQuery( 'input[name="payment_method"]:checked' ).val() === 'cod' ) {

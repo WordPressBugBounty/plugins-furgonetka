@@ -489,11 +489,13 @@ class Furgonetka_Public
         $customer       = WC()->session->get( 'customer' );
         $countryCode    = ! empty( $customer[ 'shipping_country' ] ) ? $customer[ 'shipping_country' ] : 'PL';
         $mapBounds      = strtolower( $customer[ 'shipping_country' ] ) === 'pl' ? 'pl' : 'eu';
+        $change_point_label = __( 'Change point', 'furgonetka' );
+        $label = empty($selected_point['name']) ? __( 'Select point', 'furgonetka' ) : $change_point_label;
 
         return sprintf(
             '<a id="select-point" href="#" onclick=\'openFurgonetkaMap("%1$s","%4$s","%5$s","%6$s","%7$s");return false\'>%2$s</a><span id="selected-point">%3$s</span>',
             esc_html( $generate_delivery_button ),
-            __( 'Select point', 'furgonetka' ),
+            "<span id=\"select-point-label\" data-change-point-label=\"$change_point_label\">$label</span>",
             esc_html( $selected_point['name'] ),
             esc_html( $customer['shipping_city'] ),
             esc_html( $customer['shipping_address_1'] ) . ' ' . esc_html( $customer['shipping_address_2'] ),
@@ -591,6 +593,35 @@ class Furgonetka_Public
             $displayed_point_name = esc_html( $point_name ) ? esc_html( $point_name ) : esc_html( $point );
             $this->view->render_point_information( $service_name, $displayed_point_name );
         }
+    }
+
+    /**
+     * Add tracking information
+     *
+     * @param WC_Order $order
+     * @since 1.5.1
+     */
+    private function add_tracking_information( $order )
+    {
+        $tracking = $order->get_meta( 'tracking_info' );
+
+        if ( ! empty( $tracking ) ) {
+            foreach ( $tracking as $package_number => $details ) {
+                $this->view->render_package_tracking_link( $package_number );
+            }
+        }
+    }
+
+    /**
+     * Add order information (pickup point & tracking)
+     *
+     * @param WC_Order $order
+     * @since 1.5.1
+     */
+    public function add_order_information( $order )
+    {
+        $this->add_point_information( $order );
+        $this->add_tracking_information( $order );
     }
 
     public static function add_checkout_button_product()

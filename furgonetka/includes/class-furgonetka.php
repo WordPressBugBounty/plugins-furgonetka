@@ -365,7 +365,7 @@ class Furgonetka
         $this->loader->add_action(
             'woocommerce_order_details_after_order_table',
             $this->plugin_public,
-            'add_point_information',
+            'add_order_information',
             20
         );
         $this->loader->add_action(

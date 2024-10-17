@@ -83,4 +83,32 @@ class Furgonetka_Public_View
         </section>
         <?php
     }
+
+    /**
+     * Render package tracking link
+     *
+     * @param string $package_number
+     * @since 1.5.1
+     */
+    public function render_package_tracking_link( $package_number )
+    {
+        $baseUrl = ! Furgonetka_Admin::get_test_mode() ? 'https://furgonetka.pl' : 'https://sandbox.furgonetka.pl';
+        ?>
+        <section class="woocommerce-order-details">
+            <h2 class="woocommerce-order-details__title">
+                <?php esc_attr_e( 'Package', 'furgonetka' ); ?>
+            </h2>
+            <p class="woocommerce-order-details__tracking">
+                <a
+                        style="text-decoration: underline;"
+                        target="_blank"
+                        href="<?= $baseUrl ?>/zlokalizuj/<?php echo esc_html( $package_number ); ?>"
+                >
+                    <?php echo esc_html( $package_number ); ?>
+                </a>
+                <br>
+            </p>
+        </section>
+        <?php
+    }
 }
