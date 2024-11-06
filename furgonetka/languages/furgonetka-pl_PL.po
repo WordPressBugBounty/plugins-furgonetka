@@ -373,3 +373,18 @@ msgstr "Wystąpił problem z załadowaniem mapy. Spróbuj ponownie."
 
 msgid "Manage Furgonetka module"
 msgstr "Zarządzanie modułem Furgonetka"
+
+msgid "Portmonetka checkout screen"
+msgstr "Ekran zamawiania Portmonetki"
+
+msgid "Open with additional Portmonetka button"
+msgstr "Otwieraj za pomocą dodatkowego przycisku Portmonetki"
+
+msgid "Open with native checkout button"
+msgstr "Otwieraj wbudowanym przyciskiem zamawiania"
+
+msgid "You will see an additional Portmonetka button in your shopping cart, opening Portmonetka checkout in a new window."
+msgstr "W Twoim koszyku będzie widoczny dodatkowy przycisk Portmonetki, otwierający checkout Portmonetki w nowym oknie."
+
+msgid "Your shopping cart will only show the standard checkout button, opening Portmonetka checkout in a new window."
+msgstr "W Twoim koszyku będzie widoczny tylko standardowy przycisk sklepu, otwierający checkout Portmonetki w nowym oknie."

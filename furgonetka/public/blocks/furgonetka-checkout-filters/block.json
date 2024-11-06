@@ -1,0 +1,11 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "furgonetka/furgonetka-checkout-filters",
+  "version": "1.0.0",
+  "title": "Furgonetka Checkout Filters",
+  "textdomain": "furgonetka",
+  "supports": {
+    "html": false
+  }
+}

@@ -25,12 +25,19 @@ class Furgonetka_Blocks {
 	private $public;
 
 	/**
+	 * @var Furgonetka_Admin
+	 */
+	private $admin;
+
+	/**
 	 * @var Furgonetka_Loader $loader
 	 * @var Furgonetka_Public $public
+	 * @var Furgonetka_Admin $admin
 	 */
-	public function __construct( $loader, $public ) {
+	public function __construct( $loader, $public, $admin ) {
 		$this->loader = $loader;
 		$this->public = $public;
+		$this->admin  = $admin;
 	}
 
 	/**
@@ -40,9 +47,14 @@ class Furgonetka_Blocks {
 	 */
 	public function init() {
 		/**
-		 * Register WooCommerce Blocks integration (Store API)
+		 * Register WooCommerce Blocks checkout integration (Store API)
 		 */
 		$this->add_action( 'woocommerce_blocks_checkout_block_registration', array( $this, 'register_checkout_integrations' ) );
+
+		/**
+		 * Register WooCommerce Blocks cart integration (Store API)
+		 */
+		$this->add_action( 'woocommerce_blocks_cart_block_registration', array( $this, 'register_cart_integrations' ) );
 
 		/**
 		 * Register WooCommerce Blocks integration extension data/endpoint (Store API)
@@ -77,6 +89,26 @@ class Furgonetka_Blocks {
 		require_once __DIR__ . '/class-furgonetka-pickup-point-block-integration.php';
 
 		$integration_registry->register( new Furgonetka_Pickup_Point_Block_Integration() );
+	}
+
+	/**
+	 * Register cart integration instances
+	 *
+	 * @param \Automattic\WooCommerce\Blocks\Integrations\IntegrationRegistry $integration_registry
+	 * @return void
+	 */
+	public function register_cart_integrations( $integration_registry ) {
+		if ( ! $this->admin::get_portmonetka_replace_native_checkout() ) {
+			return;
+		}
+
+		if ( ! interface_exists( \Automattic\WooCommerce\Blocks\Integrations\IntegrationInterface::class ) ) {
+			return;
+		}
+
+		require_once __DIR__ . '/class-furgonetka-checkout-filters-integration.php';
+
+		$integration_registry->register( new Furgonetka_Checkout_Filters_Integration() );
 	}
 
 	/**

@@ -87,6 +87,7 @@ table.wp-list-table .furgonetka.column-furgonetka .get-furgonetka img {
     font-style: normal;
     font-weight: 400;
     line-height: 1.5;
+    max-width: 640px;
 }
 
 .furgonetka__input-info,
@@ -98,8 +99,6 @@ table.wp-list-table .furgonetka.column-furgonetka .get-furgonetka img {
     line-height: 1.5;
     max-width: 560px;
 }
-
-
 
 .furgonetka__label {
     font-family: 'Ubuntu', sans-serif;
@@ -178,6 +177,23 @@ textarea.furgonetka__input:active {
     background: #FFF;
     border-color: #20A5E7;
     box-shadow: inset 0 0 0 1px #20A5E7, inset 2px 2px 0 2px #E4E8EB;
+}
+
+.furgonetka__input-radio {
+    margin-bottom: 12px;
+}
+
+.furgonetka__input-radio__additional-info {
+    margin-left: 24px;
+    font-weight: 300;
+}
+
+.furgonetka__input-radio__span {
+    font-family: 'Ubuntu', sans-serif;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 1.3;
 }
 
 .wp-core-ui .button.button-primary.furgonetka__button-primary {

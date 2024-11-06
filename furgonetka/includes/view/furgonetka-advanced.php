@@ -170,6 +170,29 @@
                                 echo esc_html(Furgonetka_Admin::get_portmonetka_cart_button_css()); ?></textarea>
                 </td>
             </tr>
+            <tr>
+                <th scope="row">
+                    <label for="portmonetka_replace_native_checkout" class="furgonetka__label">
+                        <?php esc_attr_e('Portmonetka checkout screen', 'furgonetka'); ?>
+                    </label>
+                </th>
+                <td>
+                    <div class="furgonetka__input-radio">
+                        <label>
+                            <input type="radio" name="portmonetka_replace_native_checkout" value="0" <?php if (!Furgonetka_Admin::get_portmonetka_replace_native_checkout()): ?>checked<?php endif; ?>>
+                            <span class="furgonetka__input-radio__span"><?php esc_attr_e('Open with additional Portmonetka button', 'furgonetka'); ?></span>
+                            <div class="furgonetka__input-radio__additional-info"><?php esc_attr_e('You will see an additional Portmonetka button in your shopping cart, opening Portmonetka checkout in a new window.', 'furgonetka'); ?></div>
+                        </label>
+                    </div>
+                    <div class="furgonetka__input-radio">
+                        <label>
+                            <input type="radio" name="portmonetka_replace_native_checkout" value="1" <?php if (Furgonetka_Admin::get_portmonetka_replace_native_checkout()): ?>checked<?php endif; ?>>
+                            <span class="furgonetka__input-radio__span"><?php esc_attr_e('Open with native checkout button', 'furgonetka'); ?></span>
+                            <div class="furgonetka__input-radio__additional-info"><?php esc_attr_e('Your shopping cart will only show the standard checkout button, opening Portmonetka checkout in a new window.', 'furgonetka'); ?></div>
+                        </label>
+                    </div>
+                </td>
+            </tr>
             </tbody>
         </table>
         <p class="submit">

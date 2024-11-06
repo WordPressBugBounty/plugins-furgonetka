@@ -379,3 +379,18 @@ msgstr ""
 #: furgonetka/includes/class-furgonetka-admin-metaboxes:235
 msgid "Tax ID"
 msgstr ""
+
+msgid "Portmonetka checkout screen"
+msgstr ""
+
+msgid "Open with additional Portmonetka button"
+msgstr ""
+
+msgid "Open with native checkout button"
+msgstr ""
+
+msgid "You will see an additional Portmonetka button in your shopping cart, opening Portmonetka checkout in a new window."
+msgstr ""
+
+msgid "Your shopping cart will only show the standard checkout button, opening Portmonetka checkout in a new window."
+msgstr ""

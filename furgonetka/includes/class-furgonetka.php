@@ -375,7 +375,17 @@ class Furgonetka
             20
         );
 
-        $this->blocks = new Furgonetka_Blocks( $this->loader, $this->plugin_public );
+        if ( $this->plugin_admin::is_checkout_active() && $this->plugin_admin::get_portmonetka_replace_native_checkout() ) {
+            $callback = [ $this->plugin_public, 'woocommerce_get_checkout_url_filter' ];
+
+            $this->loader->add_filter(
+                'woocommerce_get_checkout_url',
+                $callback[0],
+                $callback[1]
+            );
+        }
+
+        $this->blocks = new Furgonetka_Blocks( $this->loader, $this->plugin_public, $this->plugin_admin );
         $this->blocks->init();
     }
 

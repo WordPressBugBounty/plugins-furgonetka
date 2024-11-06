@@ -25,6 +25,8 @@ require_once plugin_dir_path( __FILE__ ) . '../includes/api/class-furgonetka-ord
  */
 class Furgonetka_Public
 {
+    const FURGONETKA_CHECKOUT_REPLACEMENT_URL = '#portmonetka-open-in-new-tab';
+
     /**
      * The ID of this plugin.
      *
@@ -164,6 +166,7 @@ class Furgonetka_Public
                     'cart_btn_position'  => $cart_btn_position ?? false,
                     'cart_btn_width'     => $cart_btn_width ?? false,
                     'cart_btn_css'       => $cart_btn_css ?? false,
+                    'replace_native_checkout'    => Furgonetka_Admin::get_portmonetka_replace_native_checkout(),
                     'classes'            => [
                         'base_class'         => self::$base_class,
                         'widget_class'       => self::$widget_class,
@@ -180,6 +183,7 @@ class Furgonetka_Public
                     ],
                     'pages_urls' => [
                         'cart' => parse_url(wc_get_cart_url())['path'] ?? null,
+                        'checkout' => wc_get_checkout_url()
                     ]
                 )
             );
@@ -1006,6 +1010,11 @@ class Furgonetka_Public
     public function is_woocommerce_payments_express_checkout_request(): bool
     {
         return isset( $_POST[ 'wcpay-payment-method' ] );
+    }
+
+    public function woocommerce_get_checkout_url_filter( $url = null )
+    {
+        return self::FURGONETKA_CHECKOUT_REPLACEMENT_URL;
     }
 
     public static function setup_classes() {

@@ -1108,6 +1108,14 @@ class Furgonetka_Admin
     }
 
     /**
+     * Get whether Portmonetka should replace native checkout
+     */
+    public static function get_portmonetka_replace_native_checkout()
+    {
+        return (bool) self::get_plugin_option( 'portmonetka_replace_native_checkout' );
+    }
+
+    /**
      * Save advanced settings
      *
      * @since 1.2.2
@@ -1121,6 +1129,8 @@ class Furgonetka_Admin
         $button_position   = '';
         $button_width      = '';
         $button_css        = '';
+
+        $open_in_new_tab   = '';
 
         if ( isset( $_POST['_wpnonce'] ) && wp_verify_nonce( sanitize_key( $_POST['_wpnonce'] ) ) ) {
             $product_selector  = isset( $_POST['portmonetka_product_selector'] ) ?
@@ -1136,6 +1146,8 @@ class Furgonetka_Admin
                 sanitize_text_field( wp_unslash( $_POST['portmonetka_cart_button_width'] ) ) : '';
             $button_css = isset( $_POST['portmonetka_cart_button_css'] ) ?
                 sanitize_text_field( wp_unslash( $_POST['portmonetka_cart_button_css'] ) ) : '';
+            $open_in_new_tab = isset( $_POST['portmonetka_replace_native_checkout'] ) ?
+                sanitize_text_field( wp_unslash( $_POST['portmonetka_replace_native_checkout'] ) ) : '';
         }
 
         update_option( $this->plugin_name . '_portmonetka_product_selector', $product_selector );
@@ -1145,6 +1157,8 @@ class Furgonetka_Admin
         update_option( $this->plugin_name . '_portmonetka_cart_button_position', $button_position );
         update_option( $this->plugin_name . '_portmonetka_cart_button_width', $button_width );
         update_option( $this->plugin_name . '_portmonetka_cart_button_css', $button_css );
+
+        update_option( $this->plugin_name . '_portmonetka_replace_native_checkout', $open_in_new_tab );
 
         $this->messages[] = esc_html__( 'Configuration saved successfully.', 'furgonetka' );
     }

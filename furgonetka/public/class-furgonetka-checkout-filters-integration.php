@@ -1,9 +1,9 @@
 <?php
 
 /**
- * Furgonetka Pickup Point block integration
+ * Furgonetka Checkout filters integration
  */
-class Furgonetka_Pickup_Point_Block_Integration implements \Automattic\WooCommerce\Blocks\Integrations\IntegrationInterface {
+class Furgonetka_Checkout_Filters_Integration implements \Automattic\WooCommerce\Blocks\Integrations\IntegrationInterface {
 
 	/**
 	 * The name of the integration.
@@ -11,7 +11,7 @@ class Furgonetka_Pickup_Point_Block_Integration implements \Automattic\WooCommer
 	 * @return string
 	 */
 	public function get_name() {
-		return 'furgonetka-pickup-point';
+		return 'furgonetka-checkout-filters';
 	}
 
 	/**
@@ -25,7 +25,7 @@ class Furgonetka_Pickup_Point_Block_Integration implements \Automattic\WooCommer
 		$script_asset      = file_exists( $script_asset_path )
 			? require $script_asset_path
 			: array(
-				'dependencies' => array( 'react' ),
+				'dependencies' => array(),
 				'version'      => filemtime( $this->get_plugin_absolute_path( $script_path ) ),
 			);
 
@@ -35,12 +35,6 @@ class Furgonetka_Pickup_Point_Block_Integration implements \Automattic\WooCommer
 			$script_asset['dependencies'],
 			$script_asset['version'],
 			true
-		);
-
-		wp_set_script_translations(
-			$this->get_script_handle(),
-			FURGONETKA_PLUGIN_NAME,
-			$this->get_plugin_absolute_path( 'languages' )
 		);
 	}
 
@@ -78,7 +72,7 @@ class Furgonetka_Pickup_Point_Block_Integration implements \Automattic\WooCommer
 	 */
 	public function get_script_data() {
 		return array(
-			'furgonetka_service_by_shipping_rate_id' => get_option( FURGONETKA_PLUGIN_NAME . '_deliveryToType' ) ?: array(),
+			'furgonetka_replacement_checkout_url' => Furgonetka_Public::FURGONETKA_CHECKOUT_REPLACEMENT_URL,
 		);
 	}
 
