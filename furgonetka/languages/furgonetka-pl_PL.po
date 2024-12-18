@@ -20,11 +20,11 @@ msgstr ""
 
 #: admin/class-furgonetka-admin.php:129 admin/class-furgonetka-admin.php:164
 msgid "Furgonetka.pl"
-msgstr ""
+msgstr "Furgonetka.pl"
 
-#: admin/class-furgonetka-admin.php:154 admin/partials/furgonetka-admin-display.php:42
+#: admin/class-furgonetka-admin.php:154 admin/partials/furgonetka-admin-display.php:42 includes/class-furgonetka-admin-metaboxes.php:160
 msgid "Furgonetka"
-msgstr ""
+msgstr "Furgonetka"
 
 #: admin/class-furgonetka-admin.php:229
 msgid "Get Furgonetka"
@@ -291,26 +291,44 @@ msgstr "Pełna szerokość"
 msgid "Portmonetka cart button custom CSS"
 msgstr "Niestandardowy CSS dla przycisku Portmonetki na karcie koszyka"
 
+#: furgonetka/admin/class-furgonetka-admin.php:503
 msgid "Error occurred while executing fast shipping."
 msgstr "Wystąpił błąd podczas wykonywania szybkiej przesyłki."
 
+#: furgonetka/admin/class-furgonetka-admin.php:501
 msgid "Error occurred while executing fast shipping. Please connect module with Furgonetka.pl account."
 msgstr "Wystąpił błąd podczas wykonywania szybkiej przesyłki. Proszę połączyć moduł z kontem na Furgonetka.pl."
 
+#: furgonetka/admin/class-furgonetka-admin.php:502
 msgid "Error occurred while executing fast shipping. Please reconnect module with Furgonetka.pl account."
 msgstr "Wystąpił błąd podczas wykonywania szybkiej przesyłki. Proszę ponownie połączyć moduł z kontem na Furgonetka.pl."
 
-msgid "Furgonetka.pl courier - Package"
-msgstr "Kurier Furgonetka.pl - Przesyłka"
+#: furgonetka/admin/class-furgonetka-admin.php:508
+msgid "Error occurred while processing the invoice creation."
+msgstr "Wystąpił błąd podczas przetwarzania procesu tworzenia faktury."
 
-msgid "Furgonetka.pl courier - Fast shipping"
-msgstr "Kurier Furgonetka.pl - Szybka przesyłka"
+#: furgonetka/admin/class-furgonetka-admin.php:506
+msgid "Error occurred while processing the invoice creation. Please connect module with Furgonetka.pl account."
+msgstr "Wystąpił błąd podczas przetwarzania procesu tworzenia faktury. Prosimy o połączenie modułu z kontem Furgonetka.pl."
 
-msgid "Package"
-msgstr "Przesyłka"
+#: furgonetka/admin/class-furgonetka-admin.php:507
+msgid "Error occurred while processing the invoice creation. Please reconnect module with Furgonetka.pl account."
+msgstr "Wystąpił błąd podczas przetwarzania procesu tworzenia faktury. Prosimy o ponowne połączenie modułu z kontem Furgonetka.pl."
 
-msgid "Fast shipping"
-msgstr "Szybka przesyłka"
+#: furgonetka/admin/class-furgonetka-admin.php:516
+msgid "An unexpected error occurred, please try later."
+msgstr "Wystąpił nieoczekiwany błąd, spróbuj później."
+
+#: furgonetka/includes/view/class-furgonetka-admin-metaboxes-view.php:38
+msgid "Add shipment"
+msgstr "Stwórz przesyłkę"
+
+msgid "Documents"
+msgstr "Dokumenty"
+
+#: furgonetka/includes/view/class-furgonetka-admin-metaboxes-view.php:34
+msgid "Create a shipment quickly"
+msgstr "Stwórz szybko przesyłkę"
 
 msgid "Coupon is not available for this email."
 msgstr "Kupon nie jest dostępny dla tego adresu email."
@@ -326,6 +344,10 @@ msgstr "Do wysłania"
 
 msgid "Ordered"
 msgstr "Zamówione"
+
+#: includes/view/class-furgonetka-admin-metaboxes-view.php:43
+msgid "Create an invoice"
+msgstr "Wystaw fakturę"
 
 msgid "Shopping returns"
 msgstr "Zwroty zakupów"

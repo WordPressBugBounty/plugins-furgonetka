@@ -287,25 +287,44 @@ msgstr ""
 msgid "Portmonetka cart button custom CSS"
 msgstr ""
 
+#: furgonetka/admin/class-furgonetka-admin.php:503
 msgid "Error occurred while executing fast shipping."
 msgstr ""
 
+#: furgonetka/admin/class-furgonetka-admin.php:501
 msgid "Error occurred while executing fast shipping. Please connect module with Furgonetka.pl account."
 msgstr ""
 
+#: furgonetka/admin/class-furgonetka-admin.php:502
 msgid "Error occurred while executing fast shipping. Please reconnect module with Furgonetka.pl account."
 msgstr ""
 
-msgid "Furgonetka.pl courier - Package"
+#: furgonetka/admin/class-furgonetka-admin.php:508
+msgid "Error occurred while processing the invoice creation."
 msgstr ""
 
-msgid "Furgonetka.pl courier - Fast shipping"
+#: furgonetka/admin/class-furgonetka-admin.php:506
+msgid "Error occurred while processing the invoice creation. Please connect module with Furgonetka.pl account."
 msgstr ""
 
-msgid "Package"
+#: furgonetka/admin/class-furgonetka-admin.php:507
+msgid "Error occurred while processing the invoice creation. Please reconnect module with Furgonetka.pl account."
 msgstr ""
 
-msgid "Fast shipping"
+#: furgonetka/admin/class-furgonetka-admin.php:516
+msgid "An unexpected error occurred, please try later."
+msgstr ""
+
+#: furgonetka/includes/view/class-furgonetka-admin-metaboxes-view.php:38
+msgid "Add shipment"
+msgstr ""
+
+#: admin/class-furgonetka-admin.php:375
+msgid "Documents"
+msgstr ""
+
+#: furgonetka/includes/view/class-furgonetka-admin-metaboxes-view.php:34
+msgid "Create a shipment quickly"
 msgstr ""
 
 msgid "Coupon is not available for this email."
@@ -321,6 +340,10 @@ msgid "To send"
 msgstr ""
 
 msgid "Ordered"
+msgstr ""
+
+#: includes/view/class-furgonetka-admin-metaboxes-view.php:43
+msgid "Create an invoice"
 msgstr ""
 
 msgid "Shopping returns"

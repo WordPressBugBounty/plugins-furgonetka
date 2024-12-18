@@ -53,7 +53,6 @@ class furgonetka_admin_metaboxes
         require_once FURGONETKA_PLUGIN_DIR . 'includes/view/class-furgonetka-admin-metaboxes-view.php';
         $this->view = new Furgonetka_Admin_Metaboxes_View();
 
-        // require_once FURGONETKA_PLUGIN_DIR . 'includes/rest_api/models/class-furgonetka-returns-model.php'.
         require_once FURGONETKA_PLUGIN_DIR . 'includes/rest_api/models/class-furgonetka-update-order-model.php';
         $this->model = new Furgonetka_Update_Order_Model();
     }
@@ -158,7 +157,7 @@ class furgonetka_admin_metaboxes
     public function extra_order_column( array $columns ): array
     {
         if ( Furgonetka_Capabilities::current_user_can_manage_furgonetka() ) {
-            $columns[ $this->furgonetka_admin->get_plugin_name() ] = __( 'Furgonetka.pl', 'furgonetka' );
+            $columns[ $this->furgonetka_admin->get_plugin_name() ] = __( 'Furgonetka', 'furgonetka' );
         }
 
         $columns['package_number']                             = __( 'Packages tracking numbers', 'furgonetka' );

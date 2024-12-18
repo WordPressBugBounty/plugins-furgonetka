@@ -27,12 +27,19 @@ class Furgonetka_Activator
      *
      * Long Description.
      *
+     * @throws Exception
      * @since 1.0.0
      */
     public static function activate()
     {
         if ( ! wp_next_scheduled( 'furgonetka_daily_event' ) ) {
             wp_schedule_event( time(), 'daily', 'furgonetka_daily_event' );
+        }
+
+        $admin = new Furgonetka_Admin( FURGONETKA_PLUGIN_NAME, FURGONETKA_VERSION );
+
+        if ( Furgonetka_Admin::is_account_active() ) {
+            $admin->save_account_data();
         }
 
         Furgonetka_Capabilities::ensure_capabilities();

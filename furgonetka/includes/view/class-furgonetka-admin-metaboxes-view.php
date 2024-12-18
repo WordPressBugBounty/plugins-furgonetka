@@ -30,13 +30,19 @@ class Furgonetka_Admin_Metaboxes_View
     public function render_package_link( $link, $img_src, $order_id = null )
     {
         ?>
-        <a class="get-furgonetka" href="<?php echo esc_html( $link ); ?>">
-            <img height="16px" src="<?php echo esc_html( $img_src ); ?>" alt="<?php esc_attr_e( 'Furgonetka.pl courier - Package', 'furgonetka' ); ?>"> <?php esc_html_e( 'Package', 'furgonetka' ); ?>
+        <a class="get-furgonetka" href="#" onclick="window.FurgonetkaAdmin.fastShipping.apply(this, arguments);" data-order-id="<?php echo $order_id ; ?>">
+            <?php esc_html_e( 'Create a shipment quickly', 'furgonetka' ); ?>
         </a>
         <hr/>
-        <a class="get-furgonetka" href="#" onclick="window.FurgonetkaAdmin.quickAction.apply(this, arguments);" data-order-id="<?php echo $order_id ; ?>">
-            <img height="16px" src="<?php echo esc_html( $img_src ); ?>" alt="<?php esc_attr_e( 'Furgonetka.pl courier - Fast shipping', 'furgonetka' ); ?>"> <?php esc_html_e( 'Fast shipping', 'furgonetka' ); ?>
+        <a class="get-furgonetka" href="<?php echo esc_html( $link ); ?>">
+            <?php esc_html_e( 'Add shipment', 'furgonetka' ); ?>
         </a>
+        <?php if (Furgonetka_Admin::get_account_type() === Furgonetka_Admin::ACCOUNT_TYPE_COMPANY): ?>
+        <hr/>
+        <a class="get-furgonetka" href="#" onclick="window.FurgonetkaAdmin.invoice.apply(this, arguments);" data-order-id="<?php echo $order_id ; ?>">
+            <?php esc_html_e( 'Create an invoice', 'furgonetka' ); ?>
+        </a>
+        <?php endif; ?>
         <?php
     }
 

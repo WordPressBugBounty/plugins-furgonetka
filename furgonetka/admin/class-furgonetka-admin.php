@@ -24,12 +24,13 @@ class Furgonetka_Admin
     const API_REST_URL      = 'https://api.furgonetka.pl';
     const TEST_API_REST_URL = 'https://api.sandbox.furgonetka.pl';
 
-    const PATH_ACCOUNT = '/account';
+    const PATH_ACCOUNT                  = '/account';
     const PATH_CREATE_OAUTH_APPLICATION = '/ecommerce/integrations/create-oauth-application';
-    const PATH_CONFIGURATIONS = '/ecommerce/integrations/configurations';
-    const PATH_CREATE_FORM_URL = '/ecommerce/packages/create-form-url';
-    const PATH_QUICK_ACTION_INIT = '/ecommerce/packages/quick-action/init';
-    const PATH_APP_LINK_INIT = '/ecommerce/app/link/init';
+    const PATH_CONFIGURATIONS           = '/ecommerce/integrations/configurations';
+    const PATH_CREATE_FORM_URL          = '/ecommerce/packages/create-form-url';
+    const PATH_FAST_SHIPPING_INIT       = '/ecommerce/packages/quick-action/init';
+    const PATH_INVOICES_INIT            = '/ecommerce/invoices/quick-action/init';
+    const PATH_APP_LINK_INIT            = '/ecommerce/app/link/init';
 
     const API_OAUTH_URL      = 'https://api.furgonetka.pl/oauth';
 	const TEST_API_OAUTH_URL = 'https://api.sandbox.furgonetka.pl/oauth';
@@ -42,6 +43,7 @@ class Furgonetka_Admin
     const OPTION_CHECKOUT_UUID      = 'checkout_uuid';
     const OPTION_CHECKOUT_ACTIVE    = 'checkout_active';
     const OPTION_CHECKOUT_TEST_MODE = 'checkout_test_mode';
+    const OPTION_ACCOUNT_TYPE       = 'account_type';
 
     const OPTION_PRODUCT_PAGE_BUTTON_VISIBLE = 'product_page_button_visible';
 
@@ -62,12 +64,13 @@ class Furgonetka_Admin
      * Pages available within admin panel
      */
     const PAGE_FURGONETKA = 'furgonetka';
-    const PAGE_FURGONETKA_PANEL_SETTINGS = 'furgonetka_panel_settings';
+    const PAGE_FURGONETKA_PANEL_SETTINGS   = 'furgonetka_panel_settings';
     const PAGE_FURGONETKA_WAITING_PACKAGES = 'furgonetka_waiting_packages';
     const PAGE_FURGONETKA_ORDERED_PACKAGES = 'furgonetka_ordered_packages';
-    const PAGE_FURGONETKA_RETURNS = 'furgonetka_returns';
-    const PAGE_FURGONETKA_ATTACH_MAP = 'furgonetka_attach_map';
-    const PAGE_FURGONETKA_ADVANCED = 'furgonetka_advanced';
+    const PAGE_FURGONETKA_DOCUMENTS        = 'furgonetka_documents';
+    const PAGE_FURGONETKA_RETURNS          = 'furgonetka_returns';
+    const PAGE_FURGONETKA_ATTACH_MAP       = 'furgonetka_attach_map';
+    const PAGE_FURGONETKA_ADVANCED         = 'furgonetka_advanced';
 
     /**
      * Actions available for the pages above
@@ -105,6 +108,25 @@ class Furgonetka_Admin
      */
     const PARAM_OAUTH_ERROR = 'error';
     const ERROR_OAUTH_ACCESS_DENIED = 'access_denied';
+
+    /**
+     * Account types
+     */
+     const ACCOUNT_TYPE_PERSONAL = 'personal';
+     const ACCOUNT_TYPE_COMPANY  = 'company';
+
+    /**
+     * Modal actions
+     */
+    const ACTION_FAST_SHIPPING_INIT = 'fast_shipping_init';
+    const ACTION_INVOICES_INIT      = 'invoices_init';
+
+    /**
+     * Modal error keys
+     */
+    const MODAL_ERROR_TOKEN_EXPIRED       = 'token_expired';
+    const MODAL_ERROR_NO_INTEGRATION_UUID = 'no_integration_uuid';
+    const MODAL_ERROR_DEFAULT             = 'default';
 
     /**
      * The ID of this plugin.
@@ -201,37 +223,37 @@ class Furgonetka_Admin
         );
 
         /**
-         * Fast shipping-related assets
+         * Modal assets
          */
-        if ( $this->is_current_screen_supported( $this->get_quick_action_supported_screens() ) ) {
+        if ( $this->is_current_screen_supported( $this->get_modal_supported_screens() ) ) {
             /**
              * CSS styles
              */
-            $admin_quick_action_css_file_path = 'css/furgonetka-admin-quick-action.css';
+            $admin_modal_css_file_path = 'css/furgonetka-admin-modal.css';
 
             wp_enqueue_style(
-                "{$this->plugin_name}-admin-quick-action-css",
-                plugin_dir_url( __FILE__ ) . $admin_quick_action_css_file_path,
+                "{$this->plugin_name}-admin-modal-css",
+                plugin_dir_url( __FILE__ ) . $admin_modal_css_file_path,
                 array(),
-                filemtime( plugin_dir_path( __FILE__ ) . $admin_quick_action_css_file_path ),
+                filemtime( plugin_dir_path( __FILE__ ) . $admin_modal_css_file_path ),
                 'all'
             );
 
             /**
              * JS files
              */
-            $admin_quick_action_js_file_path = 'js/furgonetka-admin-quick-action.js';
+            $admin_modal_js_file_path = 'js/furgonetka-admin-modal.js';
 
             wp_enqueue_script(
-                "{$this->plugin_name}-admin-quick-action-js",
-                plugin_dir_url( __FILE__ ) . $admin_quick_action_js_file_path,
+                "{$this->plugin_name}-admin-modal-js",
+                plugin_dir_url( __FILE__ ) . $admin_modal_js_file_path,
                 array( 'jquery' ),
-                filemtime( plugin_dir_path( __FILE__ ) . $admin_quick_action_js_file_path )
+                filemtime( plugin_dir_path( __FILE__ ) . $admin_modal_js_file_path )
             );
 
             wp_localize_script(
-                "{$this->plugin_name}-admin-quick-action-js",
-                'furgonetka_quick_action',
+                "{$this->plugin_name}-admin-modal-js",
+                'furgonetka_modal',
                 array( 'ajax_url' => admin_url( 'admin-ajax.php' ) )
             );
         }
@@ -361,6 +383,17 @@ class Furgonetka_Admin
                 array( $this, 'get_furgonetka_iframe' )
             );
 
+            if ( self::get_account_type() === self::ACCOUNT_TYPE_COMPANY ) {
+                add_submenu_page(
+                    'furgonetka',
+                    __( 'Documents', 'furgonetka' ),
+                    __( 'Documents', 'furgonetka' ),
+                    Furgonetka_Capabilities::CAPABILITY_MANAGE_FURGONETKA,
+                    self::PAGE_FURGONETKA_DOCUMENTS,
+                    array( $this, 'get_furgonetka_iframe' )
+                );
+            }
+
             add_submenu_page(
                 'furgonetka',
                 __('Shopping returns', 'furgonetka'),
@@ -392,12 +425,20 @@ class Furgonetka_Admin
         remove_submenu_page( 'furgonetka', 'furgonetka' );
     }
 
+    public function furgonetka_invoices_init(): void
+    {
+        $this->furgonetka_handle_modal_request( self::ACTION_INVOICES_INIT );
+    }
+
+    public function furgonetka_fast_shipping_init(): void
+    {
+        $this->furgonetka_handle_modal_request( self::ACTION_FAST_SHIPPING_INIT );
+    }
+
     /**
-     * Fast shipping AJAX handler
-     *
-     * @return void
+     * Furgonetka modal AJAX handler
      */
-    public function furgonetka_quick_action_init()
+    public function furgonetka_handle_modal_request( $action ): void
     {
         /**
          * Validate permissions
@@ -416,8 +457,8 @@ class Furgonetka_Admin
         if ( get_option( $this->plugin_name . '_expires_date' ) <= strtotime( 'now' ) ) {
             wp_send_json_error(
                 array(
-                    'redirect_url'  => static::get_plugin_admin_url(),
-                    'error_message' => __( 'Error occurred while executing fast shipping. Please connect module with Furgonetka.pl account.', 'furgonetka' ),
+                    'redirect_url'  => self::get_plugin_admin_url(),
+                    'error_message' => self::get_error_message_by_action( $action, self::MODAL_ERROR_TOKEN_EXPIRED ),
                 )
             );
         }
@@ -428,20 +469,20 @@ class Furgonetka_Admin
         if ( empty( self::get_integration_uuid() ) ) {
             wp_send_json_error(
                 array(
-                    'redirect_url'  => static::get_plugin_admin_url( self::PAGE_FURGONETKA_ADVANCED ),
-                    'error_message' => __( 'Error occurred while executing fast shipping. Please reconnect module with Furgonetka.pl account.', 'furgonetka' ),
+                    'redirect_url'  => self::get_plugin_admin_url( self::PAGE_FURGONETKA_ADVANCED ),
+                    'error_message' => self::get_error_message_by_action( $action, self::MODAL_ERROR_NO_INTEGRATION_UUID ),
                 )
             );
         }
 
         /**
-         * Handle fast shipping request
+         * Handle request
          */
         if ( isset ( $_POST['order_id'] ) ) {
             $order_id = sanitize_text_field( wp_unslash( $_POST['order_id'] ) );
 
             try {
-                $result = self::get_quick_action_url( $order_id );
+                $result = self::get_modal_init_url( $order_id, $action );
 
                 wp_send_json_success( array ( 'url' => $result ) );
             } catch ( Exception $e ) {
@@ -455,9 +496,31 @@ class Furgonetka_Admin
          */
         wp_send_json_error(
             array(
-                'error_message' => __( 'Error occurred while executing fast shipping.', 'furgonetka' ),
+                'error_message' => self::get_error_message_by_action( $action ),
             )
         );
+    }
+
+    private static function get_error_message_by_action( $action = null, $message_key = null ): string
+    {
+        $messages = [
+            self::ACTION_FAST_SHIPPING_INIT => [
+                self::MODAL_ERROR_TOKEN_EXPIRED       => __( 'Error occurred while executing fast shipping. Please connect module with Furgonetka.pl account.', 'furgonetka' ),
+                self::MODAL_ERROR_NO_INTEGRATION_UUID => __( 'Error occurred while executing fast shipping. Please reconnect module with Furgonetka.pl account.', 'furgonetka' ),
+                self::MODAL_ERROR_DEFAULT             => __( 'Error occurred while executing fast shipping.', 'furgonetka' ),
+            ],
+            self::ACTION_INVOICES_INIT      => [
+                self::MODAL_ERROR_TOKEN_EXPIRED       => __( 'Error occurred while processing the invoice creation. Please connect module with Furgonetka.pl account.', 'furgonetka' ),
+                self::MODAL_ERROR_NO_INTEGRATION_UUID => __( 'Error occurred while processing the invoice creation. Please reconnect module with Furgonetka.pl account.', 'furgonetka' ),
+                self::MODAL_ERROR_DEFAULT             => __( 'Error occurred while processing the invoice creation.', 'furgonetka' ),
+            ],
+        ];
+
+        if ( isset( $messages[$action] ) ) {
+            return $messages[$action][$message_key] ?? $messages[$action][self::MODAL_ERROR_DEFAULT];
+        }
+
+        return __( 'An unexpected error occurred, please try later.', 'furgonetka' );
     }
 
     /**
@@ -548,6 +611,14 @@ class Furgonetka_Admin
     public static function get_checkout_uuid()
     {
         return self::get_plugin_option( self::OPTION_CHECKOUT_UUID );
+    }
+
+    /**
+     * @return string|false
+     */
+    public static function get_account_type()
+    {
+        return self::get_plugin_option( self::OPTION_ACCOUNT_TYPE );
     }
 
     public static function is_checkout_active()
@@ -995,6 +1066,27 @@ class Furgonetka_Admin
     }
 
     /**
+     * @throws Exception
+     */
+    public function save_account_data(): void
+    {
+        $account_data = self::send_rest_api_request(
+            'GET',
+            self::PATH_ACCOUNT,
+            array_merge( self::authorization_headers(), self::furgonetka_api_v2_headers() )
+        );
+
+        if ( isset( $account_data->account_type ) ) {
+            update_option( $this->plugin_name . '_' . self::OPTION_ACCOUNT_TYPE, $account_data->account_type );
+        }
+    }
+
+    private function delete_account_data(): void
+    {
+        delete_option( $this->plugin_name . '_' . self::OPTION_ACCOUNT_TYPE );
+    }
+
+    /**
      * Save delivery option
      *
      * @since 1.0.0
@@ -1249,8 +1341,10 @@ class Furgonetka_Admin
          */
         try {
             $this->save_credentials_code();
+            $this->save_account_data();
         } catch (Exception $e) {
             $this->delete_credentials_data();
+            $this->delete_account_data();
             $this->log( $e );
 
             $this->redirect_to_error_page( self::ERROR_CODE_INTEGRATION_FAILED );
@@ -1732,12 +1826,11 @@ class Furgonetka_Admin
     }
 
     /**
-     * Fast shipping API
-     *
-     * @param mixed $order_id - order ID.
+     * @param mixed $order_id - order ID
+     * @param string $action  - action
      * @throws \Exception     - error
      */
-    public static function get_quick_action_url( $order_id )
+    public static function get_modal_init_url( $order_id, $action ): string
     {
         /**
          * Get order number
@@ -1745,7 +1838,7 @@ class Furgonetka_Admin
         $order_data = wc_get_order( $order_id );
 
         if ( ! $order_data ) {
-            throw new \Exception( __( 'Get fast shipping URL problem.', 'furgonetka' ) );
+            throw new \Exception( self::get_error_message_by_action( $action ) );
         }
 
         $reference = $order_data->get_order_number();
@@ -1755,7 +1848,7 @@ class Furgonetka_Admin
         }
 
         /**
-         * Initialize fast shipping
+         * Initialize
          */
         $data = array(
             'integrationUuid' => self::get_integration_uuid(),
@@ -1763,7 +1856,15 @@ class Furgonetka_Admin
             'shopOrderId'     => $order_id
         );
 
-        $path = self::PATH_QUICK_ACTION_INIT . '?' . http_build_query( $data );
+        if ( $action === self::ACTION_FAST_SHIPPING_INIT ) {
+            $path = self::PATH_FAST_SHIPPING_INIT;
+        } elseif ( $action === self::ACTION_INVOICES_INIT ) {
+            $path = self::PATH_INVOICES_INIT;
+        } else {
+            throw new \Exception( self::get_error_message_by_action() );
+        }
+
+        $path .= '?' . http_build_query( $data );
 
         $result = self::send_rest_api_request('POST', $path, self::authorization_headers() );
 
@@ -1774,7 +1875,7 @@ class Furgonetka_Admin
                 throw new \Exception( $first_error->path . ': ' . $first_error->message );
             }
 
-            throw new \Exception( __( 'Get fast shipping URL problem.', 'furgonetka' ) );
+            throw new \Exception( self::get_error_message_by_action( $action ) );
         }
 
         /**
@@ -2166,17 +2267,12 @@ class Furgonetka_Admin
      */
     public function render_modal()
     {
-        if ( $this->is_current_screen_supported( $this->get_quick_action_supported_screens() ) ) {
+        if ( $this->is_current_screen_supported( $this->get_modal_supported_screens() ) ) {
             $this->view->render_modal();
         }
     }
 
-    /**
-     * Get fast shipping-related screens
-     *
-     * @return array
-     */
-    private function get_quick_action_supported_screens()
+    private function get_modal_supported_screens(): array
     {
         $supported_screens   = array();
         $supported_screens[] = self::is_hpos_enabled() ? wc_get_page_screen_id( 'shop-order' ) : 'shop_order';

@@ -259,9 +259,14 @@ class Furgonetka
             2
         );
         $this->loader->add_action(
-            'wp_ajax_furgonetka_quick_action_init',
+            'wp_ajax_furgonetka_fast_shipping_init',
             $this->plugin_admin,
-            'furgonetka_quick_action_init'
+            'furgonetka_fast_shipping_init'
+        );
+        $this->loader->add_action(
+            'wp_ajax_furgonetka_invoices_init',
+            $this->plugin_admin,
+            'furgonetka_invoices_init'
         );
         $this->loader->add_action(
             'wp_ajax_furgonetka_connect_integration',

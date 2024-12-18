@@ -11,7 +11,7 @@
  * Plugin Name:          Furgonetka.pl
  * Plugin URI:           https://furgonetka.pl
  * Description:          Połącz swój sklep z modułem Furgonetka.pl! Generuj etykiety, twórz szablony przesyłek, śledź statusy paczek. Nadawaj paczki szybko i tanio korzystając z 10 firm kurierskich.
- * Version:              1.6.0
+ * Version:              1.6.1
  * Author:               Furgonetka.pl
  * Author URI:           https://furgonetka.pl
  * License:              GPL-2.0+
@@ -37,7 +37,7 @@ if ( ! defined( 'WPINC' ) )
  * Start at version 1.0.0 and use SemVer - https://semver.org
  * Rename this for your plugin and update it as you release new versions.
  */
-define( 'FURGONETKA_VERSION', '1.6.0' );
+define( 'FURGONETKA_VERSION', '1.6.1' );
 define( 'FURGONETKA_PLUGIN_NAME', 'furgonetka' );
 define( 'FURGONETKA_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'FURGONETKA_DEBUG', false );
@@ -144,10 +144,14 @@ function get_customer_shop_country() {
 function activate_furgonetka()
 {
     if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', get_option( 'active_plugins' ) ), true ) ) {
-        require_once plugin_dir_path( __FILE__ ) . 'includes/class-furgonetka-activator.php';
-        Furgonetka_Activator::activate();
+        try {
+            require_once FURGONETKA_PLUGIN_DIR . 'includes/class-furgonetka-activator.php';
+            Furgonetka_Activator::activate();
 
-        Furgonetka_Admin::update_plugin_version( FURGONETKA_VERSION );
+            Furgonetka_Admin::update_plugin_version(FURGONETKA_VERSION);
+        } catch (Exception $e) {
+            furgonetka_log($e);
+        }
     }
 }
 
@@ -159,6 +163,16 @@ function deactivate_furgonetka()
 {
     require_once plugin_dir_path( __FILE__ ) . 'includes/class-furgonetka-deactivator.php';
     Furgonetka_Deactivator::deactivate();
+}
+
+function furgonetka_log( $message ) {
+    require_once FURGONETKA_PLUGIN_DIR . 'includes/trait/trait-furgonetka-logger.php';
+
+    $loggerInstance = new class {
+        use Furgonetka_Logger;
+    };
+
+    $loggerInstance->log($message);
 }
 
 register_activation_hook( __FILE__, 'activate_furgonetka' );
