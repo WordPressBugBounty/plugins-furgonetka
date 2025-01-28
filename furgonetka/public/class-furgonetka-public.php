@@ -3,6 +3,7 @@
 require_once plugin_dir_path( __FILE__ ) . '../includes/api/class-furgonetka-cart.php';
 require_once plugin_dir_path( __FILE__ ) . '../includes/api/class-furgonetka-settings.php';
 require_once plugin_dir_path( __FILE__ ) . '../includes/api/class-furgonetka-order.php';
+require_once plugin_dir_path( __FILE__ ) . '../includes/api/class-furgonetka-map-settings.php';
 
 /**
  * The public-facing functionality of the plugin.
@@ -284,13 +285,7 @@ class Furgonetka_Public
         /**
          * Get assigned delivery type for shipping method ID
          */
-        $delivery_to_type = get_option( FURGONETKA_PLUGIN_NAME . '_deliveryToType' );
-
-        if ( ! is_array( $delivery_to_type ) || ! isset( $delivery_to_type[ $shipping_method_id ] ) ) {
-            return null;
-        }
-
-        return $delivery_to_type[ $shipping_method_id ];
+        return Furgonetka_Map::get_service_by_shipping_rate_id( $shipping_method_id );
     }
 
     /**
@@ -462,18 +457,20 @@ class Furgonetka_Public
         if ( ! is_checkout() ) {
             return;
         }
+
         $chosen_method_array = WC()->session->get( 'chosen_shipping_methods' );
 
         if ( $chosen_method_array[0] !== $method->id ) {
             return;
         }
-        $delivery_to_type = get_option( FURGONETKA_PLUGIN_NAME . '_deliveryToType' );
 
-        if ( isset( $method->id ) && isset( $delivery_to_type[ $method->id ] ) ) {
+        $service = Furgonetka_Map::get_service_from_session();
+
+        if ( $service ) {
             // all variables are escaped in generate_delivery_button method.
             //phpcs:ignore
             echo '<p id="select-point-container">' . $this->generate_delivery_button(
-                $delivery_to_type[$method->id],
+                $service,
                 ( WC()->session->get( 'chosen_payment_method' ) === 'cod' )
             ) . '</p>';
         }
@@ -482,14 +479,14 @@ class Furgonetka_Public
     /**
      * Select Point button in delivery list
      *
-     * @param string $generate_delivery_button - ethod type.
-     * @param mixed  $is_cod - check if ic COD.
+     * @param string $service - method type.
+     * @param mixed  $is_cod - check if is COD
      * @since    1.0.0
      * @return string
      */
-    public function generate_delivery_button( $generate_delivery_button, $is_cod )
+    public function generate_delivery_button( $service, $is_cod )
     {
-        $selected_point = $this->get_selected_point_from_session( $generate_delivery_button, $is_cod );
+        $selected_point = $this->get_selected_point_from_session( $service, $is_cod );
         $customer       = WC()->session->get( 'customer' );
         $countryCode    = ! empty( $customer[ 'shipping_country' ] ) ? $customer[ 'shipping_country' ] : 'PL';
         $mapBounds      = strtolower( $customer[ 'shipping_country' ] ) === 'pl' ? 'pl' : 'eu';
@@ -498,7 +495,7 @@ class Furgonetka_Public
 
         return sprintf(
             '<a id="select-point" href="#" onclick=\'openFurgonetkaMap("%1$s","%4$s","%5$s","%6$s","%7$s");return false\'>%2$s</a><span id="selected-point">%3$s</span>',
-            esc_html( $generate_delivery_button ),
+            esc_html( $service ),
             "<span id=\"select-point-label\" data-change-point-label=\"$change_point_label\">$label</span>",
             esc_html( $selected_point['name'] ),
             esc_html( $customer['shipping_city'] ),
@@ -542,14 +539,7 @@ class Furgonetka_Public
      */
     public function get_selected_service_from_session()
     {
-        $delivery_to_type = get_option( FURGONETKA_PLUGIN_NAME . '_deliveryToType' );
-        $chosen_method_array = WC()->session->get( 'chosen_shipping_methods' );
-
-        if ( isset( $chosen_method_array[0], $delivery_to_type[ $chosen_method_array[0] ] ) ) {
-            return $delivery_to_type[ $chosen_method_array[0] ];
-        }
-
-        return null;
+        return Furgonetka_Map::get_service_from_session();
     }
 
     /**
@@ -763,6 +753,48 @@ class Furgonetka_Public
             && password_verify( $secret, Furgonetka_Admin::get_rest_customer_secret() )
         ) {
             return true;
+        }
+
+        return false;
+    }
+
+    public function permission_callback_furgonetka_rest_api(): bool
+    {
+        apply_filters( 'determine_current_user', get_current_user_id() );
+
+        return Furgonetka_Capabilities::current_user_can_manage_furgonetka();
+    }
+
+    public function is_request_to_furgonetka_rest_api( $access_granted ): bool
+    {
+        /**
+         * Pass already authorized user
+         */
+        if ( $access_granted ) {
+            return true;
+        }
+
+        /**
+         * Check access to Furgonetka API
+         */
+        if ( empty( $_SERVER['REQUEST_URI'] ) ) {
+            return false;
+        }
+
+        $rest_prefix = trailingslashit( rest_get_url_prefix() );
+        $request_uri = esc_url_raw( wp_unslash( $_SERVER['REQUEST_URI'] ) );
+
+        /**
+         * Check supported endpoints
+         */
+        $supported_endpoints = array(
+            'furgonetka/v1/map/',
+        );
+
+        foreach ( $supported_endpoints as $endpoint ) {
+            if ( strpos( $request_uri, $rest_prefix . $endpoint ) !== false ) {
+                return true;
+            }
         }
 
         return false;
@@ -992,6 +1024,40 @@ class Furgonetka_Public
                 'methods'             => WP_REST_Server::CREATABLE,
                 'callback'            => array( new Furgonetka_Settings(), 'authorize_callback' ),
                 'permission_callback' => array( $this, 'permission_callback_auth_api' ),
+            )
+        );
+
+        register_rest_route(
+            FURGONETKA_REST_NAMESPACE,
+            '/map/zones',
+            array(
+                'methods'             => WP_REST_Server::READABLE,
+                'callback'            => array( new Furgonetka_Map_Settings(), 'get_zones' ),
+                'permission_callback' => array( $this, 'permission_callback_furgonetka_rest_api' ),
+            )
+        );
+
+        register_rest_route(
+            FURGONETKA_REST_NAMESPACE,
+            '/map/configuration',
+            array(
+                array(
+                    'methods'             => WP_REST_Server::READABLE,
+                    'callback'            => array( new Furgonetka_Map_Settings(), 'get_configuration' ),
+                    'permission_callback' => array( $this, 'permission_callback_furgonetka_rest_api' ),
+                ),
+                array(
+                    'methods'             => WP_REST_Server::CREATABLE,
+                    'callback'            => array( new Furgonetka_Map_Settings(), 'post_configuration' ),
+                    'permission_callback' => array( $this, 'permission_callback_furgonetka_rest_api' ),
+                    'args'                => array(
+                        'configuration' => array(
+                            'description'       => 'Map configuration',
+                            'validate_callback' => array( new Furgonetka_Map_Settings(), 'validate_post_configuration' ),
+                            'required'          => true,
+                        ),
+                    ),
+                ),
             )
         );
     }

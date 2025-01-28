@@ -111,8 +111,6 @@ class Furgonetka_Cart
         $shipping_methods = array();
 
         if ( !empty( $shipping['rates'] ) ) {
-            $delivery_to_type = get_option( FURGONETKA_PLUGIN_NAME . '_deliveryToType' );
-
             /**
              * Gather assigned payments
              *
@@ -180,7 +178,7 @@ class Furgonetka_Cart
                     'currency'          => get_woocommerce_currency(),
                     'payments'          => $shipping_payment_methods,
                     'description'       => $description,
-                    'furgonetkaMapType' => isset( $delivery_to_type[ $shipping_method->id ] ) ? $delivery_to_type[ $shipping_method->id ] : null,
+                    'furgonetkaMapType' => Furgonetka_Map::get_service_by_shipping_rate_id( $shipping_method->id ),
                 );
                 $shipping_methods[] = $method;
             }

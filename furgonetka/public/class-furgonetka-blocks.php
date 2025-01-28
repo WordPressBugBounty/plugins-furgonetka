@@ -98,6 +98,10 @@ class Furgonetka_Blocks {
 	 * @return void
 	 */
 	public function register_cart_integrations( $integration_registry ) {
+		if ( ! $this->admin::is_checkout_active() ) {
+			return;
+		}
+
 		if ( ! $this->admin::get_portmonetka_replace_native_checkout() ) {
 			return;
 		}
@@ -346,17 +350,6 @@ class Furgonetka_Blocks {
 	 * @return string|null
 	 */
 	private function get_selected_service() {
-		$chosen_method_array = WC()->session->get( 'chosen_shipping_methods' );
-		$delivery_to_type    = get_option( FURGONETKA_PLUGIN_NAME . '_deliveryToType' );
-
-		if ( ! isset( $chosen_method_array[0], $delivery_to_type[ $chosen_method_array[0] ] ) ) {
-			return null;
-		}
-
-		if ( ! is_string( $delivery_to_type[ $chosen_method_array[0] ] ) ) {
-			return null;
-		}
-
-		return $delivery_to_type[ $chosen_method_array[0] ];
+		return Furgonetka_Map::get_service_from_session();
 	}
 }

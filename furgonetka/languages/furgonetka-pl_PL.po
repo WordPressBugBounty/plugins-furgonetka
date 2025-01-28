@@ -157,50 +157,6 @@ msgstr "Zapisz"
 msgid "City"
 msgstr "Miasto"
 
-#: admin/partials/furgonetka-admin-display.php:182 admin/partials/furgonetka-admin-display.php:183
-msgid "Attach map to delivery option"
-msgstr "Dołącz mapę punktów do opcji dostawy"
-
-#: admin/partials/furgonetka-admin-display.php:185
-msgid "Please remember! You can only attach map to flat rates delivery option. Every delivery option can have one map attached"
-msgstr "Każda opcja dostawy może posiadać tylko jeden typ mapy."
-
-#: includes/view/class-furgonetka-admin-map-details.php:31
-msgid "Add InPost map to:"
-msgstr "Dodaj mapę InPost:"
-
-#: includes/view/class-furgonetka-admin-map-details.php:37
-msgid "Add Poczta Polska map to:"
-msgstr "Dodaj mapę Poczty Polskiej:"
-
-#: includes/view/class-furgonetka-admin-map-details.php:44
-msgid "Add ORLEN Paczka map to:"
-msgstr "Dodaj mapę ORLEN Paczka:"
-
-#: includes/view/class-furgonetka-admin-map-details.php:51
-msgid "Add UPS Access Point map to:"
-msgstr "Dodaj mapę UPS Access Point:"
-
-#: includes/view/class-furgonetka-admin-map-details.php:58
-msgid "Add DPD Pickup map to:"
-msgstr "Dodaj mapę DPD Pickup:"
-
-#: includes/view/class-furgonetka-admin-map-details.php:64
-msgid "Add DHL Parcel map to:"
-msgstr "Dodaj mapę DHL Parcel:"
-
-#: includes/view/class-furgonetka-admin-map-details.php:70
-msgid "Add FedEx Point map to:"
-msgstr "Dodaj mapę FedEx Punkt:"
-
-#: includes/view/class-furgonetka-admin-map-details.php:77
-msgid "Add GLS Szybka Paczka map to*:"
-msgstr "Dodaj mapę GLS Szybka Paczka*:"
-
-#: includes/view/class-furgonetka-admin-map-details.php:82
-msgid "* Applies to own contracts in the ShopDeliveryService service"
-msgstr "* Dotyczy umów własnych w usłudze ShopDeliveryService"
-
 #: public/class-furgonetka-public.php:232
 #: public/blocks/furgonetka-pickup-point/index.js:1
 msgid "Select point"

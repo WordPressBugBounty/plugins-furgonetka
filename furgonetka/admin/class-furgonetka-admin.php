@@ -69,7 +69,7 @@ class Furgonetka_Admin
     const PAGE_FURGONETKA_ORDERED_PACKAGES = 'furgonetka_ordered_packages';
     const PAGE_FURGONETKA_DOCUMENTS        = 'furgonetka_documents';
     const PAGE_FURGONETKA_RETURNS          = 'furgonetka_returns';
-    const PAGE_FURGONETKA_ATTACH_MAP       = 'furgonetka_attach_map';
+    const PAGE_FURGONETKA_MAP_SETTINGS     = 'furgonetka_map_settings';
     const PAGE_FURGONETKA_ADVANCED         = 'furgonetka_advanced';
 
     /**
@@ -80,7 +80,6 @@ class Furgonetka_Admin
     const ACTION_GET_PACKAGE_FORM = 'get_package_form';
     const ACTION_ERROR_PAGE = 'error_page';
 
-    const ACTION_SAVE_DELIVERY = 'save_delivery';
     const ACTION_SAVE_ADVANCED = 'save_advanced';
     const ACTION_RESET_CREDENTIALS = 'reset_credentials';
 
@@ -408,8 +407,8 @@ class Furgonetka_Admin
                 __('Attach map', 'furgonetka'),
                 __('Attach map', 'furgonetka'),
                 Furgonetka_Capabilities::CAPABILITY_MANAGE_FURGONETKA,
-                self::PAGE_FURGONETKA_ATTACH_MAP,
-                array( $this, 'get_furgonetka_map' )
+                self::PAGE_FURGONETKA_MAP_SETTINGS,
+                array( $this, 'get_furgonetka_iframe' )
             );
 
             add_submenu_page(
@@ -894,11 +893,6 @@ class Furgonetka_Admin
         return null;
     }
 
-    public function get_furgonetka_map()
-    {
-        $this->render_simple_form( 'includes/view/furgonetka-attach-map.php' );
-    }
-
     public function get_furgonetka_advanced()
     {
         $additional_data = [
@@ -948,9 +942,6 @@ class Furgonetka_Admin
          * Handle action
          */
         switch ($action) {
-            case self::ACTION_SAVE_DELIVERY:
-                $this->save_delivery();
-                break;
             case self::ACTION_SAVE_ADVANCED:
                 $this->save_advanced_settings();
                 break;
@@ -1084,38 +1075,6 @@ class Furgonetka_Admin
     private function delete_account_data(): void
     {
         delete_option( $this->plugin_name . '_' . self::OPTION_ACCOUNT_TYPE );
-    }
-
-    /**
-     * Save delivery option
-     *
-     * @since 1.0.0
-     */
-    private function save_delivery()
-    {
-        if ( isset( $_POST['_wpnonce'] ) && wp_verify_nonce( sanitize_key( $_POST['_wpnonce'] ) ) ) {
-            $map_to_delivery = map_deep( wp_unslash( isset( $_POST['mapToDelivery'] ) ?
-                $_POST['mapToDelivery'] : [] ), 'sanitize_text_field' );
-            $result_array    = array();
-            $fail            = false;
-            if ( ! empty( $map_to_delivery ) ) {
-                foreach ( $map_to_delivery as $type => $options ) {
-                    foreach ( $options as $option ) {
-                        if ( isset( $result_array[ sanitize_text_field( $option ) ] ) ) {
-                            $fail = true;
-                            break 2;
-                        }
-                        $result_array[ $option ] = sanitize_text_field( $type );
-                    }
-                }
-            }
-            if ( $fail ) {
-                $this->errors[] = esc_html__( 'Every delivery option can have just one map attached.', 'furgonetka' );
-                return;
-            }
-            update_option( $this->plugin_name . '_deliveryToType', $result_array );
-            $this->messages[] = esc_html__( 'Configuration saved successfully.', 'furgonetka' );
-        }
     }
 
     /**
@@ -1994,12 +1953,9 @@ class Furgonetka_Admin
             }
         }
 
-        $delivery_to_type = get_option( FURGONETKA_PLUGIN_NAME . '_deliveryToType' );
-        $service          = null;
+        $service = Furgonetka_Map::get_service_by_shipping_rate_id( $shipping_name );
 
-        if ( isset( $delivery_to_type[ $shipping_name ] ) ) {
-            $service = $delivery_to_type[ $shipping_name ];
-        } elseif ( $order_data ) {
+        if ( ! $service && $order_data ) {
             $service = $order_data->get_meta( '_furgonetkaService' );
         }
 
@@ -2166,68 +2122,6 @@ class Furgonetka_Admin
     }
 
     /**
-     * Generate multiselect with delivery options
-     *
-     * @param mixed $type             - field type.
-     * @param mixed $delivery_to_type - delivery type.
-     *
-     * @since 1.0.0.
-     */
-    public static function map_attach_to( $type, $delivery_to_type )
-    {
-        if ( ! $type ) {
-            return;
-        }
-        $options = '';
-
-        $zones = WC_Shipping_Zones::get_zones();
-
-        /**
-         * Add "0" zone (that contains shipping methods without assigned real zone)
-         */
-        $fallback_zone = WC_Shipping_Zones::get_zone( 0 );
-
-        if ( $fallback_zone ) {
-            /**
-             * Get zone data & assigned shipping methods
-             */
-            $data                     = $fallback_zone->get_data();
-            $data['shipping_methods'] = $fallback_zone->get_shipping_methods( false, 'admin' );
-
-            /**
-             * Push zone to the array
-             */
-            $zones[ $fallback_zone->get_id() ] = $data;
-        }
-        ?>
-        <select multiple size="6" name="mapToDelivery[<?php echo esc_html( $type ); ?>][]" class="furgonetka__select furgonetka__select-multiselect">
-        <?php
-        $supported_shipping_methods_ids = array( 'flat_rate', 'flexible_shipping_single', 'free_shipping' );
-        foreach ( $zones as $zone_item ) {
-            $shipping_methods = $zone_item['shipping_methods'];
-            foreach ( $shipping_methods as $shipping_method ) {
-                if ( ! in_array( $shipping_method->id, $supported_shipping_methods_ids, true ) ) {
-                    continue;
-                }
-                $instance = $shipping_method->id . ':' . $shipping_method->instance_id;
-                ?>
-                    <option
-                            value="<?php echo esc_html( $instance ); ?>"
-                            <?php echo self::check_selected( $type, $instance, $delivery_to_type ) ?
-                                'selected' : ''; ?>
-                            class="furgonetka__option"
-                    >
-                        <?php echo esc_html( $zone_item['zone_name'] ) . ':' . esc_html( $shipping_method->title ); ?>
-                    </option>
-                <?php
-            }
-        }
-        ?>
-        </select>
-        <?php
-    }
-
-    /**
      * Admin print messages
      *
      * @param mixed $messages - message.
@@ -2305,36 +2199,6 @@ class Furgonetka_Admin
         $current_screen_id = $current_screen ? $current_screen->id : '';
 
         return in_array( $current_screen_id, $supported_screens, true );
-    }
-
-    /**
-     * Check if map is attach to delivery option
-     *
-     * @param mixed $type             - type.
-     * @param mixed $instance         - instance.
-     * @param mixed $delivery_to_type - delivery type.
-     *
-     * @since 1.0.0
-     */
-    public static function check_selected( $type, $instance, $delivery_to_type )
-    {
-
-        if (
-            isset( $_POST['_wpnonce'], $_POST['mapToDelivery'] )
-            && wp_verify_nonce( sanitize_key( $_POST['_wpnonce'] ) )
-        ) {
-            if (
-                isset( $_POST['mapToDelivery'][ $type ] )
-                && in_array( $instance, $_POST['mapToDelivery'][ $type ], true )
-            ) {
-                return true;
-            }
-        } else {
-            if ( isset( $delivery_to_type[ $instance ] ) && $delivery_to_type[ $instance ] === $type ) {
-                return true;
-            }
-        }
-        return false;
     }
 
     /**

@@ -179,6 +179,11 @@ class Furgonetka
          * WooCommerce Blocks support
          */
         require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-furgonetka-blocks.php';
+
+        /**
+         * Furgonetka map management
+         */
+        require_once plugin_dir_path( __DIR__ ) . 'includes/class-furgonetka-map.php';
     }
 
     /**
@@ -378,6 +383,12 @@ class Furgonetka
             $this->plugin_public,
             'add_point_information',
             20
+        );
+
+        $this->loader->add_filter(
+            'woocommerce_rest_is_request_to_rest_api',
+            $this->plugin_public,
+            'is_request_to_furgonetka_rest_api'
         );
 
         if ( $this->plugin_admin::is_checkout_active() && $this->plugin_admin::get_portmonetka_replace_native_checkout() ) {

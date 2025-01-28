@@ -78,7 +78,7 @@ class Furgonetka_Pickup_Point_Block_Integration implements \Automattic\WooCommer
 	 */
 	public function get_script_data() {
 		return array(
-			'furgonetka_service_by_shipping_rate_id' => get_option( FURGONETKA_PLUGIN_NAME . '_deliveryToType' ) ?: array(),
+			'furgonetka_service_by_shipping_rate_id' => Furgonetka_Map::get_configuration(),
 		);
 	}
 

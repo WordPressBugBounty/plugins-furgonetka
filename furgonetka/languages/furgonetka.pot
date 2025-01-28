@@ -170,45 +170,6 @@ msgstr ""
 msgid "City"
 msgstr ""
 
-#: admin/partials/furgonetka-admin-display.php:182
-#: admin/partials/furgonetka-admin-display.php:183
-msgid "Attach map to delivery option"
-msgstr ""
-
-#: admin/partials/furgonetka-admin-display.php:185
-msgid ""
-"Please remember! You can only attach map to flat rates delivery option. "
-"Every delivery option can have one map attached."
-msgstr ""
-
-#: admin/partials/furgonetka-admin-display.php:196
-msgid "Add InPost map to:"
-msgstr ""
-
-#: admin/partials/furgonetka-admin-display.php:202
-msgid "Add Poczta Polska map to:"
-msgstr ""
-
-#: admin/partials/furgonetka-admin-display.php:208
-msgid "Add ORLEN Paczka map to:"
-msgstr ""
-
-#: admin/partials/furgonetka-admin-display.php:214
-msgid "Add UPS Access Point map to:"
-msgstr ""
-
-#: admin/partials/furgonetka-admin-display.php:220
-msgid "Add DPD Pickup map to:"
-msgstr ""
-
-#: admin/partials/furgonetka-admin-display.php:226
-msgid "Add DHL Parcel map to:"
-msgstr ""
-
-#: admin/partials/furgonetka-admin-display.php:232
-msgid "Add FedEx Point map to:"
-msgstr ""
-
 #: public/class-furgonetka-public.php:232
 #: public/blocks/furgonetka-pickup-point/index.js:1
 msgid "Select point"
@@ -216,9 +177,6 @@ msgstr ""
 
 #: public/class-furgonetka-public.php:273
 msgid "Please select delivery point."
-msgstr ""
-
-msgid "Please remember! You can only attach map to flat rates delivery option. Every delivery option can have one map attached"
 msgstr ""
 
 msgid "More info - https://docs.woocommerce.com/document/woocommerce-rest-api/"
