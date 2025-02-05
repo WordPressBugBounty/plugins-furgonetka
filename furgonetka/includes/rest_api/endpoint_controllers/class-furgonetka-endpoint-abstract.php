@@ -93,42 +93,6 @@ abstract class Furgonetka_Endpoint_Abstract
     }
 
     /**
-     * Manage permision callback
-     *
-     * @param WP_REST_Request $request - rest request.
-     *
-     * @return bool
-     */
-    public function permission_callback( \WP_REST_Request $request )
-    {
-        // Auth header.
-        if ( ! empty( $request->get_header( 'authorization' ) ) ) {
-
-            $auth_data = str_replace( 'Basic ', '', $request->get_header( 'authorization' ) );
-            //phpcs:ignore
-            $auth_array = explode( ':', base64_decode( $auth_data ) );
-
-            $key    = $auth_array[0];
-            $secret = $auth_array[1];
-
-            // Query params.
-        } else {
-            $request_params = $request->get_query_params();
-
-            $key    = $request_params['consumer_key'];
-            $secret = $request_params['consumer_secret'];
-        }
-
-        if ( Furgonetka_Admin::get_rest_customer_key() === $key
-            && password_verify( $secret, Furgonetka_Admin::get_rest_customer_secret() )
-        ) {
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
      * Add info to woocommerce logs
      *
      * @param mixed  $msg      - message.

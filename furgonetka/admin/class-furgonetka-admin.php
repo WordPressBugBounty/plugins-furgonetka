@@ -195,10 +195,6 @@ class Furgonetka_Admin
 
         require_once FURGONETKA_PLUGIN_DIR . 'includes/view/class-furgonetka-admin-view.php';
         $this->view = new Furgonetka_Admin_View();
-
-        if ( empty( self::get_rest_customer_key() ) || empty( self::get_rest_customer_secret() ) ) {
-            $this->delete_credentials_data( false );
-        }
     }
 
     /**
@@ -354,7 +350,7 @@ class Furgonetka_Admin
             $menu_pos
         );
 
-        if ( self::is_integration_active() ) {
+        if ( self::is_account_active() ) {
             add_submenu_page(
                 'furgonetka',
                 __('Plugin panel', 'furgonetka'),
@@ -555,8 +551,8 @@ class Furgonetka_Admin
          * Edge-case when shop doesn't have SSL - flow excludes prompt and generates keys directly
          */
         if ( ! $this->is_shop_ssl_enabled() ) {
-            $credentials = $this->create_api_credentials();
-            $this->store_temporary_api_credentials( $credentials['consumer_key'], $credentials['consumer_secret'] );
+            $credentials = Furgonetka_Api_Keys::create_api_credentials();
+            Furgonetka_Api_Keys::store_temporary_api_keys( $credentials['consumer_key'], $credentials['consumer_secret'] );
 
             $redirect_url = static::get_plugin_admin_url(
                 self::PAGE_FURGONETKA,
@@ -576,7 +572,7 @@ class Furgonetka_Admin
             array(
                 'app_name' => __( 'Furgonetka', 'furgonetka' ),
                 'scope' => 'read_write',
-                'user_id' => $this->generate_auth_api_nonce(),
+                'user_id' => Furgonetka_Auth_Api_Permissions::generate_auth_api_nonce(),
                 'return_url' => $return_url,
                 'callback_url' => get_home_url() . '/wp-json/furgonetka/v1/authorize/callback'
             )
@@ -922,7 +918,7 @@ class Furgonetka_Admin
             wp_die( self::get_permissions_error_message() );
         }
 
-        if ( ! self::is_integration_active() ) {
+        if ( ! self::is_account_active() ) {
             $this->redirect_to_plugin_admin_page();
         }
 
@@ -975,7 +971,7 @@ class Furgonetka_Admin
             wp_die( self::get_permissions_error_message() );
         }
 
-        if ( ! self::get_integration_uuid() || ! self::is_integration_active() ) {
+        if ( ! self::get_integration_uuid() || ! self::is_account_active() ) {
             $this->redirect_to_plugin_admin_page();
         }
 
@@ -1011,8 +1007,8 @@ class Furgonetka_Admin
         }
 
         $test                = self::get_test_mode();
-        $key_consumer_key    = get_option( $this->plugin_name . '_key_consumer_key' );
-        $key_consumer_secret = get_option( $this->plugin_name . '_key_consumer_secret' );
+        $key_consumer_key    = Furgonetka_Api_Keys::get_temporary_consumer_key();
+        $key_consumer_secret = Furgonetka_Api_Keys::get_temporary_consumer_secret();
 
         try {
             $this->grant_code_access($code, self::get_client_id(), self::get_client_secret(), $test );
@@ -1042,7 +1038,7 @@ class Furgonetka_Admin
      *
      * @return void
      */
-    private function delete_credentials_data( $delete_temporary_data = true )
+    private function delete_credentials_data()
     {
         delete_option( $this->plugin_name . '_source_id' );
         delete_option( $this->plugin_name . '_integration_uuid' );
@@ -1050,10 +1046,7 @@ class Furgonetka_Admin
         delete_option( $this->plugin_name . '_refresh_token' );
         delete_option( $this->plugin_name . '_expires_date' );
 
-        if ( $delete_temporary_data ) {
-            delete_option( $this->plugin_name . '_key_consumer_key' );
-            delete_option( $this->plugin_name . '_key_consumer_secret' );
-        }
+        Furgonetka_Api_Keys::remove_temporary_api_keys();
     }
 
     /**
@@ -1086,16 +1079,10 @@ class Furgonetka_Admin
     {
         delete_option( $this->plugin_name . '_client_ID' );
         delete_option( $this->plugin_name . '_client_secret' );
-        delete_option( $this->plugin_name . '_access_token' );
-        delete_option( $this->plugin_name . '_refresh_token' );
-        delete_option( $this->plugin_name . '_expires_date' );
         delete_option( $this->plugin_name . '_test_mode' );
         delete_option( $this->plugin_name . '_email' );
-        delete_option( $this->plugin_name . '_source_id' );
-        delete_option( $this->plugin_name . '_integration_uuid' );
 
-        delete_option( $this->plugin_name . '_key_consumer_key' );
-        delete_option( $this->plugin_name . '_key_consumer_secret' );
+        $this->delete_credentials_data();
     }
 
     /**
@@ -1255,14 +1242,7 @@ class Furgonetka_Admin
         /**
          * Save wp access api data in db
          */
-        update_option( $this->plugin_name . '_key_consumer_key', $ck );
-        update_option( $this->plugin_name . '_key_consumer_secret', $cs );
-
-        /**
-         * Woocommerce api keys
-         */
-        update_option( $this->plugin_name . '_woo_ck', $ck );
-        update_option( $this->plugin_name . '_woo_cs', password_hash( $cs, PASSWORD_DEFAULT ) );
+        Furgonetka_Api_Keys::store_temporary_api_keys( $ck, $cs );
 
         update_option( $this->plugin_name . '_test_mode', $test_mode );
 
@@ -1339,8 +1319,8 @@ class Furgonetka_Admin
             $this->redirect_to_plugin_admin_page();
         }
 
-        $ck = get_option($this->plugin_name . '_key_consumer_key');
-        $cs = get_option($this->plugin_name . '_key_consumer_secret');
+        $ck = Furgonetka_Api_Keys::get_temporary_consumer_key();
+        $cs = Furgonetka_Api_Keys::get_temporary_consumer_secret();
 
         try {
             $this->create_integration_internal($ck, $cs);
@@ -1349,86 +1329,6 @@ class Furgonetka_Admin
 
             $this->redirect_to_error_page( self::ERROR_CODE_INTEGRATION_FAILED );
         }
-    }
-
-    /**
-     * Store generated API credentials
-     *
-     * @param $consumer_key
-     * @param $consumer_secret
-     * @return void
-     */
-    public function store_temporary_api_credentials( $consumer_key, $consumer_secret )
-    {
-        update_option( $this->plugin_name . '_key_consumer_key', $consumer_key );
-        update_option( $this->plugin_name . '_key_consumer_secret', $consumer_secret );
-    }
-
-    /**
-     * Generate auth API nonce to verify further request
-     *
-     * @return string
-     */
-    public function generate_auth_api_nonce()
-    {
-        $nonce = wc_rand_hash();
-
-        update_option( $this->plugin_name . '_auth_api_nonce', $nonce );
-
-        return $nonce;
-    }
-
-    /**
-     * Create API credentials
-     *
-     * This method is used as fallback when website is not protected with SSL/TLS.
-     *
-     * @return array
-     */
-    protected function create_api_credentials()
-    {
-        global $wpdb;
-
-        $app_name = __( 'Furgonetka', 'furgonetka' );
-
-        $description = sprintf(
-            '%s - API (%s)',
-            wc_trim_string( wc_clean( $app_name ), 170 ),
-            gmdate( 'Y-m-d H:i:s' )
-        );
-        $user        = wp_get_current_user();
-
-        // Created API keys.
-        $permissions     = 'read_write';
-        $consumer_key    = 'ck_' . wc_rand_hash();
-        $consumer_secret = 'cs_' . wc_rand_hash();
-
-        $wpdb->insert(
-            $wpdb->prefix . 'woocommerce_api_keys',
-            array(
-                'user_id'         => $user->ID,
-                'description'     => $description,
-                'permissions'     => $permissions,
-                'consumer_key'    => wc_api_hash( $consumer_key ),
-                'consumer_secret' => $consumer_secret,
-                'truncated_key'   => substr( $consumer_key, -7 ),
-            ),
-            array(
-                '%d',
-                '%s',
-                '%s',
-                '%s',
-                '%s',
-                '%s',
-            )
-        );
-
-        return array(
-            'key_id'          => $wpdb->insert_id,
-            'consumer_key'    => $consumer_key,
-            'consumer_secret' => $consumer_secret,
-            'key_permissions' => $permissions,
-        );
     }
 
     public static function perform_migrations()
@@ -1440,7 +1340,7 @@ class Furgonetka_Admin
 
     public static function update_plugin_version( $version )
     {
-        if ( ! self::get_rest_customer_key() || ! self::get_rest_customer_secret() ) {
+        if ( ! self::is_account_active() ) {
             return;
         }
 
@@ -1565,8 +1465,7 @@ class Furgonetka_Admin
             )
         );
 
-        delete_option( $this->plugin_name . '_key_consumer_key' );
-        delete_option( $this->plugin_name . '_key_consumer_secret' );
+        Furgonetka_Api_Keys::remove_temporary_api_keys();
 
         $result = self::send_rest_api_request('POST', self::PATH_CONFIGURATIONS, self::authorization_headers(), $api_data );
 
@@ -2243,26 +2142,6 @@ class Furgonetka_Admin
         return 'woocommerce_' . self::get_wc_version() . '_plugin_' . FURGONETKA_VERSION;
     }
 
-    /**
-     * Get rest customer key
-     *
-     * @return string
-     */
-    public static function get_rest_customer_key()
-    {
-        return get_option( FURGONETKA_PLUGIN_NAME . '_woo_ck' );
-    }
-
-    /**
-     * Get rest customer secret
-     *
-     * @return string
-     */
-    public static function get_rest_customer_secret()
-    {
-        return get_option( FURGONETKA_PLUGIN_NAME . '_woo_cs' );
-    }
-
     public static function get_rest_api_url()
     {
         return self::get_test_mode() ? self::TEST_API_REST_URL : self::API_REST_URL;
@@ -2321,11 +2200,6 @@ class Furgonetka_Admin
         return array(
             'Accept' => 'application/vnd.furgonetka.v2+json',
         );
-    }
-
-    public static function is_integration_active()
-    {
-       return self::is_account_active() && self::get_rest_customer_key() && self::get_rest_customer_secret();
     }
 
     /**

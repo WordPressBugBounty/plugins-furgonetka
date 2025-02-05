@@ -67,7 +67,7 @@ class Furgonetka_Endpoint_Delete_Return_Info extends Furgonetka_Endpoint_Abstrac
             array(
                 'methods'             => WP_REST_Server::DELETABLE,
                 'callback'            => array( $this, 'callback' ),
-                'permission_callback' => array( $this, 'permission_callback' ),
+                'permission_callback' => Furgonetka_Rest_Api_Permissions::PERMISSION_CALLBACK,
             )
         );
     }

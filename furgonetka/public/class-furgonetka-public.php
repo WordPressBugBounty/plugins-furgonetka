@@ -722,121 +722,6 @@ class Furgonetka_Public
     }
 
     /**
-     * Furgonetka permission callback
-     *
-     * @see \Furgonetka_Endpoint_Abstract permission_callback method
-     *
-     * @param \WP_REST_Request $request
-     * @return bool
-     */
-    public function permission_callback( \WP_REST_Request $request )
-    {
-        // Auth header.
-        if ( ! empty( $request->get_header( 'authorization' ) ) ) {
-
-            $auth_data = str_replace( 'Basic ', '', $request->get_header( 'authorization' ) );
-            //phpcs:ignore
-            $auth_array = explode( ':', base64_decode( $auth_data ) );
-
-            $key    = $auth_array[0];
-            $secret = $auth_array[1];
-
-            // Query params.
-        } else {
-            $request_params = $request->get_query_params();
-
-            $key    = $request_params['consumer_key'];
-            $secret = $request_params['consumer_secret'];
-        }
-
-        if ( Furgonetka_Admin::get_rest_customer_key() === $key
-            && password_verify( $secret, Furgonetka_Admin::get_rest_customer_secret() )
-        ) {
-            return true;
-        }
-
-        return false;
-    }
-
-    public function permission_callback_furgonetka_rest_api(): bool
-    {
-        apply_filters( 'determine_current_user', get_current_user_id() );
-
-        return Furgonetka_Capabilities::current_user_can_manage_furgonetka();
-    }
-
-    public function is_request_to_furgonetka_rest_api( $access_granted ): bool
-    {
-        /**
-         * Pass already authorized user
-         */
-        if ( $access_granted ) {
-            return true;
-        }
-
-        /**
-         * Check access to Furgonetka API
-         */
-        if ( empty( $_SERVER['REQUEST_URI'] ) ) {
-            return false;
-        }
-
-        $rest_prefix = trailingslashit( rest_get_url_prefix() );
-        $request_uri = esc_url_raw( wp_unslash( $_SERVER['REQUEST_URI'] ) );
-
-        /**
-         * Check supported endpoints
-         */
-        $supported_endpoints = array(
-            'furgonetka/v1/map/',
-        );
-
-        foreach ( $supported_endpoints as $endpoint ) {
-            if ( strpos( $request_uri, $rest_prefix . $endpoint ) !== false ) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * Auth API permission callback
-     *
-     * @param \WP_REST_Request $request
-     * @return bool
-     */
-    public function permission_callback_auth_api( $request )
-    {
-        $data = $request->get_json_params();
-
-        if ( ! isset( $data[ 'user_id' ]) ) {
-            return false;
-        }
-
-        return $this->verify_auth_api_nonce( $data[ 'user_id' ] );
-    }
-
-    /**
-     * Verify & discard nonce with the saved one
-     *
-     * @param $nonce
-     * @return bool
-     */
-    private function verify_auth_api_nonce( $nonce )
-    {
-        $stored_nonce = get_option( $this->plugin_name . '_auth_api_nonce' );
-
-        if ( ! $stored_nonce ) {
-            return false;
-        }
-
-        delete_option( $this->plugin_name . '_auth_api_nonce' );
-
-        return $nonce === $stored_nonce;
-    }
-
-    /**
      * Get name of service
      *
      * @param string $service
@@ -923,7 +808,7 @@ class Furgonetka_Public
             array(
                 'methods'             => WP_REST_Server::READABLE,
                 'callback'            => array( new Furgonetka_Cart(), 'get_all_in_one' ),
-                'permission_callback' => '__return_true',
+                'permission_callback' => Furgonetka_Rest_Api_Permissions::PERMISSION_CALLBACK_NO_AUTHORIZATION,
             )
         );
 
@@ -933,7 +818,7 @@ class Furgonetka_Public
             array(
                 'methods'             => WP_REST_Server::READABLE,
                 'callback'            => array( new Furgonetka_Cart(), 'get_cart_items' ),
-                'permission_callback' => '__return_true',
+                'permission_callback' => Furgonetka_Rest_Api_Permissions::PERMISSION_CALLBACK_NO_AUTHORIZATION,
             )
         );
 
@@ -943,7 +828,7 @@ class Furgonetka_Public
             array(
                 'methods'             => WP_REST_Server::READABLE,
                 'callback'            => array( new Furgonetka_Cart(), 'get_shipping' ),
-                'permission_callback' => '__return_true',
+                'permission_callback' => Furgonetka_Rest_Api_Permissions::PERMISSION_CALLBACK_NO_AUTHORIZATION,
             )
         );
 
@@ -953,7 +838,7 @@ class Furgonetka_Public
             array(
                 'methods'             => WP_REST_Server::READABLE,
                 'callback'            => array( new Furgonetka_Cart(), 'get_payments' ),
-                'permission_callback' => '__return_true',
+                'permission_callback' => Furgonetka_Rest_Api_Permissions::PERMISSION_CALLBACK_NO_AUTHORIZATION,
             )
         );
 
@@ -963,7 +848,7 @@ class Furgonetka_Public
             array(
                 'methods'             => WP_REST_Server::READABLE,
                 'callback'            => array( new Furgonetka_Cart(), 'get_coupons' ),
-                'permission_callback' => '__return_true',
+                'permission_callback' => Furgonetka_Rest_Api_Permissions::PERMISSION_CALLBACK_NO_AUTHORIZATION,
             )
         );
 
@@ -973,7 +858,7 @@ class Furgonetka_Public
             array(
                 'methods'             => WP_REST_Server::READABLE,
                 'callback'            => array( new Furgonetka_Cart(), 'get_totals' ),
-                'permission_callback' => '__return_true',
+                'permission_callback' => Furgonetka_Rest_Api_Permissions::PERMISSION_CALLBACK_NO_AUTHORIZATION,
             )
         );
 
@@ -983,7 +868,7 @@ class Furgonetka_Public
             array(
                 'methods'             => WP_REST_Server::CREATABLE,
                 'callback'            => array( new Furgonetka_Cart(), 'get_cart_shipping_method' ),
-                'permission_callback' => array( $this, 'permission_callback' ),
+                'permission_callback' => Furgonetka_Rest_Api_Permissions::PERMISSION_CALLBACK,
             )
         );
 
@@ -993,7 +878,7 @@ class Furgonetka_Public
             array(
                 'methods'             => WP_REST_Server::CREATABLE,
                 'callback'            => array( new Furgonetka_Cart(), 'maybe_add_coupon' ),
-                'permission_callback' => '__return_true',
+                'permission_callback' => Furgonetka_Rest_Api_Permissions::PERMISSION_CALLBACK_NO_AUTHORIZATION,
             )
         );
 
@@ -1003,7 +888,7 @@ class Furgonetka_Public
             array(
                 'methods'             => WP_REST_Server::DELETABLE,
                 'callback'            => array( new Furgonetka_Cart(), 'remove_coupons' ),
-                'permission_callback' => '__return_true',
+                'permission_callback' => Furgonetka_Rest_Api_Permissions::PERMISSION_CALLBACK_NO_AUTHORIZATION,
             )
         );
 
@@ -1013,7 +898,7 @@ class Furgonetka_Public
             array(
                 'methods'             => WP_REST_Server::CREATABLE,
                 'callback'            => array( new Furgonetka_Settings(), 'updateSettings' ),
-                'permission_callback' => array( $this, 'permission_callback' ),
+                'permission_callback' => Furgonetka_Rest_Api_Permissions::PERMISSION_CALLBACK,
             )
         );
 
@@ -1023,7 +908,7 @@ class Furgonetka_Public
             array(
                 'methods'             => WP_REST_Server::CREATABLE,
                 'callback'            => array( new Furgonetka_Settings(), 'authorize_callback' ),
-                'permission_callback' => array( $this, 'permission_callback_auth_api' ),
+                'permission_callback' => Furgonetka_Auth_Api_Permissions::PERMISSION_CALLBACK,
             )
         );
 
@@ -1033,7 +918,7 @@ class Furgonetka_Public
             array(
                 'methods'             => WP_REST_Server::READABLE,
                 'callback'            => array( new Furgonetka_Map_Settings(), 'get_zones' ),
-                'permission_callback' => array( $this, 'permission_callback_furgonetka_rest_api' ),
+                'permission_callback' => Furgonetka_Rest_Api_Permissions::PERMISSION_CALLBACK,
             )
         );
 
@@ -1044,12 +929,12 @@ class Furgonetka_Public
                 array(
                     'methods'             => WP_REST_Server::READABLE,
                     'callback'            => array( new Furgonetka_Map_Settings(), 'get_configuration' ),
-                    'permission_callback' => array( $this, 'permission_callback_furgonetka_rest_api' ),
+                    'permission_callback' => Furgonetka_Rest_Api_Permissions::PERMISSION_CALLBACK,
                 ),
                 array(
                     'methods'             => WP_REST_Server::CREATABLE,
                     'callback'            => array( new Furgonetka_Map_Settings(), 'post_configuration' ),
-                    'permission_callback' => array( $this, 'permission_callback_furgonetka_rest_api' ),
+                    'permission_callback' => Furgonetka_Rest_Api_Permissions::PERMISSION_CALLBACK,
                     'args'                => array(
                         'configuration' => array(
                             'description'       => 'Map configuration',

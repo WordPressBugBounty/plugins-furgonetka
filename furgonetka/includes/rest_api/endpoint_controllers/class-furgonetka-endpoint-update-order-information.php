@@ -85,7 +85,7 @@ class Furgonetka_Endpoint_Update_Order_Information extends Furgonetka_Endpoint_A
             array(
                 'methods'             => WP_REST_Server::EDITABLE,
                 'callback'            => array( $this, 'callback' ),
-                'permission_callback' => array( $this, 'permission_callback' ),
+                'permission_callback' => Furgonetka_Rest_Api_Permissions::PERMISSION_CALLBACK,
                 'args'                => array(
                     'id' => array(
                         'validate_callback' => function ( $param, $request, $key )

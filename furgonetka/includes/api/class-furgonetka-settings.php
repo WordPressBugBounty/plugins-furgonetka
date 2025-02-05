@@ -22,8 +22,8 @@ class Furgonetka_Settings
     public function authorize_callback( $request )
     {
         $data = $request->get_json_params();
-        $admin = new Furgonetka_Admin( FURGONETKA_PLUGIN_NAME, FURGONETKA_VERSION );
-        $admin->store_temporary_api_credentials( $data['consumer_key'], $data['consumer_secret'] );
+
+        Furgonetka_Api_Keys::store_temporary_api_keys( $data['consumer_key'], $data['consumer_secret'] );
 
         return new WP_REST_Response( true, 200 );
     }

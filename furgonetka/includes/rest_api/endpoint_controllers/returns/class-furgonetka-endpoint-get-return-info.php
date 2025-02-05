@@ -67,7 +67,7 @@ class Furgonetka_Endpoint_Get_Return_Info extends Furgonetka_Endpoint_Abstract
             array(
                 'methods'             => WP_REST_Server::READABLE,
                 'callback'            => array( $this, 'callback' ),
-                'permission_callback' => array( $this, 'permission_callback' ),
+                'permission_callback' => Furgonetka_Rest_Api_Permissions::PERMISSION_CALLBACK,
             )
         );
     }
