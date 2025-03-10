@@ -4,7 +4,7 @@ Donate link: https://furgonetka.pl
 Tags: delivery, kurier, paczki, courier
 Requires at least: 5.0
 Tested up to: 6.6.2
-Stable tag: 1.6.3
+Stable tag: 1.6.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Integracja WooCommerce z Furgonetka.pl pozwoli Ci nadawać przesyłki sprawdzonymi przewoźnikami takimi jak DPD, DHL, UPS, InPost, GLS, Poczta Polska, FedEx, Meest, Ambro Express oraz Paczka w RUCHu.
@@ -13,7 +13,7 @@ Integracja WooCommerce z Furgonetka.pl pozwoli Ci nadawać przesyłki sprawdzony
 
 Wtyczka pozwala na integrację z platformą usług kurierskich Furgonetka.pl. Dzięki niej można uzyskać dostęp do szerokiej oferty aż 14 firm kurierskich, bez konieczności podpisywania umowy. Wtyczka pozwala nadawać nawet duże ilości paczek bezpośrednio z panelu WooCommerce. Korzystając z niej, można zlecać odbiór paczek wybranym firmom kurierskim, automatycznie generować i drukować dokumenty przewozowe oraz udostępniać klientom w koszyku sklepu mapę z punktami odbioru przesyłek. Dzięki niej można oszczędzić czas i zlecać wysyłkę zamówień do klientów o wiele taniej oraz szybciej.
 
-Dodatkową funkcjonalnością, którą można zyskać dzięki instalacji wtyczki, jest dedykowane narzędzie dla sklepów internetowych — Portmonetka. To w pełni darmowe rozwiązanie, które umożliwia tzw. fast checkout, czyli szybki sposób finalizacji zakupów. Pozwoli kupującym w sklepie za pomocą kilku kliknięć sfinalizować cały proces zakupów — bez uzupełniania formularzy, zapamiętywania haseł czy wyboru sposobu dostawy i płatności za każdym razem.
+Dodatkową funkcjonalnością, którą można zyskać dzięki instalacji wtyczki, jest dedykowane narzędzie dla sklepów internetowych — Furgonetka Koszyk. To w pełni darmowe rozwiązanie, które umożliwia tzw. fast checkout, czyli szybki sposób finalizacji zakupów. Pozwoli kupującym w sklepie za pomocą kilku kliknięć sfinalizować cały proces zakupów — bez uzupełniania formularzy, zapamiętywania haseł czy wyboru sposobu dostawy i płatności za każdym razem.
 
 Platformę Furgonetka wyróżnia:
 
@@ -221,6 +221,9 @@ Tak, wtyczka umożliwia nadawanie paczek bezpośrednio z poziomu panelu WooComme
 1.6.3
 * Portmonetka - added shop favicon
 * Changed API authorization logic for module endpoints
+1.6.4
+* Checkout rebranding to Furgonetka Koszyk
+* Added endpoint to return order statuses available in store
 
 == Upgrade Notice ==
 

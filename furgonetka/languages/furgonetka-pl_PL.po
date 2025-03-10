@@ -199,8 +199,8 @@ msgstr "Zaawansowane ustawienia"
 msgid "Setting below are for advanced users with at least basic programming/web development knowledge"
 msgstr "Poniższe ustawienia są przewidziane dla zaawansowanych użytkowników z conajmniej podstawową wiedzą programistyczną"
 
-msgid "Portmonetka product button parent html selector"
-msgstr "Selektor HTML dla przycisku Portmonetki w produkcie"
+msgid "Furgonetka Koszyk product button parent html selector"
+msgstr "Selektor HTML dla przycisku Furgonetka Koszyk w produkcie"
 
 msgid "Use only when default button placement is wrong, will display button within woocommerce single product page."
 msgstr "Do użytku tylko i wyłącznie gdy przycisk się nie wyświetla lub wyświetla błędnie, przycisk pojawi się tylko i wyłącznie w widoku produktu."
@@ -208,20 +208,20 @@ msgstr "Do użytku tylko i wyłącznie gdy przycisk się nie wyświetla lub wyś
 msgid "Element must be inside woocommerce add to cart form"
 msgstr "Wybrany element musi się znajdować w formularzu produktu"
 
-msgid "Portmonetka cart button parent html selector"
-msgstr "Selektor HTML dla przycisku Portmonetki w koszyku"
+msgid "Furgonetka Koszyk cart button parent html selector"
+msgstr "Selektor HTML dla przycisku Furgonetka Koszyk w koszyku"
 
 msgid "Use only when default button placement is wrong, will display button within woocommerce cart page."
 msgstr "Do użytku tylko i wyłącznie gdy przycisk się nie wyświetla lub wyświetla błędnie, przycisk pojawi się tylko i wyłącznie w koszyku."
 
-msgid "Portmonetka mini cart button parent html selector"
-msgstr "Selektor HTML dla przycisku Portmonetki w mini koszyku"
+msgid "Furgonetka Koszyk mini cart button parent html selector"
+msgstr "Selektor HTML dla przycisku Furgonetka Koszyk w mini koszyku"
 
 msgid "Use only when default button placement is wrong, will display button within woocommerce mini cart widget."
 msgstr "Do użytku tylko i wyłącznie gdy przycisk się nie wyświetla lub wyświetla błędnie, przycisk pojawi się tylko i wyłącznie w mini koszyku."
 
-msgid "Portmonetka cart button position"
-msgstr "Pozycja przycisku Portmonetki na karcie koszyka"
+msgid "Furgonetka Koszyk cart button position"
+msgstr "Pozycja przycisku Furgonetka Koszyk na karcie koszyka"
 
 msgid "To left"
 msgstr "Do lewej"
@@ -232,8 +232,8 @@ msgstr "Wycentrowany"
 msgid "To right"
 msgstr "Do prawej"
 
-msgid "Portmonetka cart button width"
-msgstr "Szerokość przycisku Portmonetki na karcie koszyka"
+msgid "Furgonetka Koszyk cart button width"
+msgstr "Szerokość przycisku Furgonetka Koszyk na karcie koszyka"
 
 msgid "Automatic"
 msgstr "Automatyczny"
@@ -244,8 +244,8 @@ msgstr "Połowa szerokości"
 msgid "Full width"
 msgstr "Pełna szerokość"
 
-msgid "Portmonetka cart button custom CSS"
-msgstr "Niestandardowy CSS dla przycisku Portmonetki na karcie koszyka"
+msgid "Furgonetka Koszyk cart button custom CSS"
+msgstr "Niestandardowy CSS dla przycisku Furgonetka Koszyk na karcie koszyka"
 
 #: furgonetka/admin/class-furgonetka-admin.php:503
 msgid "Error occurred while executing fast shipping."
@@ -352,17 +352,17 @@ msgstr "Wystąpił problem z załadowaniem mapy. Spróbuj ponownie."
 msgid "Manage Furgonetka module"
 msgstr "Zarządzanie modułem Furgonetka"
 
-msgid "Portmonetka checkout screen"
-msgstr "Ekran zamawiania Portmonetki"
+msgid "Furgonetka Koszyk checkout screen"
+msgstr "Ekran zamawiania Furgonetka Koszyk"
 
-msgid "Open with additional Portmonetka button"
-msgstr "Otwieraj za pomocą dodatkowego przycisku Portmonetki"
+msgid "Open with additional Furgonetka Koszyk button"
+msgstr "Otwieraj za pomocą dodatkowego przycisku Furgonetka Koszyk"
 
 msgid "Open with native checkout button"
 msgstr "Otwieraj wbudowanym przyciskiem zamawiania"
 
-msgid "You will see an additional Portmonetka button in your shopping cart, opening Portmonetka checkout in a new window."
-msgstr "W Twoim koszyku będzie widoczny dodatkowy przycisk Portmonetki, otwierający checkout Portmonetki w nowym oknie."
+msgid "You will see an additional Furgonetka Koszyk button in your shopping cart, opening Furgonetka Koszyk checkout in a new window."
+msgstr "W Twoim koszyku będzie widoczny dodatkowy przycisk Furgonetka Koszyk, otwierający checkout Furgonetka Koszyk w nowym oknie."
 
-msgid "Your shopping cart will only show the standard checkout button, opening Portmonetka checkout in a new window."
-msgstr "W Twoim koszyku będzie widoczny tylko standardowy przycisk sklepu, otwierający checkout Portmonetki w nowym oknie."
+msgid "Your shopping cart will only show the standard checkout button, opening Furgonetka Koszyk checkout in a new window."
+msgstr "W Twoim koszyku będzie widoczny tylko standardowy przycisk sklepu, otwierający checkout Furgonetka Koszyk w nowym oknie."

@@ -14,7 +14,7 @@
 
     </p>
     <h2 class="furgonetka__header-secondary"><?php
-        esc_attr_e('Portmonetka', 'furgonetka'); ?></h2>
+        esc_attr_e('Furgonetka Koszyk', 'furgonetka'); ?></h2>
     <form method="post" action="">
         <input type="hidden" name="furgonetkaAction" value="<?= Furgonetka_Admin::ACTION_SAVE_ADVANCED ?>"/>
         <?php wp_nonce_field(); ?>
@@ -24,7 +24,7 @@
                 <th scope="row">
                     <label for="productSelector" class="furgonetka__label">
                         <?php
-                        esc_attr_e('Portmonetka product button parent html selector', 'furgonetka'); ?>
+                        esc_attr_e('Furgonetka Koszyk product button parent html selector', 'furgonetka'); ?>
                     </label>
                 </th>
                 <td>
@@ -51,7 +51,7 @@
                 <th scope="row">
                     <label for="cartSelector" class="furgonetka__label">
                         <?php
-                        esc_attr_e('Portmonetka cart button parent html selector', 'furgonetka'); ?>
+                        esc_attr_e('Furgonetka Koszyk cart button parent html selector', 'furgonetka'); ?>
                     </label>
                 </th>
                 <td>
@@ -76,7 +76,7 @@
                 <th scope="row">
                     <label for="miniCartSelector" class="furgonetka__label">
                         <?php
-                        esc_attr_e('Portmonetka mini cart button parent html selector', 'furgonetka'); ?>
+                        esc_attr_e('Furgonetka Koszyk mini cart button parent html selector', 'furgonetka'); ?>
                     </label>
                 </th>
                 <td>
@@ -101,7 +101,7 @@
                 <th scope="row">
                     <label for="cartButtonPosition" class="furgonetka__label">
                         <?php
-                        esc_attr_e('Portmonetka cart button position', 'furgonetka'); ?>
+                        esc_attr_e('Furgonetka Koszyk cart button position', 'furgonetka'); ?>
                     </label>
                 </th>
                 <td>
@@ -128,7 +128,7 @@
                 <th scope="row">
                     <label for="cartButtonWidth" class="furgonetka__label">
                         <?php
-                        esc_attr_e('Portmonetka cart button width', 'furgonetka'); ?>
+                        esc_attr_e('Furgonetka Koszyk cart button width', 'furgonetka'); ?>
                     </label>
                 </th>
                 <td>
@@ -156,7 +156,7 @@
                 <th scope="row">
                     <label for="cartButtonCSS" class="furgonetka__label">
                         <?php
-                        esc_attr_e('Portmonetka cart button custom CSS', 'furgonetka'); ?>
+                        esc_attr_e('Furgonetka Koszyk cart button custom CSS', 'furgonetka'); ?>
                     </label>
                 </th>
                 <td>
@@ -173,22 +173,22 @@
             <tr>
                 <th scope="row">
                     <label for="portmonetka_replace_native_checkout" class="furgonetka__label">
-                        <?php esc_attr_e('Portmonetka checkout screen', 'furgonetka'); ?>
+                        <?php esc_attr_e('Furgonetka Koszyk checkout screen', 'furgonetka'); ?>
                     </label>
                 </th>
                 <td>
                     <div class="furgonetka__input-radio">
                         <label>
                             <input type="radio" name="portmonetka_replace_native_checkout" value="0" <?php if (!Furgonetka_Admin::get_portmonetka_replace_native_checkout()): ?>checked<?php endif; ?>>
-                            <span class="furgonetka__input-radio__span"><?php esc_attr_e('Open with additional Portmonetka button', 'furgonetka'); ?></span>
-                            <div class="furgonetka__input-radio__additional-info"><?php esc_attr_e('You will see an additional Portmonetka button in your shopping cart, opening Portmonetka checkout in a new window.', 'furgonetka'); ?></div>
+                            <span class="furgonetka__input-radio__span"><?php esc_attr_e('Open with additional Furgonetka Koszyk button', 'furgonetka'); ?></span>
+                            <div class="furgonetka__input-radio__additional-info"><?php esc_attr_e('You will see an additional Furgonetka Koszyk button in your shopping cart, opening Furgonetka Koszyk checkout in a new window.', 'furgonetka'); ?></div>
                         </label>
                     </div>
                     <div class="furgonetka__input-radio">
                         <label>
                             <input type="radio" name="portmonetka_replace_native_checkout" value="1" <?php if (Furgonetka_Admin::get_portmonetka_replace_native_checkout()): ?>checked<?php endif; ?>>
                             <span class="furgonetka__input-radio__span"><?php esc_attr_e('Open with native checkout button', 'furgonetka'); ?></span>
-                            <div class="furgonetka__input-radio__additional-info"><?php esc_attr_e('Your shopping cart will only show the standard checkout button, opening Portmonetka checkout in a new window.', 'furgonetka'); ?></div>
+                            <div class="furgonetka__input-radio__additional-info"><?php esc_attr_e('Your shopping cart will only show the standard checkout button, opening Furgonetka Koszyk checkout in a new window.', 'furgonetka'); ?></div>
                         </label>
                     </div>
                 </td>

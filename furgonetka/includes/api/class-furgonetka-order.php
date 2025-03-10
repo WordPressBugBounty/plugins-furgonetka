@@ -45,4 +45,13 @@ class Furgonetka_Order
 
         return $order;
     }
+
+    public function get_order_statuses(): WP_REST_Response
+    {
+        return new WP_REST_Response(
+            array(
+                'orders_statuses' => wc_get_order_statuses(),
+            )
+        );
+    }
 }

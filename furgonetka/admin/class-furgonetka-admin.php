@@ -1086,7 +1086,7 @@ class Furgonetka_Admin
     }
 
     /**
-     * Get product html selector to put portmonetka button in
+     * Get product html selector to put Furgonetka Koszyk button in
      *
      * @since 1.2.2
      */

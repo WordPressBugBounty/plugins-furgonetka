@@ -197,7 +197,7 @@ msgstr ""
 msgid "Setting below are for advanced users with at least basic programming/web development knowledge"
 msgstr ""
 
-msgid "Portmonetka product button parent html selector"
+msgid "Furgonetka Koszyk product button parent html selector"
 msgstr ""
 
 msgid "Use only when default button placement is wrong, will display button within woocommerce single product page."
@@ -206,19 +206,19 @@ msgstr ""
 msgid "Element must be inside woocommerce add to cart form"
 msgstr ""
 
-msgid "Portmonetka cart button parent html selector"
+msgid "Furgonetka Koszyk cart button parent html selector"
 msgstr ""
 
 msgid "Use only when default button placement is wrong, will display button within woocommerce cart page."
 msgstr ""
 
-msgid "Portmonetka mini cart button parent html selector"
+msgid "Furgonetka Koszyk mini cart button parent html selector"
 msgstr ""
 
 msgid "Use only when default button placement is wrong, will display button within woocommerce mini cart widget."
 msgstr ""
 
-msgid "Portmonetka cart button position"
+msgid "Furgonetka Koszyk cart button position"
 msgstr ""
 
 msgid "To left"
@@ -230,7 +230,7 @@ msgstr ""
 msgid "To right"
 msgstr ""
 
-msgid "Portmonetka cart button width"
+msgid "Furgonetka Koszyk cart button width"
 msgstr ""
 
 msgid "Automatic"
@@ -242,7 +242,7 @@ msgstr ""
 msgid "Full width"
 msgstr ""
 
-msgid "Portmonetka cart button custom CSS"
+msgid "Furgonetka Koszyk cart button custom CSS"
 msgstr ""
 
 #: furgonetka/admin/class-furgonetka-admin.php:503
@@ -361,17 +361,17 @@ msgstr ""
 msgid "Tax ID"
 msgstr ""
 
-msgid "Portmonetka checkout screen"
+msgid "Furgonetka Koszyk checkout screen"
 msgstr ""
 
-msgid "Open with additional Portmonetka button"
+msgid "Open with additional Furgonetka Koszyk button"
 msgstr ""
 
 msgid "Open with native checkout button"
 msgstr ""
 
-msgid "You will see an additional Portmonetka button in your shopping cart, opening Portmonetka checkout in a new window."
+msgid "You will see an additional Furgonetka Koszyk button in your shopping cart, opening Furgonetka Koszyk checkout in a new window."
 msgstr ""
 
-msgid "Your shopping cart will only show the standard checkout button, opening Portmonetka checkout in a new window."
+msgid "Your shopping cart will only show the standard checkout button, opening Furgonetka Koszyk checkout in a new window."
 msgstr ""

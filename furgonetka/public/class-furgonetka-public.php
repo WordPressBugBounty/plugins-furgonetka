@@ -945,6 +945,16 @@ class Furgonetka_Public
                 ),
             )
         );
+
+        register_rest_route(
+            FURGONETKA_REST_NAMESPACE,
+            '/orders/statuses',
+            array(
+                'methods'             => WP_REST_Server::READABLE,
+                'callback'            => array( new Furgonetka_Order(), 'get_order_statuses'),
+                'permission_callback' => Furgonetka_Rest_Api_Permissions::PERMISSION_CALLBACK,
+            )
+        );
     }
 
     function rest_api_includes()
