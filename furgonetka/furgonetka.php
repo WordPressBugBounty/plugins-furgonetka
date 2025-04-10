@@ -11,7 +11,7 @@
  * Plugin Name:          Furgonetka.pl
  * Plugin URI:           https://furgonetka.pl
  * Description:          Połącz swój sklep z modułem Furgonetka.pl! Generuj etykiety, twórz szablony przesyłek, śledź statusy paczek. Nadawaj paczki szybko i tanio korzystając z 10 firm kurierskich.
- * Version:              1.6.4
+ * Version:              1.6.5
  * Author:               Furgonetka.pl
  * Author URI:           https://furgonetka.pl
  * License:              GPL-2.0+
@@ -37,11 +37,13 @@ if ( ! defined( 'WPINC' ) )
  * Start at version 1.0.0 and use SemVer - https://semver.org
  * Rename this for your plugin and update it as you release new versions.
  */
-define( 'FURGONETKA_VERSION', '1.6.4' );
+define( 'FURGONETKA_VERSION', '1.6.5' );
 define( 'FURGONETKA_PLUGIN_NAME', 'furgonetka' );
 define( 'FURGONETKA_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'FURGONETKA_DEBUG', false );
 
+/** Require the file containing the constants class */
+require_once 'includes/class-furgonetka-constants.php';
 
 /**
  * This function runs when WordPress completes its install/upgrade process
@@ -53,10 +55,7 @@ function furgonetka_upgrade_completed( $upgrader_object, $options )
 
         // Iterate through the plugins being updated and check if ours is there
         if ( in_array( 'furgonetka/furgonetka.php', $options['plugins'] ) ) {
-            $plugin_data = get_plugin_data( __FILE__ );
-            Furgonetka_Admin::perform_migrations();
-            Furgonetka_Admin::update_plugin_version( $plugin_data['Version'] );
-
+            set_transient( Furgonetka_Constants::TRANSIENT_PLUGIN_UPDATED, true );
         }
     }
 
@@ -65,8 +64,7 @@ function furgonetka_upgrade_completed( $upgrader_object, $options )
         $new_plugin_data = $upgrader_object->new_plugin_data;
 
         if ( $new_plugin_data['Author'] === 'Furgonetka.pl' && $new_plugin_data['Name'] === 'Furgonetka.pl' ) {
-            Furgonetka_Admin::perform_migrations();
-            Furgonetka_Admin::update_plugin_version( $new_plugin_data['Version'] );
+            set_transient( Furgonetka_Constants::TRANSIENT_PLUGIN_UPDATED, true );
         }
     }
 }
@@ -78,23 +76,24 @@ function perform_migrations() {
     $previous_plugin_version = get_option('furgonetka_version', '1.0.0');
 
     /** If module version is already this same, skip tasks */
-    if ($previous_plugin_version === FURGONETKA_VERSION) {
+    if ( get_transient( Furgonetka_Constants::TRANSIENT_PLUGIN_UPDATED ) === false || $previous_plugin_version === FURGONETKA_VERSION ) {
         return;
     }
+    delete_transient( Furgonetka_Constants::TRANSIENT_PLUGIN_UPDATED );
 
     require_once 'includes/class-furgonetka-migrations-performer.php';
     $migrations_performer = new Furgonetka_Migrations_Performer();
-    $migrations_performer->run($previous_plugin_version);
+    $migrations_performer->run( $previous_plugin_version );
 
     /** Update module version, to prevent run tasks twice */
-    update_option('furgonetka_version', FURGONETKA_VERSION);
+    update_option( 'furgonetka_version', FURGONETKA_VERSION );
 }
 
 add_action( 'upgrader_process_complete', 'furgonetka_upgrade_completed', 10, 2 );
 
 add_action( 'woocommerce_add_to_cart', 'set_default_customer_address' );
 
-add_action('furgonetka_perform_migrations', 'perform_migrations');
+add_action( 'plugins_loaded', 'perform_migrations' );
 
 /**
  * Set default customer address to manage shipping prices problem

@@ -2,12 +2,35 @@
 
 class Furgonetka_Cart
 {
-    public static $session;
+    private static $session;
 
-    public function __construct()
+    /**
+     * @return array|null
+     */
+    private function get_session()
     {
-        $session_handler = new WC_Session_Handler();
-        self::$session = $session_handler->get_session( $this->get_customer_id_from_session( $session_handler ) );
+        if ( ! self::$session ) {
+            $this->load_session_for_current_user();
+        }
+
+        return self::$session;
+    }
+
+    /**
+     * @return void
+     */
+    private function load_session_for_current_user()
+    {
+        self::$session = WC()->session->get_session_data();
+    }
+
+    /**
+     * @param mixed $cartId
+     * @return void
+     */
+    private function load_session_for_cart( $cartId )
+    {
+        self::$session = ( new WC_Session_Handler() )->get_session( $cartId );
     }
 
     /**
@@ -27,8 +50,13 @@ class Furgonetka_Cart
      */
     private function internal_get_cart_items()
     {
-        $cart_items = (array) maybe_unserialize( self::$session['cart'] );
-        $items      = array();
+        $cart_items = array();
+
+        if ( ! empty( $this->get_session()['cart'] ) ) {
+            $cart_items = (array) maybe_unserialize( $this->get_session()['cart'] );
+        }
+
+        $items = array();
 
         foreach ( $cart_items as $key => $cart_item ) {
             $is_variation = ( $cart_item['variation_id'] !== 0 );
@@ -77,12 +105,10 @@ class Furgonetka_Cart
             );
         }
 
-        $cart_response = array(
+        return array(
             'items'   => $items,
-            'cart_id' => $this->get_customer_id_from_session( WC()->session )
+            'cart_id' => $this->get_customer_id_from_session()
         );
-
-        return $cart_response;
     }
 
     /**
@@ -104,8 +130,8 @@ class Furgonetka_Cart
     {
         $shipping = array();
 
-        if ( !empty( self::$session['shipping_for_package_0']) ) {
-            $shipping = (array) maybe_unserialize( self::$session['shipping_for_package_0'] );
+        if ( !empty( $this->get_session()['shipping_for_package_0']) ) {
+            $shipping = (array) maybe_unserialize( $this->get_session()['shipping_for_package_0'] );
         }
 
         $shipping_methods = array();
@@ -184,12 +210,10 @@ class Furgonetka_Cart
             }
         }
 
-        $shipping_response = array(
+        return array(
             'shipping_methods' => $shipping_methods,
             'cart_needs_shipping' => WC()->cart ? WC()->cart->needs_shipping() : null,
         );
-
-        return $shipping_response;
     }
 
     /**
@@ -264,7 +288,7 @@ class Furgonetka_Cart
      */
     private function internal_get_coupons()
     {
-        $coupons_raw = (array) maybe_unserialize( self::$session['coupon_discount_totals'] );
+        $coupons_raw = (array) maybe_unserialize( $this->get_session()['coupon_discount_totals'] );
         $coupons     = array();
 
         foreach ( $coupons_raw as $code => $discount ) {
@@ -296,7 +320,7 @@ class Furgonetka_Cart
     private function internal_get_totals()
     {
         // Gather raw cart totals
-        $cart_totals_raw = (array) maybe_unserialize( self::$session['cart_totals'] );
+        $cart_totals_raw = (array) maybe_unserialize( $this->get_session()['cart_totals'] );
 
         // Define available cart totals
         $cart_totals = array(
@@ -352,8 +376,7 @@ class Furgonetka_Cart
         $cartId     = $this->get( 'cartId' );
         $instanceId = (int) $this->get( 'instanceId' );
 
-        $session_handler = new WC_Session_Handler();
-        self::$session   = $session_handler->get_session( $cartId );
+        $this->load_session_for_cart( $cartId );
 
         $shippingMethods = $this->get_shipping()->get_data()['shipping_methods'];
 
@@ -446,23 +469,24 @@ class Furgonetka_Cart
     /**
      * Internal method to get unique customer id from Woocommerce session
      *
-     * @param WC_Session_Handler|WC_Session $session_handler
-     *
-     * @return string
+     * @return string|null
      */
-    private function get_customer_id_from_session( &$session_handler )
+    private function get_customer_id_from_session()
     {
-        $wcSession = WC()->session;
+        /**
+         * Get customer ID
+         */
+        $session_handler = WC()->session;
 
-        if ( ! is_null( $wcSession ) ) {
-            if ( $wcSession->has_session() && $session_handler->_customer_id ) {
-                return $session_handler->_customer_id;
-            } elseif ( is_user_logged_in() ) {
-                return (string) get_current_user_id();
-            }
+        if ( $session_handler && $session_handler->has_session() && $session_handler->get_customer_id() ) {
+            return (string) $session_handler->get_customer_id();
         }
 
-        return $wcSession->get_customer_id();
+        if ( is_user_logged_in() ) {
+            return (string) get_current_user_id();
+        }
+
+        return null;
     }
 
     public function maybe_add_coupon()

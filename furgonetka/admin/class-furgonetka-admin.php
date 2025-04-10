@@ -381,8 +381,8 @@ class Furgonetka_Admin
             if ( self::get_account_type() === self::ACCOUNT_TYPE_COMPANY ) {
                 add_submenu_page(
                     'furgonetka',
-                    __( 'Documents', 'furgonetka' ),
-                    __( 'Documents', 'furgonetka' ),
+                    __( 'Invoices', 'furgonetka' ),
+                    __( 'Invoices', 'furgonetka' ),
                     Furgonetka_Capabilities::CAPABILITY_MANAGE_FURGONETKA,
                     self::PAGE_FURGONETKA_DOCUMENTS,
                     array( $this, 'get_furgonetka_iframe' )
@@ -525,6 +525,9 @@ class Furgonetka_Admin
      */
     public function furgonetka_connect_integration()
     {
+        /** Try to ensure capabilities when trying to connect integration */
+        Furgonetka_Capabilities::ensure_capabilities();
+
         /**
          * Validate permissions
          */
@@ -1328,13 +1331,6 @@ class Furgonetka_Admin
             $this->delete_credentials_data();
 
             $this->redirect_to_error_page( self::ERROR_CODE_INTEGRATION_FAILED );
-        }
-    }
-
-    public static function perform_migrations()
-    {
-        if ( function_exists( 'WC' ) ) {
-            WC()->queue()->add('furgonetka_perform_migrations');
         }
     }
 

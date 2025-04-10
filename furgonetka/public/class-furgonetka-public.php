@@ -957,9 +957,12 @@ class Furgonetka_Public
         );
     }
 
-    function rest_api_includes()
+    public function rest_api_includes()
     {
-        if ( empty( WC()->cart ) ) {
+        /**
+         * Load checkout-related includes for proper session content
+         */
+        if ( $this->is_checkout_module_request() && empty( WC()->cart ) ) {
             WC()->frontend_includes();
             wc_load_cart();
         }
@@ -990,5 +993,17 @@ class Furgonetka_Public
         self::$cart_class = self::$class_base . '__cart';
         self::$minicart_class = self::$class_base . '__minicart';
         self::$order_class = self::$class_base . '__order';
+    }
+
+    private function is_checkout_module_request(): bool
+    {
+        if ( empty( $_SERVER['REQUEST_URI'] ) ) {
+            return false;
+        }
+
+        $rest_prefix = trailingslashit( rest_get_url_prefix() );
+        $request_uri = esc_url_raw( wp_unslash( $_SERVER['REQUEST_URI'] ) );
+
+        return strpos( $request_uri, $rest_prefix . 'furgonetka/v1/checkout' ) !== false;
     }
 }

@@ -27,6 +27,8 @@ class Furgonetka_Migrations_Performer
         }
 
         Furgonetka_Capabilities::ensure_capabilities();
+
+        Furgonetka_Admin::update_plugin_version( FURGONETKA_VERSION );
     }
 
     /**

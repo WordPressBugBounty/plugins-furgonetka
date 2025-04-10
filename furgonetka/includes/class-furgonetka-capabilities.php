@@ -65,7 +65,11 @@ class Furgonetka_Capabilities
      */
     private static function can_administrator_role_manage_furgonetka(): bool
     {
-        global $wp_roles;
+        $wp_roles = self::get_wp_roles();
+
+        if ( ! $wp_roles ) {
+            return false;
+        }
 
         $role_object = $wp_roles->get_role( 'administrator' );
 
@@ -79,7 +83,11 @@ class Furgonetka_Capabilities
      */
     private static function add_furgonetka_capabilities_to_woocommerce_management_roles()
     {
-        global $wp_roles;
+        $wp_roles = self::get_wp_roles();
+
+        if ( ! $wp_roles ) {
+            return;
+        }
 
         /**
          * Get roles with "manage_woocommerce" capability
@@ -193,5 +201,27 @@ class Furgonetka_Capabilities
         }
 
         return $groups;
+    }
+
+    /**
+     * Get WP_Roles instance
+     *
+     * When user is not logged in, global $wp_roles is not initialized, then try to create new instance of WP_Roles
+     *
+     * @return WP_Roles|null
+     */
+    private static function get_wp_roles()
+    {
+        global $wp_roles;
+
+        if ( ! class_exists( 'WP_Roles' ) ) {
+            return null;
+        }
+
+        if ( ! isset( $wp_roles ) ) {
+            return new WP_Roles();
+        }
+
+        return $wp_roles;
     }
 }

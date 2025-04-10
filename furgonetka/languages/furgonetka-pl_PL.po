@@ -279,8 +279,8 @@ msgstr "Wystąpił nieoczekiwany błąd, spróbuj później."
 msgid "Add shipment"
 msgstr "Stwórz przesyłkę"
 
-msgid "Documents"
-msgstr "Dokumenty"
+msgid "Invoices"
+msgstr "Faktury"
 
 #: furgonetka/includes/view/class-furgonetka-admin-metaboxes-view.php:34
 msgid "Create a shipment quickly"

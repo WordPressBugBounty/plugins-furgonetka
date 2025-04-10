@@ -278,7 +278,7 @@ msgid "Add shipment"
 msgstr ""
 
 #: admin/class-furgonetka-admin.php:375
-msgid "Documents"
+msgid "Invoices"
 msgstr ""
 
 #: furgonetka/includes/view/class-furgonetka-admin-metaboxes-view.php:34
