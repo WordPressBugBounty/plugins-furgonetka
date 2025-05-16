@@ -229,7 +229,7 @@ class Furgonetka_Blocks {
 			),
 			self::FIELD_SELECTED_POINT_COD => array(
 				self::FIELD_SERVICE      => isset( $data_cod[ self::FIELD_SERVICE ] ) ? $data_cod[ self::FIELD_SERVICE ] : '',
-				self::FIELD_SERVICE_TYPE => isset( $data[ self::FIELD_SERVICE_TYPE ] ) ? $data[ self::FIELD_SERVICE_TYPE ] : '',
+				self::FIELD_SERVICE_TYPE => isset( $data_cod[ self::FIELD_SERVICE_TYPE ] ) ? $data_cod[ self::FIELD_SERVICE_TYPE ] : '',
 				self::FIELD_CODE         => isset( $data_cod[ self::FIELD_CODE ] ) ? $data_cod[ self::FIELD_CODE ] : '',
 				self::FIELD_NAME         => isset( $data_cod[ self::FIELD_NAME ] ) ? $data_cod[ self::FIELD_NAME ] : '',
 			),
