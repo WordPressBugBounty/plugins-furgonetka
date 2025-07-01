@@ -1,368 +1,351 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR furgonetka.pl
-# This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
 msgid ""
 msgstr ""
-"Project-Id-Version: furgonetka 1.0.0\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-02-22 20:55+0100\n"
-"PO-Revision-Date: 2024-02-13 10:00+0100\n"
+"Project-Id-Version: Furgonetka.pl 1.6.6\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/furgonetka\n"
 "Last-Translator: \n"
 "Language-Team: \n"
-"Language: pl_PL\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: \n"
-"X-Generator: Poedit 2.4.2\n"
+"POT-Creation-Date: 2025-07-01T09:10:12+00:00\n"
+"PO-Revision-Date: 2025-07-01T09:10:12+00:00\n"
+"Language: pl_PL\n"
+"X-Generator: WP-CLI 2.12.0\n"
+"X-Domain: furgonetka\n"
 
-#: admin/class-furgonetka-admin.php:129 admin/class-furgonetka-admin.php:164
+#. Plugin Name of the plugin
+#. Author of the plugin
+#: furgonetka.php
+#: includes/class-furgonetka-admin-metaboxes.php:96
 msgid "Furgonetka.pl"
 msgstr "Furgonetka.pl"
 
-#: admin/class-furgonetka-admin.php:154 admin/partials/furgonetka-admin-display.php:42 includes/class-furgonetka-admin-metaboxes.php:160
-msgid "Furgonetka"
-msgstr "Furgonetka"
+#. Plugin URI of the plugin
+#. Author URI of the plugin
+#: furgonetka.php
+msgid "https://furgonetka.pl"
+msgstr "https://furgonetka.pl"
 
-#: admin/class-furgonetka-admin.php:229
-msgid "Get Furgonetka"
-msgstr "Kurier Furgonetka.pl"
+#. Description of the plugin
+#: furgonetka.php
+msgid "Połącz swój sklep z modułem Furgonetka.pl! Generuj etykiety, twórz szablony przesyłek, śledź statusy paczek. Nadawaj paczki szybko i tanio korzystając z 10 firm kurierskich."
+msgstr "Połącz swój sklep z modułem Furgonetka.pl! Generuj etykiety, twórz szablony przesyłek, śledź statusy paczek. Nadawaj paczki szybko i tanio korzystając z 10 firm kurierskich."
 
-#: admin/class-furgonetka-admin.php:243
-msgid "You do not have sufficient permissions to access this page."
-msgstr "Nie posiadasz uprawnień aby zobaczyć tę stronę."
-
-#: admin/class-furgonetka-admin.php:341 admin/class-furgonetka-admin.php:632
-msgid "Access granted"
-msgstr "Przyznano dostęp"
-
-#: admin/class-furgonetka-admin.php:411
-msgid "Every delivery option can have just one map attached."
-msgstr "Każda forma dostawy może posiadać tylko jedną mapę."
-
-#: admin/class-furgonetka-admin.php:438
-msgid "Account reseted"
-msgstr "Zresetowano ustawienia"
-
-#: admin/class-furgonetka-admin.php:481
-msgid "Integration created. Please add credentials."
-msgstr "Integracja stworzona. Połącz się z kontem."
-
-#: admin/class-furgonetka-admin.php:609
-msgid "Add integration source problem"
-msgstr "Wystąpił problem podczas dodawania integracji"
-
-#: admin/class-furgonetka-admin.php:734
-msgid "Balance GET problem"
-msgstr "Wystąpił problem podczas pobierania stanu konta."
-
-#: admin/class-furgonetka-admin.php:823
-msgid "ORDER"
-msgstr "Zamówienie"
-
-#: admin/class-furgonetka-admin.php:836
-msgid "Get package Form URL problem."
-msgstr "Wystąpił problem podczas pobierania formularza."
-
-#: admin/class-furgonetka-admin.php:1734
-msgid "Get fast shipping URL problem."
-msgstr "Wystąpił problem podczas wykonywania szybkiej przesyłki."
-
-#: admin/partials/furgonetka-admin-display.php:30
-msgid "API account"
-msgstr "Konto API"
-
-#: admin/partials/furgonetka-admin-display.php:33
-msgid "Attach map"
-msgstr "Dołącz mapę"
-
-#: admin/partials/furgonetka-admin-display.php:41
-msgid "Main settings"
-msgstr "Główne ustawienia"
-
-#: admin/partials/furgonetka-admin-display.php:44
-msgid "The Furgonetka.pl website enables the use of a wide range of courier services at very attractive prices without restrictions and the need to sign contracts."
-msgstr ""
-"Serwis Furgonetka.pl to platforma, za pośrednictwem której można łatwo i szybko nadawać przesyłki kurierskie. Mogą z niego korzystać klienci zarówno indywidualni, jak i biznesowi – bez konieczności podpisywania umowy ani deklaracji wolumenów paczek. W ofercie dostępne są usługi aż 10 firm "
-"kurierskich, takich jak DPD, DHL, UPS czy InPost. Za pośrednictwem serwisu realizowane są przesyłki krajowe i międzynarodowe oraz dostawy pod drzwi i do punktów odbioru. Furgonetka.pl udostępnia także wiele narzędzi wspierających wysyłkę i automatyzujących procesy logistyczne, dzięki czemu będziesz "
-"mógł m.in. importować zamówienia za pośrednictwem plików, generować dokumenty przewozowe czy nadawać paczki zgodnie z wcześniej ustaloną ceną bezpośrednio z przewoźnikiem. "
-
-#: admin/partials/furgonetka-admin-display.php:46
-msgid "We offer convenient tools that allow both companies and individuals to order quickly and conveniently courier."
-msgstr "Oferujemy wygodne narzędzia, które pozwalają zarówno firmom, jak i osobom prywatnym, szybko i wygodnie zamówić kuriera. "
-
-#: admin/partials/furgonetka-admin-display.php:48
-msgid "This module will significantly improve the creation of shipments and ordering courier at Furgonetka.pl."
-msgstr "Moduł ten znacznie usprawni tworzenie przesyłek oraz zamawianie kuriera w Furgonetka.pl."
-
-#: admin/partials/furgonetka-admin-display.php:56
-msgid "Balance"
-msgstr "Stan konta"
-
-#: admin/partials/furgonetka-admin-display.php:63
-msgid "Client ID"
-msgstr "Klucz klienta"
-
-#: admin/partials/furgonetka-admin-display.php:70
-msgid "Client Secret"
-msgstr "Klucz prywatny"
-
-#: admin/partials/furgonetka-admin-display.php:77 admin/partials/furgonetka-admin-display.php:119
-msgid "Test mode"
-msgstr "Tryb testowy"
-
-#: admin/partials/furgonetka-admin-display.php:82 admin/partials/furgonetka-admin-display.php:121
-msgid "Requires an account on"
-msgstr "Wymaga konta na"
-
-#: furgonetka/includes/view/furgonetka-advanced.php:188
-msgid "Furgonetka - API account"
-msgstr "Furgonetka - konto API"
-
-#: admin/partials/furgonetka-admin-display.php:90
-msgid "You can reset current account by clicking Reset button"
-msgstr "Przycisk RESET powoduje rozłączenie aktualnego połączenia, umożliwiając Ci nawiązanie nowego z innym kontem lub zmianę środowiska."
-
-#: admin/partials/furgonetka-admin-display.php:94
-msgid "Reset"
-msgstr ""
-
-#: admin/partials/furgonetka-admin-display.php:98
-msgid "Account"
-msgstr "Konto"
-
-#: admin/partials/furgonetka-admin-display.php:100
-msgid "Please add new WOOCOMMERCE REST API read and write key and copy Consumer key and Consumer secret below."
-msgstr "Proszę dodać nowy klucz REST API w WooCommerce z uprawnieniami do odczytu i zapisu. Skopuj Klucz klienta oraz Klucz prywatny w pola poniżej."
-
-#: admin/partials/furgonetka-admin-display.php:101
-msgid "Create new key"
-msgstr "Stwórz nowy klucz"
-
-#: admin/partials/furgonetka-admin-display.php:110
-msgid "Consumer key"
-msgstr "Klucz klienta"
-
-#: admin/partials/furgonetka-admin-display.php:114
-msgid "Consumer secret"
-msgstr "Klucz prywatny"
-
-#: admin/partials/furgonetka-admin-display.php:126 admin/partials/furgonetka-admin-display.php:177 admin/partials/furgonetka-admin-display.php:243
-msgid "Save"
-msgstr "Zapisz"
-
-#: admin/partials/furgonetka-admin-display.php:152
-msgid "City"
-msgstr "Miasto"
-
-#: public/class-furgonetka-public.php:232
-#: public/blocks/furgonetka-pickup-point/index.js:1
-msgid "Select point"
-msgstr "Wybierz punkt odbioru"
-
-#: public/class-furgonetka-public.php:273
-msgid "Please select delivery point."
-msgstr "Proszę wybrać punkt odbioru."
-
+#: admin/class-furgonetka-admin.php:322
 msgid "Settings"
 msgstr "Ustawienia"
 
+#: admin/class-furgonetka-admin.php:325
 msgid "Contact"
 msgstr "Kontakt"
 
-msgid "More info - https://docs.woocommerce.com/document/woocommerce-rest-api/"
-msgstr "Więcej informacji - https://docs.woocommerce.com/document/woocommerce-rest-api/"
+#: admin/class-furgonetka-admin.php:345
+#: admin/class-furgonetka-admin.php:346
+#: admin/class-furgonetka-admin.php:577
+#: includes/class-furgonetka-admin-metaboxes.php:160
+#: includes/class-furgonetka-api-keys.php:72
+#: includes/class-furgonetka-capabilities.php:124
+#: includes/class-furgonetka-capabilities.php:179
+msgid "Furgonetka"
+msgstr "Furgonetka"
 
-msgid "Packages tracking numbers"
-msgstr "Śledzenie przesyłek"
+#: admin/class-furgonetka-admin.php:357
+#: admin/class-furgonetka-admin.php:358
+msgid "Plugin panel"
+msgstr "Panel pluginu"
 
-msgid "Packages tracking numbers:"
-msgstr "Śledzenie przesyłek:"
-
-msgid "Pickup point"
-msgstr "Punkt odbioru"
-
-msgid "Tax ID"
-msgstr "NIP"
-
-#~ msgid "Password"
-#~ msgstr "Hasło"
-
-msgid "Advanced"
-msgstr "Zaawansowane"
-
-msgid "Advanced settings"
-msgstr "Zaawansowane ustawienia"
-
-msgid "Setting below are for advanced users with at least basic programming/web development knowledge"
-msgstr "Poniższe ustawienia są przewidziane dla zaawansowanych użytkowników z conajmniej podstawową wiedzą programistyczną"
-
-msgid "Furgonetka Koszyk product button parent html selector"
-msgstr "Selektor HTML dla przycisku Furgonetka Koszyk w produkcie"
-
-msgid "Use only when default button placement is wrong, will display button within woocommerce single product page."
-msgstr "Do użytku tylko i wyłącznie gdy przycisk się nie wyświetla lub wyświetla błędnie, przycisk pojawi się tylko i wyłącznie w widoku produktu."
-
-msgid "Element must be inside woocommerce add to cart form"
-msgstr "Wybrany element musi się znajdować w formularzu produktu"
-
-msgid "Furgonetka Koszyk cart button parent html selector"
-msgstr "Selektor HTML dla przycisku Furgonetka Koszyk w koszyku"
-
-msgid "Use only when default button placement is wrong, will display button within woocommerce cart page."
-msgstr "Do użytku tylko i wyłącznie gdy przycisk się nie wyświetla lub wyświetla błędnie, przycisk pojawi się tylko i wyłącznie w koszyku."
-
-msgid "Furgonetka Koszyk mini cart button parent html selector"
-msgstr "Selektor HTML dla przycisku Furgonetka Koszyk w mini koszyku"
-
-msgid "Use only when default button placement is wrong, will display button within woocommerce mini cart widget."
-msgstr "Do użytku tylko i wyłącznie gdy przycisk się nie wyświetla lub wyświetla błędnie, przycisk pojawi się tylko i wyłącznie w mini koszyku."
-
-msgid "Furgonetka Koszyk cart button position"
-msgstr "Pozycja przycisku Furgonetka Koszyk na karcie koszyka"
-
-msgid "To left"
-msgstr "Do lewej"
-
-msgid "Center"
-msgstr "Wycentrowany"
-
-msgid "To right"
-msgstr "Do prawej"
-
-msgid "Furgonetka Koszyk cart button width"
-msgstr "Szerokość przycisku Furgonetka Koszyk na karcie koszyka"
-
-msgid "Automatic"
-msgstr "Automatyczny"
-
-msgid "Half width"
-msgstr "Połowa szerokości"
-
-msgid "Full width"
-msgstr "Pełna szerokość"
-
-msgid "Furgonetka Koszyk cart button custom CSS"
-msgstr "Niestandardowy CSS dla przycisku Furgonetka Koszyk na karcie koszyka"
-
-#: furgonetka/admin/class-furgonetka-admin.php:503
-msgid "Error occurred while executing fast shipping."
-msgstr "Wystąpił błąd podczas wykonywania szybkiej przesyłki."
-
-#: furgonetka/admin/class-furgonetka-admin.php:501
-msgid "Error occurred while executing fast shipping. Please connect module with Furgonetka.pl account."
-msgstr "Wystąpił błąd podczas wykonywania szybkiej przesyłki. Proszę połączyć moduł z kontem na Furgonetka.pl."
-
-#: furgonetka/admin/class-furgonetka-admin.php:502
-msgid "Error occurred while executing fast shipping. Please reconnect module with Furgonetka.pl account."
-msgstr "Wystąpił błąd podczas wykonywania szybkiej przesyłki. Proszę ponownie połączyć moduł z kontem na Furgonetka.pl."
-
-#: furgonetka/admin/class-furgonetka-admin.php:508
-msgid "Error occurred while processing the invoice creation."
-msgstr "Wystąpił błąd podczas przetwarzania procesu tworzenia faktury."
-
-#: furgonetka/admin/class-furgonetka-admin.php:506
-msgid "Error occurred while processing the invoice creation. Please connect module with Furgonetka.pl account."
-msgstr "Wystąpił błąd podczas przetwarzania procesu tworzenia faktury. Prosimy o połączenie modułu z kontem Furgonetka.pl."
-
-#: furgonetka/admin/class-furgonetka-admin.php:507
-msgid "Error occurred while processing the invoice creation. Please reconnect module with Furgonetka.pl account."
-msgstr "Wystąpił błąd podczas przetwarzania procesu tworzenia faktury. Prosimy o ponowne połączenie modułu z kontem Furgonetka.pl."
-
-#: furgonetka/admin/class-furgonetka-admin.php:516
-msgid "An unexpected error occurred, please try later."
-msgstr "Wystąpił nieoczekiwany błąd, spróbuj później."
-
-#: furgonetka/includes/view/class-furgonetka-admin-metaboxes-view.php:38
-msgid "Add shipment"
-msgstr "Stwórz przesyłkę"
-
-msgid "Invoices"
-msgstr "Faktury"
-
-#: furgonetka/includes/view/class-furgonetka-admin-metaboxes-view.php:34
-msgid "Create a shipment quickly"
-msgstr "Stwórz szybko przesyłkę"
-
-msgid "Coupon is not available for this email."
-msgstr "Kupon nie jest dostępny dla tego adresu email."
-
-msgid "Coupon already applied."
-msgstr "Kupon został już użyty."
-
-msgid "Coupon was not applied."
-msgstr "Kupon nie został dodany."
-
+#: admin/class-furgonetka-admin.php:366
+#: admin/class-furgonetka-admin.php:367
 msgid "To send"
 msgstr "Do wysłania"
 
+#: admin/class-furgonetka-admin.php:375
+#: admin/class-furgonetka-admin.php:376
 msgid "Ordered"
 msgstr "Zamówione"
+
+#: admin/class-furgonetka-admin.php:385
+#: admin/class-furgonetka-admin.php:386
+msgid "Invoices"
+msgstr "Faktury"
+
+#: admin/class-furgonetka-admin.php:395
+#: admin/class-furgonetka-admin.php:396
+msgid "Shopping returns"
+msgstr "Zwroty zakupów"
+
+#: admin/class-furgonetka-admin.php:404
+#: admin/class-furgonetka-admin.php:405
+msgid "Attach map"
+msgstr "Dołącz mapę"
+
+#: admin/class-furgonetka-admin.php:413
+#: admin/class-furgonetka-admin.php:414
+msgid "Advanced"
+msgstr "Zaawansowane"
+
+#: admin/class-furgonetka-admin.php:504
+msgid "Error occurred while executing fast shipping. Please connect module with Furgonetka.pl account."
+msgstr "Wystąpił błąd podczas wykonywania szybkiej przesyłki. Proszę połączyć moduł z kontem na Furgonetka.pl."
+
+#: admin/class-furgonetka-admin.php:505
+msgid "Error occurred while executing fast shipping. Please reconnect module with Furgonetka.pl account."
+msgstr "Wystąpił błąd podczas wykonywania szybkiej przesyłki. Proszę ponownie połączyć moduł z kontem na Furgonetka.pl."
+
+#: admin/class-furgonetka-admin.php:506
+msgid "Error occurred while executing fast shipping."
+msgstr "Wystąpił błąd podczas wykonywania szybkiej przesyłki."
+
+#: admin/class-furgonetka-admin.php:509
+msgid "Error occurred while processing the invoice creation. Please connect module with Furgonetka.pl account."
+msgstr "Wystąpił błąd podczas przetwarzania procesu tworzenia faktury. Prosimy o połączenie modułu z kontem Furgonetka.pl."
+
+#: admin/class-furgonetka-admin.php:510
+msgid "Error occurred while processing the invoice creation. Please reconnect module with Furgonetka.pl account."
+msgstr "Wystąpił błąd podczas przetwarzania procesu tworzenia faktury. Prosimy o ponowne połączenie modułu z kontem Furgonetka.pl."
+
+#: admin/class-furgonetka-admin.php:511
+msgid "Error occurred while processing the invoice creation."
+msgstr "Wystąpił błąd podczas przetwarzania procesu tworzenia faktury."
+
+#: admin/class-furgonetka-admin.php:519
+msgid "An unexpected error occurred, please try later."
+msgstr "Wystąpił nieoczekiwany błąd, spróbuj później."
+
+#: admin/class-furgonetka-admin.php:1208
+msgid "Configuration saved successfully."
+msgstr "Konfiguracja została pomyślnie zapisana."
+
+#: admin/class-furgonetka-admin.php:1224
+#: admin/class-furgonetka-admin.php:1242
+#: admin/class-furgonetka-admin.php:1479
+msgid "Add integration source problem"
+msgstr "Wystąpił problem podczas dodawania integracji"
+
+#: admin/class-furgonetka-admin.php:1595
+msgid "Balance GET problem"
+msgstr "Wystąpił problem podczas pobierania stanu konta."
+
+#: admin/class-furgonetka-admin.php:2048
+msgid "You do not have sufficient permissions to access this page."
+msgstr "Nie posiadasz uprawnień aby zobaczyć tę stronę"
+
+#: includes/api/class-furgonetka-cart.php:365
+msgid "Invalid resource ID."
+msgstr "Zły identyfikator zasobu"
+
+#: includes/class-furgonetka-admin-metaboxes.php:163
+msgid "Packages tracking numbers"
+msgstr "Śledzenie przesyłek"
+
+#: includes/class-furgonetka-admin-metaboxes.php:243
+msgid "Tax ID"
+msgstr "NIP"
+
+#: includes/class-furgonetka-capabilities.php:143
+msgid "Manage Furgonetka module"
+msgstr "Zarządzanie modułem Furgonetka"
+
+#: includes/rest_api/helper/class-furgonetka-rest-helper.php:39
+msgid "Coupon is not available for this email."
+msgstr "Kupon nie jest dostępny dla tego adresu email."
+
+#: includes/rest_api/helper/class-furgonetka-rest-helper.php:62
+msgid "Coupon already applied."
+msgstr "Kupon został już użyty."
+
+#: includes/rest_api/helper/class-furgonetka-rest-helper.php:70
+msgid "Coupon was not applied."
+msgstr "Kupon nie został dodany."
+
+#: includes/view/class-furgonetka-admin-metaboxes-view.php:34
+msgid "Create a shipment quickly"
+msgstr "Stwórz szybko przesyłkę"
+
+#: includes/view/class-furgonetka-admin-metaboxes-view.php:38
+msgid "Add shipment"
+msgstr "Stwórz przesyłkę"
 
 #: includes/view/class-furgonetka-admin-metaboxes-view.php:43
 msgid "Create an invoice"
 msgstr "Wystaw fakturę"
 
-msgid "Shopping returns"
-msgstr "Zwroty zakupów"
+#: includes/view/class-furgonetka-admin-metaboxes-view.php:62
+msgid "Packages tracking numbers:"
+msgstr "Śledzenie przesyłek:"
 
-msgid "Plugin panel"
-msgstr "Panel pluginu"
+#: includes/view/class-furgonetka-public-view.php:74
+msgid "Pickup point"
+msgstr "Punkt odbioru"
 
-msgid "Configuration saved successfully."
-msgstr "Konfiguracja została pomyślnie zapisana."
+#: includes/view/class-furgonetka-public-view.php:99
+msgid "Package"
+msgstr "Przesyłka"
 
-msgid "An unexpected error occurred while saving advanced settings."
-msgstr "Podczas zapisywania ustawień zaawansowanych wystąpił nieoczekiwany błąd."
+#: includes/view/furgonetka-advanced.php:5
+#: includes/view/furgonetka-advanced.php:7
+msgid "Advanced settings"
+msgstr "Zaawansowane ustawienia"
 
+#: includes/view/furgonetka-advanced.php:10
 msgid "Settings below are for advanced users with at least basic programming/web development knowledge."
 msgstr "Poniższe ustawienia są przeznaczone dla zaawansowanych użytkowników z co najmniej podstawową wiedzą na temat programowania/tworzenia stron internetowych."
 
-msgid "Selected point"
-msgstr "Wybrany punkt"
+#: includes/view/furgonetka-advanced.php:17
+msgid "Furgonetka Koszyk"
+msgstr "Furgonetka Koszyk"
 
-msgid "Selected point (COD)"
-msgstr "Wybrany punkt (płatność przy odbiorze)"
+#: includes/view/furgonetka-advanced.php:27
+msgid "Furgonetka Koszyk product button parent html selector"
+msgstr "Selektor HTML dla przycisku Furgonetka Koszyk w produkcie"
 
+#: includes/view/furgonetka-advanced.php:41
+msgid "Use only when default button placement is wrong, will display button within woocommerce single product page."
+msgstr "Do użytku tylko i wyłącznie gdy przycisk się nie wyświetla lub wyświetla błędnie, przycisk pojawi się tylko i wyłącznie w widoku produktu."
+
+#: includes/view/furgonetka-advanced.php:46
+msgid "Element must be inside woocommerce add to cart form"
+msgstr "Wybrany element musi się znajdować w formularzu produktu"
+
+#: includes/view/furgonetka-advanced.php:54
+msgid "Furgonetka Koszyk cart button parent html selector"
+msgstr "Selektor HTML dla przycisku Furgonetka Koszyk w koszyku"
+
+#: includes/view/furgonetka-advanced.php:68
+msgid "Use only when default button placement is wrong, will display button within woocommerce cart page."
+msgstr "Do użytku tylko i wyłącznie gdy przycisk się nie wyświetla lub wyświetla błędnie, przycisk pojawi się tylko i wyłącznie w koszyku."
+
+#: includes/view/furgonetka-advanced.php:79
+msgid "Furgonetka Koszyk mini cart button parent html selector"
+msgstr "Selektor HTML dla przycisku Furgonetka Koszyk w mini koszyku"
+
+#: includes/view/furgonetka-advanced.php:93
+msgid "Use only when default button placement is wrong, will display button within woocommerce mini cart widget."
+msgstr "Do użytku tylko i wyłącznie gdy przycisk się nie wyświetla lub wyświetla błędnie, przycisk pojawi się tylko i wyłącznie w mini koszyku."
+
+#: includes/view/furgonetka-advanced.php:104
+msgid "Furgonetka Koszyk cart button position"
+msgstr "Pozycja przycisku Furgonetka Koszyk na karcie koszyka"
+
+#: includes/view/furgonetka-advanced.php:130
+msgid "Furgonetka Koszyk cart button width"
+msgstr "Szerokość przycisku Furgonetka Koszyk na karcie koszyka"
+
+#: includes/view/furgonetka-advanced.php:158
+msgid "Furgonetka Koszyk cart button custom CSS"
+msgstr "Niestandardowy CSS dla przycisku Furgonetka Koszyk na karcie koszyka"
+
+#: includes/view/furgonetka-advanced.php:175
+msgid "Furgonetka Koszyk checkout screen"
+msgstr "Ekran zamawiania Furgonetka Koszyk"
+
+#: includes/view/furgonetka-advanced.php:182
+msgid "Open with additional Furgonetka Koszyk button"
+msgstr "Otwieraj za pomocą dodatkowego przycisku Furgonetka Koszyk"
+
+#: includes/view/furgonetka-advanced.php:183
+msgid "You will see an additional Furgonetka Koszyk button in your shopping cart, opening Furgonetka Koszyk checkout in a new window."
+msgstr "W Twoim koszyku będzie widoczny dodatkowy przycisk Furgonetka Koszyk, otwierający checkout Furgonetka Koszyk w nowym oknie."
+
+#: includes/view/furgonetka-advanced.php:189
+msgid "Open with native checkout button"
+msgstr "Otwieraj wbudowanym przyciskiem zamawiania"
+
+#: includes/view/furgonetka-advanced.php:190
+msgid "Your shopping cart will only show the standard checkout button, opening Furgonetka Koszyk checkout in a new window."
+msgstr "W Twoim koszyku będzie widoczny tylko standardowy przycisk sklepu, otwierający checkout Furgonetka Koszyk w nowym oknie."
+
+#: includes/view/furgonetka-advanced.php:203
+msgid "Save"
+msgstr "Zapisz"
+
+#: includes/view/furgonetka-advanced.php:209
+msgid "Furgonetka - API account"
+msgstr "Furgonetka - konto API"
+
+#: includes/view/furgonetka-advanced.php:214
+msgid "You can reset current account by clicking Reset button"
+msgstr "Przycisk RESET powoduje rozłączenie aktualnego połączenia, umożliwiając Ci nawiązanie nowego z innym kontem lub zmianę środowiska."
+
+#: includes/view/furgonetka-advanced.php:218
+msgid "Reset"
+msgstr "Reset"
+
+#: public/class-furgonetka-blocks.php:161
 msgid "Pickup point service"
 msgstr "Usługa kurierska punktu odbioru"
 
+#: public/class-furgonetka-blocks.php:166
 msgid "Pickup point service type"
 msgstr "Rodzaj punktu odbioru"
 
+#: public/class-furgonetka-blocks.php:171
 msgid "Pickup point code"
 msgstr "Kod punktu odbioru"
 
+#: public/class-furgonetka-blocks.php:176
 msgid "Pickup point name"
 msgstr "Nazwa punktu odbioru"
 
+#: public/class-furgonetka-blocks.php:181
 msgid "Cash on delivery"
 msgstr "Płatność przy odbiorze"
 
-#: public/blocks/furgonetka-pickup-point/index.js:1
+#: public/class-furgonetka-blocks.php:189
+msgid "Selected point"
+msgstr "Wybrany punkt"
+
+#: public/class-furgonetka-blocks.php:195
+msgid "Selected point (COD)"
+msgstr "Wybrany punkt (płatność przy odbiorze)"
+
+#: public/class-furgonetka-blocks.php:279
+#: public/class-furgonetka-public.php:566
+msgid "Please select delivery point."
+msgstr "Proszę wybrać punkt odbioru."
+
+#: public/class-furgonetka-public.php:493
 msgid "Change point"
 msgstr "Zmień punkt odbioru"
+
+#: public/class-furgonetka-public.php:494
+msgid "Select point"
+msgstr "Wybierz punkt odbioru"
 
 #: public/blocks/furgonetka-pickup-point/index.js:1
 msgid "There was a problem loading the map. Please try again."
 msgstr "Wystąpił problem z załadowaniem mapy. Spróbuj ponownie."
 
-msgid "Manage Furgonetka module"
-msgstr "Zarządzanie modułem Furgonetka"
+#: public/blocks/furgonetka-checkout-filters/block.json
+msgctxt "block title"
+msgid "Furgonetka Checkout Filters"
+msgstr "Furgonetka filtry checkoutu"
 
-msgid "Furgonetka Koszyk checkout screen"
-msgstr "Ekran zamawiania Furgonetka Koszyk"
+#: public/blocks/furgonetka-pickup-point/block.json
+msgctxt "block title"
+msgid "Furgonetka Pickup Point Block"
+msgstr "Furgonetka blok punktu odbioru"
 
-msgid "Open with additional Furgonetka Koszyk button"
-msgstr "Otwieraj za pomocą dodatkowego przycisku Furgonetka Koszyk"
+#: admin/class-furgonetka-admin.php:903
+msgid "To left"
+msgstr "Do lewej"
 
-msgid "Open with native checkout button"
-msgstr "Otwieraj wbudowanym przyciskiem zamawiania"
+#: admin/class-furgonetka-admin.php:904
+msgid "Center"
+msgstr "Wycentrowany"
 
-msgid "You will see an additional Furgonetka Koszyk button in your shopping cart, opening Furgonetka Koszyk checkout in a new window."
-msgstr "W Twoim koszyku będzie widoczny dodatkowy przycisk Furgonetka Koszyk, otwierający checkout Furgonetka Koszyk w nowym oknie."
+#: admin/class-furgonetka-admin.php:905
+msgid "To right"
+msgstr "Do prawej"
 
-msgid "Your shopping cart will only show the standard checkout button, opening Furgonetka Koszyk checkout in a new window."
-msgstr "W Twoim koszyku będzie widoczny tylko standardowy przycisk sklepu, otwierający checkout Furgonetka Koszyk w nowym oknie."
+#: admin/class-furgonetka-admin.php:908
+msgid "Automatic"
+msgstr "Automatyczny"
+
+#: admin/class-furgonetka-admin.php:909
+msgid "Half width"
+msgstr "Połowa szerokości"
+
+#: admin/class-furgonetka-admin.php:910
+msgid "Full width"
+msgstr "Pełna szerokość"

@@ -116,8 +116,7 @@
                             <option value="<?php
                             echo $value; ?>"<?php
                             echo ($cart_button_position_value === $value) ? 'selected' : '' ?>>
-                                <?php
-                                esc_attr_e($label, 'furgonetka'); ?>
+                                <?= $label ?>
                             </option>
                         <?php
                         } ?>

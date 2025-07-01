@@ -93,13 +93,6 @@ class Furgonetka_Loader
                 'callback'      => 'addLinkToResponse',
                 'priority'      => 10,
                 'accepted_args' => 1
-            ),
-            array(
-                'hook'          => 'woocommerce_rest_pre_insert_shop_order_object',
-                'component'     => 'Furgonetka_Order',
-                'callback'      => 'rest_pre_insert_shop_order_object',
-                'priority'      => 10,
-                'accepted_args' => 3
             )
         );
     }

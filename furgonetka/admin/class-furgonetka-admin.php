@@ -27,7 +27,7 @@ class Furgonetka_Admin
     const PATH_ACCOUNT                  = '/account';
     const PATH_CREATE_OAUTH_APPLICATION = '/ecommerce/integrations/create-oauth-application';
     const PATH_CONFIGURATIONS           = '/ecommerce/integrations/configurations';
-    const PATH_CREATE_FORM_URL          = '/ecommerce/packages/create-form-url';
+    const PATH_PACKAGE_FORM_INIT        = '/ecommerce/packages/form/init';
     const PATH_FAST_SHIPPING_INIT       = '/ecommerce/packages/quick-action/init';
     const PATH_INVOICES_INIT            = '/ecommerce/invoices/quick-action/init';
     const PATH_APP_LINK_INIT            = '/ecommerce/app/link/init';
@@ -115,8 +115,9 @@ class Furgonetka_Admin
      const ACCOUNT_TYPE_COMPANY  = 'company';
 
     /**
-     * Modal actions
+     * Order actions
      */
+    const ACTION_PACKAGE_FORM_INIT  = 'package_form_init';
     const ACTION_FAST_SHIPPING_INIT = 'fast_shipping_init';
     const ACTION_INVOICES_INIT      = 'invoices_init';
 
@@ -477,7 +478,7 @@ class Furgonetka_Admin
             $order_id = sanitize_text_field( wp_unslash( $_POST['order_id'] ) );
 
             try {
-                $result = self::get_modal_init_url( $order_id, $action );
+                $result = self::get_action_init_url( $order_id, $action );
 
                 wp_send_json_success( array ( 'url' => $result ) );
             } catch ( Exception $e ) {
@@ -757,7 +758,10 @@ class Furgonetka_Admin
         try {
             $this->render_view(
                 'partials/furgonetka-admin-getpackageform.php',
-                array( 'furgonetka_package_form_url' => self::get_package_form_url( (int) $order_id ) )
+                [
+                    'furgonetka_package_form_url' =>
+                        self::get_action_init_url( (int) $order_id, self::ACTION_PACKAGE_FORM_INIT )
+                ]
             );
         } catch ( Exception $e ) {
             $this->log( $e );
@@ -896,14 +900,14 @@ class Furgonetka_Admin
     {
         $additional_data = [
             'position_options' => [
-                'To left' => 'left',
-                'Center' => 'center',
-                'To right' => 'right'
+                __('To left', 'furgonetka') => 'left',
+                __('Center', 'furgonetka') => 'center',
+                __('To right', 'furgonetka') => 'right'
             ],
             'width_options' => [
-                'Automatic' => 'auto',
-                'Half width' => 'half',
-                'Full width' => 'full'
+                __('Automatic', 'furgonetka') => 'auto',
+                __('Half width', 'furgonetka') => 'half',
+                __('Full width', 'furgonetka') => 'full'
             ]
         ];
 
@@ -1595,96 +1599,11 @@ class Furgonetka_Admin
     }
 
     /**
-     * Get package form url from API
-     *
-     * @param mixed $order_id     - order ID.
-     *
-     * @throws \Exception - url package error.
-     *
-     * @since 1.0.0
-     */
-    public static function get_package_form_url( $order_id )
-    {
-        $order_data = wc_get_order( $order_id );
-        $additional_services = array();
-
-        if ( ! $order_data ) {
-            throw new \Exception( __( 'Get package Form URL problem.', 'furgonetka' ) );
-        }
-
-        if ( $order_data->get_payment_method() === 'cod' ) {
-            $additional_services['cod'] = array(
-                'amount' => $order_data->get_total(),
-            );
-        }
-
-        $products_names = array();
-        $total_weight = 0;
-        foreach ( $order_data->get_items() as $item ) {
-            $products_names[] = $item['name'];
-            if ($item instanceof WC_Order_Item_Product && $item->get_product() instanceof WC_Product) {
-                $total_weight += ((float) $item->get_product()->get_weight() * (float) $item->get_quantity());
-            }
-        }
-
-        $parcels = array(
-            array(
-                'description' => implode(', ', $products_names),
-                'value'       => $order_data->get_total(),
-                'weight'      => $total_weight
-            )
-        );
-
-        $receiver = self::get_receiver( $order_data );
-
-        $reference = $order_data->get_order_number();
-
-        if ( empty( $reference ) ) {
-            $reference = $order_id;
-        }
-
-        $data = array(
-            'receiver'                 => $receiver,
-            'additional_services'      => $additional_services,
-            'service'                  => self::get_service( $order_data ),
-            'service_description'      => $order_data->get_shipping_method(),
-            'type'                     => 'package',
-            'partner_reference_number' => $reference,
-            'user_reference_number'    => $reference,
-            'parcels'                  => $parcels,
-            'sale_source_id'           => self::get_source_id(),
-            'integration_uuid'         => self::get_integration_uuid()
-        );
-
-        $result = self::send_rest_api_request('POST', self::PATH_CREATE_FORM_URL, self::authorization_headers(), $data );
-
-        if ( empty ( $result->url )) {
-            if ( ! empty( $result->errors ) ) {
-                $first_error = reset( $result->errors );
-
-                throw new \Exception( $first_error->path . ': ' . $first_error->message );
-            }
-
-            throw new \Exception( __( 'Get package Form URL problem.', 'furgonetka' ) );
-        }
-
-        /**
-         * Store order number in metadata
-         */
-        if ( $order_data->get_order_number() !== ( (string) $order_data->get_id() ) ) {
-            $order_data->update_meta_data( self::METADATA_FURGONETKA_ORDER_NUMBER, $order_data->get_order_number() );
-            $order_data->save();
-        }
-
-        return $result->url;
-    }
-
-    /**
      * @param mixed $order_id - order ID
      * @param string $action  - action
      * @throws \Exception     - error
      */
-    public static function get_modal_init_url( $order_id, $action ): string
+    public static function get_action_init_url($order_id, $action ): string
     {
         /**
          * Get order number
@@ -1710,7 +1629,9 @@ class Furgonetka_Admin
             'shopOrderId'     => $order_id
         );
 
-        if ( $action === self::ACTION_FAST_SHIPPING_INIT ) {
+        if ( $action === self::ACTION_PACKAGE_FORM_INIT ) {
+            $path = self::PATH_PACKAGE_FORM_INIT;
+        } elseif ( $action === self::ACTION_FAST_SHIPPING_INIT ) {
             $path = self::PATH_FAST_SHIPPING_INIT;
         } elseif ( $action === self::ACTION_INVOICES_INIT ) {
             $path = self::PATH_INVOICES_INIT;
@@ -1759,141 +1680,6 @@ class Furgonetka_Admin
         }
 
         return $response->url;
-    }
-
-    /**
-     * Get receiver from order
-     *
-     * @param bool|WC_Order|WC_Order_Refund $order_data - order data.
-     *
-     * @since 1.0.0
-     */
-    public static function get_receiver( $order_data )
-    {
-        if ( $order_data ) {
-            $point = $order_data->get_meta( '_furgonetkaPoint' );
-            $name = ! empty( $order_data->get_shipping_first_name() ) ?
-                $order_data->get_shipping_first_name() . ' ' . $order_data->get_shipping_last_name()
-                : $order_data->get_billing_first_name() . ' ' . $order_data->get_billing_last_name();
-            $email = $order_data->get_billing_email();
-            $company = ! empty( $order_data->get_shipping_company() ) ?
-                $order_data->get_shipping_company() : $order_data->get_billing_company();
-            $street = ! empty( $order_data->get_shipping_address_1() ) ?
-                $order_data->get_shipping_address_1() . ' ' . $order_data->get_shipping_address_2()
-                : $order_data->get_billing_address_1() . ' ' . $order_data->get_billing_address_2();
-            $post_code = ! empty( $order_data->get_shipping_postcode() ) ?
-                $order_data->get_shipping_postcode() : $order_data->get_billing_postcode();
-            $city = ! empty( $order_data->get_shipping_city() ) ?
-                $order_data->get_shipping_city() : $order_data->get_billing_city();
-            $country_code = ! empty( $order_data->get_shipping_country() ) ?
-                $order_data->get_shipping_country() : $order_data->get_billing_country();
-            $county = ! empty( $order_data->get_shipping_state() ) ?
-                $order_data->get_shipping_state() : $order_data->get_billing_state();
-            $phone = ! empty( $order_data->get_shipping_phone() ) ?
-                $order_data->get_shipping_phone() : $order_data->get_billing_phone();
-
-            $data = array(
-                'name'              => $name,
-                'email'             => $email,
-                'company'           => $company,
-                'street'            => $street,
-                'postcode'          => $post_code,
-                'city'              => $city,
-                'country_code'      => $country_code,
-                'county'            => $county,
-                'phone'             => $phone,
-                'point'             => $point,
-            );
-        } else {
-            $data = array(
-                'name'              => '',
-                'email'             => '',
-                'company'           => '',
-                'street'            => '',
-                'postcode'          => '',
-                'city'              => '',
-                'country_code'      => '',
-                'county'            => '',
-                'phone'             => '',
-                'point'             => '',
-            );
-        }
-        return $data;
-    }
-
-    /**
-     * Get furgonetka service name from order
-     *
-     * @param mixed $order_data - order data.
-     *
-     * @since 1.0.0.
-     */
-    public static function get_service( $order_data )
-    {
-        // Dhl, dpd, fedex, ups, inpost, inpostkurier, poczta, kex, ruch, xpress, gls.
-        $shipping_methods = $order_data->get_shipping_methods();
-        $shipping_name    = '';
-        foreach ( $shipping_methods as $shipping_method ) {
-            $data = $shipping_method->get_data();
-
-            $shipping_name = $data['method_id'] . ':' . $data['instance_id'];
-            if ( 'flexible_shipping' === $data['method_id'] ) {
-                if (
-                    isset( $shipping_method['item_meta'] )
-                    && isset( $shipping_method['item_meta']['_fs_method'] )
-                ) {
-                    $fs_method     = $shipping_method['item_meta']['_fs_method'];
-                    $shipping_name = $fs_method['id_for_shipping'];
-                }
-            }
-        }
-
-        $service = Furgonetka_Map::get_service_by_shipping_rate_id( $shipping_name );
-
-        if ( ! $service && $order_data ) {
-            $service = $order_data->get_meta( '_furgonetkaService' );
-        }
-
-        if ( ! empty( $service ) ) {
-            $type = '';
-            switch ( $service ) {
-                case 'inpost':
-                    $type = 'inpost';
-                    break;
-                case 'poczta':
-                    $type = 'poczta';
-                    break;
-                case 'kiosk':
-                    $type = 'ruch';
-                    break;
-                case 'uap':
-                    $type = 'ups';
-                    break;
-                case 'dpd':
-                    $type = 'dpd';
-                    break;
-                case 'dhl':
-                    $type = 'dhl';
-                    break;
-                case 'fedex':
-                    $type = 'fedex';
-                    break;
-                case 'gls':
-                    $type = 'gls';
-                    break;
-                case 'orlen':
-                    $type = 'orlen';
-                    break;
-                default:
-                    break;
-            }
-            return $type;
-        }
-        if ( ! $order_data ) {
-            return;
-        }
-
-        return '';
     }
 
     /**
