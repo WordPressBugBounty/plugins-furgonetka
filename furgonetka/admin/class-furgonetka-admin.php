@@ -63,14 +63,33 @@ class Furgonetka_Admin
     /**
      * Pages available within admin panel
      */
-    const PAGE_FURGONETKA = 'furgonetka';
-    const PAGE_FURGONETKA_PANEL_SETTINGS   = 'furgonetka_panel_settings';
-    const PAGE_FURGONETKA_WAITING_PACKAGES = 'furgonetka_waiting_packages';
-    const PAGE_FURGONETKA_ORDERED_PACKAGES = 'furgonetka_ordered_packages';
-    const PAGE_FURGONETKA_DOCUMENTS        = 'furgonetka_documents';
-    const PAGE_FURGONETKA_RETURNS          = 'furgonetka_returns';
-    const PAGE_FURGONETKA_MAP_SETTINGS     = 'furgonetka_map_settings';
-    const PAGE_FURGONETKA_ADVANCED         = 'furgonetka_advanced';
+    const PAGE_FURGONETKA                                  = 'furgonetka';
+    const PAGE_FURGONETKA_PANEL_SETTINGS                   = 'furgonetka_panel_settings';
+    const PAGE_FURGONETKA_WAITING_PACKAGES                 = 'furgonetka_waiting_packages';
+    const PAGE_FURGONETKA_ORDERED_PACKAGES                 = 'furgonetka_ordered_packages';
+    const PAGE_FURGONETKA_DOCUMENTS                        = 'furgonetka_documents';
+    const PAGE_FURGONETKA_RETURNS                          = 'furgonetka_returns';
+    const PAGE_FURGONETKA_MAP_SETTINGS                     = 'furgonetka_map_settings';
+    const PAGE_FURGONETKA_ADVANCED_INTERNAL                = 'furgonetka_advanced_internal';
+    const PAGE_FURGONETKA_CHECKOUT                         = 'furgonetka_checkout';
+    const PAGE_FURGONETKA_PAYMENT_METHODS                  = 'furgonetka_payment_methods';
+    const PAGE_FURGONETKA_COMPLAINTS                       = 'furgonetka_complaints';
+    const PAGE_FURGONETKA_ORDER_STATUS_CHANGE              = 'furgonetka_order_status_change';
+    const PAGE_FURGONETKA_ORDERS_RETURNS                   = 'furgonetka_orders_returns';
+    const PAGE_FURGONETKA_APPEARANCE                       = 'furgonetka_appearance';
+    const PAGE_FURGONETKA_ADDRESS_BOOK                     = 'furgonetka_address_book';
+    const PAGE_FURGONETKA_PACKAGE_TEMPLATES                = 'furgonetka_package_templates';
+    const PAGE_FURGONETKA_PRINTING                         = 'furgonetka_printing';
+    const PAGE_FURGONETKA_NOTIFICATIONS                    = 'furgonetka_notifications';
+    const PAGE_FURGONETKA_OWN_AGREEMENTS                   = 'furgonetka_own_agreements';
+    const PAGE_FURGONETKA_ACCOUNT_DETAILS                  = 'furgonetka_account_details';
+    const PAGE_FURGONETKA_ADVANCED                         = 'furgonetka_advanced';
+    const PAGE_FURGONETKA_HELP_AND_CONTACT                 = 'furgonetka_help_and_contact';
+    const PAGE_FURGONETKA_TERMS_AND_CONDITIONS             = 'furgonetka_terms_and_conditions';
+    const PAGE_FURGONETKA_BALANCE                          = 'furgonetka_balance';
+    const PAGE_FURGONETKA_LIST_OF_TRANSFERS                = 'furgonetka_list_of_transfers';
+    const PAGE_FURGONETKA_MY_PRICE_LISTS                   = 'furgonetka_my_price_lists';
+    const PAGE_FURGONETKA_INVOICES_AND_FINANCIAL_DOCUMENTS = 'furgonetka_invoices_and_financial_documents';
 
     /**
      * Actions available for the pages above
@@ -401,8 +420,52 @@ class Furgonetka_Admin
 
             add_submenu_page(
                 'furgonetka',
-                __('Attach map', 'furgonetka'),
-                __('Attach map', 'furgonetka'),
+                '-',
+                '-',
+                Furgonetka_Capabilities::CAPABILITY_MANAGE_FURGONETKA,
+                ''
+            );
+
+            add_submenu_page(
+                'furgonetka',
+                __('Checkout', 'furgonetka'),
+                __('Checkout', 'furgonetka'),
+                Furgonetka_Capabilities::CAPABILITY_MANAGE_FURGONETKA,
+                self::PAGE_FURGONETKA_CHECKOUT,
+                array( $this, 'get_furgonetka_iframe' )
+            );
+
+            add_submenu_page(
+                'furgonetka',
+                __('Payment methods', 'furgonetka'),
+                __('Payment methods', 'furgonetka'),
+                Furgonetka_Capabilities::CAPABILITY_MANAGE_FURGONETKA,
+                self::PAGE_FURGONETKA_PAYMENT_METHODS,
+                array( $this, 'get_furgonetka_iframe' )
+            );
+
+            add_submenu_page(
+                'furgonetka',
+                __('Order status change', 'furgonetka'),
+                __('Order status change', 'furgonetka'),
+                Furgonetka_Capabilities::CAPABILITY_MANAGE_FURGONETKA,
+                self::PAGE_FURGONETKA_ORDER_STATUS_CHANGE,
+                array( $this, 'get_furgonetka_iframe' )
+            );
+
+            add_submenu_page(
+                'furgonetka',
+                __('Orders returns', 'furgonetka'),
+                __('Orders returns', 'furgonetka'),
+                Furgonetka_Capabilities::CAPABILITY_MANAGE_FURGONETKA,
+                self::PAGE_FURGONETKA_ORDERS_RETURNS,
+                array( $this, 'get_furgonetka_iframe' )
+            );
+
+            add_submenu_page(
+                'furgonetka',
+                __('Map settings', 'furgonetka'),
+                __('Map settings', 'furgonetka'),
                 Furgonetka_Capabilities::CAPABILITY_MANAGE_FURGONETKA,
                 self::PAGE_FURGONETKA_MAP_SETTINGS,
                 array( $this, 'get_furgonetka_iframe' )
@@ -410,11 +473,172 @@ class Furgonetka_Admin
 
             add_submenu_page(
                 'furgonetka',
+                __('Appearance', 'furgonetka'),
+                __('Appearance', 'furgonetka'),
+                Furgonetka_Capabilities::CAPABILITY_MANAGE_FURGONETKA,
+                self::PAGE_FURGONETKA_APPEARANCE,
+                array( $this, 'get_furgonetka_iframe' )
+            );
+
+            add_submenu_page(
+                'furgonetka',
+                __('Advanced settings', 'furgonetka'),
+                __('Advanced settings', 'furgonetka'),
+                Furgonetka_Capabilities::CAPABILITY_MANAGE_FURGONETKA,
+                self::PAGE_FURGONETKA_ADVANCED_INTERNAL,
+                array( $this, 'get_furgonetka_advanced' )
+            );
+
+            add_submenu_page(
+                'furgonetka',
+                '-',
+                '-',
+                Furgonetka_Capabilities::CAPABILITY_MANAGE_FURGONETKA,
+                ''
+            );
+
+            add_submenu_page(
+                'furgonetka',
+                __('Address book', 'furgonetka'),
+                __('Address book', 'furgonetka'),
+                Furgonetka_Capabilities::CAPABILITY_MANAGE_FURGONETKA,
+                self::PAGE_FURGONETKA_ADDRESS_BOOK,
+                array( $this, 'get_furgonetka_iframe' )
+            );
+
+            add_submenu_page(
+                'furgonetka',
+                __('Package templates', 'furgonetka'),
+                __('Package templates', 'furgonetka'),
+                Furgonetka_Capabilities::CAPABILITY_MANAGE_FURGONETKA,
+                self::PAGE_FURGONETKA_PACKAGE_TEMPLATES,
+                array( $this, 'get_furgonetka_iframe' )
+            );
+
+            add_submenu_page(
+                'furgonetka',
+                __('Printing', 'furgonetka'),
+                __('Printing', 'furgonetka'),
+                Furgonetka_Capabilities::CAPABILITY_MANAGE_FURGONETKA,
+                self::PAGE_FURGONETKA_PRINTING,
+                array( $this, 'get_furgonetka_iframe' )
+            );
+
+            add_submenu_page(
+                'furgonetka',
+                __('Notifications', 'furgonetka'),
+                __('Notifications', 'furgonetka'),
+                Furgonetka_Capabilities::CAPABILITY_MANAGE_FURGONETKA,
+                self::PAGE_FURGONETKA_NOTIFICATIONS,
+                array( $this, 'get_furgonetka_iframe' )
+            );
+
+
+            add_submenu_page(
+                'furgonetka',
+                __('Own agreements', 'furgonetka'),
+                __('Own agreements', 'furgonetka'),
+                Furgonetka_Capabilities::CAPABILITY_MANAGE_FURGONETKA,
+                self::PAGE_FURGONETKA_OWN_AGREEMENTS,
+                array( $this, 'get_furgonetka_iframe' )
+            );
+
+
+            add_submenu_page(
+                'furgonetka',
                 __('Advanced', 'furgonetka'),
                 __('Advanced', 'furgonetka'),
                 Furgonetka_Capabilities::CAPABILITY_MANAGE_FURGONETKA,
                 self::PAGE_FURGONETKA_ADVANCED,
-                array( $this, 'get_furgonetka_advanced' )
+                array( $this, 'get_furgonetka_iframe' )
+            );
+
+            add_submenu_page(
+                'furgonetka',
+                '-',
+                '-',
+                Furgonetka_Capabilities::CAPABILITY_MANAGE_FURGONETKA,
+                ''
+            );
+
+            add_submenu_page(
+                'furgonetka',
+                __('Account details', 'furgonetka'),
+                __('Account details', 'furgonetka'),
+                Furgonetka_Capabilities::CAPABILITY_MANAGE_FURGONETKA,
+                self::PAGE_FURGONETKA_ACCOUNT_DETAILS,
+                array( $this, 'get_furgonetka_iframe' )
+            );
+
+            add_submenu_page(
+                'furgonetka',
+                __('Help and contact', 'furgonetka'),
+                __('Help and contact', 'furgonetka'),
+                Furgonetka_Capabilities::CAPABILITY_MANAGE_FURGONETKA,
+                self::PAGE_FURGONETKA_HELP_AND_CONTACT,
+                array( $this, 'get_furgonetka_iframe' )
+            );
+
+            add_submenu_page(
+                'furgonetka',
+                __('Terms and Conditions', 'furgonetka'),
+                __('Terms and Conditions', 'furgonetka'),
+                Furgonetka_Capabilities::CAPABILITY_MANAGE_FURGONETKA,
+                self::PAGE_FURGONETKA_TERMS_AND_CONDITIONS,
+                array( $this, 'get_furgonetka_iframe' )
+            );
+
+            add_submenu_page(
+                'furgonetka',
+                '-',
+                '-',
+                Furgonetka_Capabilities::CAPABILITY_MANAGE_FURGONETKA,
+                ''
+            );
+
+            add_submenu_page(
+                'furgonetka',
+                __('Balance', 'furgonetka'),
+                __('Balance', 'furgonetka'),
+                Furgonetka_Capabilities::CAPABILITY_MANAGE_FURGONETKA,
+                self::PAGE_FURGONETKA_BALANCE,
+                array( $this, 'get_furgonetka_iframe' )
+            );
+
+            add_submenu_page(
+                'furgonetka',
+                __('My price lists', 'furgonetka'),
+                __('My price lists', 'furgonetka'),
+                Furgonetka_Capabilities::CAPABILITY_MANAGE_FURGONETKA,
+                self::PAGE_FURGONETKA_MY_PRICE_LISTS,
+                array( $this, 'get_furgonetka_iframe' )
+            );
+
+            add_submenu_page(
+                'furgonetka',
+                __('Invoices and financial documents', 'furgonetka'),
+                __('Invoices and financial documents', 'furgonetka'),
+                Furgonetka_Capabilities::CAPABILITY_MANAGE_FURGONETKA,
+                self::PAGE_FURGONETKA_INVOICES_AND_FINANCIAL_DOCUMENTS,
+                array( $this, 'get_furgonetka_iframe' )
+            );
+
+            add_submenu_page(
+                'furgonetka',
+                __('List of transfers', 'furgonetka'),
+                __('List of transfers', 'furgonetka'),
+                Furgonetka_Capabilities::CAPABILITY_MANAGE_FURGONETKA,
+                self::PAGE_FURGONETKA_LIST_OF_TRANSFERS,
+                array( $this, 'get_furgonetka_iframe' )
+            );
+
+            add_submenu_page(
+                'furgonetka',
+                __('Complaints', 'furgonetka'),
+                __('Complaints', 'furgonetka'),
+                Furgonetka_Capabilities::CAPABILITY_MANAGE_FURGONETKA,
+                self::PAGE_FURGONETKA_COMPLAINTS,
+                array( $this, 'get_furgonetka_iframe' )
             );
         }
 
@@ -465,7 +689,7 @@ class Furgonetka_Admin
         if ( empty( self::get_integration_uuid() ) ) {
             wp_send_json_error(
                 array(
-                    'redirect_url'  => self::get_plugin_admin_url( self::PAGE_FURGONETKA_ADVANCED ),
+                    'redirect_url'  => self::get_plugin_admin_url( self::PAGE_FURGONETKA_ADVANCED_INTERNAL ),
                     'error_message' => self::get_error_message_by_action( $action, self::MODAL_ERROR_NO_INTEGRATION_UUID ),
                 )
             );

@@ -288,7 +288,13 @@ class Furgonetka_Cart
      */
     private function internal_get_coupons()
     {
-        $coupons_raw = (array) maybe_unserialize( $this->get_session()['coupon_discount_totals'] );
+        $session = $this->get_session();
+
+        if ( ! isset( $session['coupon_discount_totals'] ) ) {
+            return [];
+        }
+
+        $coupons_raw = (array) maybe_unserialize( $session['coupon_discount_totals'] );
         $coupons     = array();
 
         foreach ( $coupons_raw as $code => $discount ) {

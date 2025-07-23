@@ -31,17 +31,17 @@ msgstr "https://furgonetka.pl"
 msgid "Połącz swój sklep z modułem Furgonetka.pl! Generuj etykiety, twórz szablony przesyłek, śledź statusy paczek. Nadawaj paczki szybko i tanio korzystając z 10 firm kurierskich."
 msgstr "Połącz swój sklep z modułem Furgonetka.pl! Generuj etykiety, twórz szablony przesyłek, śledź statusy paczek. Nadawaj paczki szybko i tanio korzystając z 10 firm kurierskich."
 
-#: admin/class-furgonetka-admin.php:322
+#: admin/class-furgonetka-admin.php:341
 msgid "Settings"
 msgstr "Ustawienia"
 
-#: admin/class-furgonetka-admin.php:325
+#: admin/class-furgonetka-admin.php:344
 msgid "Contact"
 msgstr "Kontakt"
 
-#: admin/class-furgonetka-admin.php:345
-#: admin/class-furgonetka-admin.php:346
-#: admin/class-furgonetka-admin.php:577
+#: admin/class-furgonetka-admin.php:364
+#: admin/class-furgonetka-admin.php:365
+#: admin/class-furgonetka-admin.php:801
 #: includes/class-furgonetka-admin-metaboxes.php:160
 #: includes/class-furgonetka-api-keys.php:72
 #: includes/class-furgonetka-capabilities.php:124
@@ -49,84 +49,79 @@ msgstr "Kontakt"
 msgid "Furgonetka"
 msgstr "Furgonetka"
 
-#: admin/class-furgonetka-admin.php:357
-#: admin/class-furgonetka-admin.php:358
+#: admin/class-furgonetka-admin.php:376
+#: admin/class-furgonetka-admin.php:377
 msgid "Plugin panel"
 msgstr "Panel pluginu"
 
-#: admin/class-furgonetka-admin.php:366
-#: admin/class-furgonetka-admin.php:367
+#: admin/class-furgonetka-admin.php:385
+#: admin/class-furgonetka-admin.php:386
 msgid "To send"
 msgstr "Do wysłania"
 
-#: admin/class-furgonetka-admin.php:375
-#: admin/class-furgonetka-admin.php:376
+#: admin/class-furgonetka-admin.php:394
+#: admin/class-furgonetka-admin.php:395
 msgid "Ordered"
 msgstr "Zamówione"
 
-#: admin/class-furgonetka-admin.php:385
-#: admin/class-furgonetka-admin.php:386
+#: admin/class-furgonetka-admin.php:404
+#: admin/class-furgonetka-admin.php:405
 msgid "Invoices"
 msgstr "Faktury"
 
-#: admin/class-furgonetka-admin.php:395
-#: admin/class-furgonetka-admin.php:396
+#: admin/class-furgonetka-admin.php:414
+#: admin/class-furgonetka-admin.php:415
 msgid "Shopping returns"
 msgstr "Zwroty zakupów"
 
-#: admin/class-furgonetka-admin.php:404
-#: admin/class-furgonetka-admin.php:405
-msgid "Attach map"
-msgstr "Dołącz mapę"
-
-#: admin/class-furgonetka-admin.php:413
-#: admin/class-furgonetka-admin.php:414
+#: admin/class-furgonetka-admin.php:549
+#: admin/class-furgonetka-admin.php:550
 msgid "Advanced"
 msgstr "Zaawansowane"
 
-#: admin/class-furgonetka-admin.php:504
+#: admin/class-furgonetka-admin.php:728
 msgid "Error occurred while executing fast shipping. Please connect module with Furgonetka.pl account."
 msgstr "Wystąpił błąd podczas wykonywania szybkiej przesyłki. Proszę połączyć moduł z kontem na Furgonetka.pl."
 
-#: admin/class-furgonetka-admin.php:505
+#: admin/class-furgonetka-admin.php:729
 msgid "Error occurred while executing fast shipping. Please reconnect module with Furgonetka.pl account."
 msgstr "Wystąpił błąd podczas wykonywania szybkiej przesyłki. Proszę ponownie połączyć moduł z kontem na Furgonetka.pl."
 
-#: admin/class-furgonetka-admin.php:506
+#: admin/class-furgonetka-admin.php:730
 msgid "Error occurred while executing fast shipping."
 msgstr "Wystąpił błąd podczas wykonywania szybkiej przesyłki."
 
-#: admin/class-furgonetka-admin.php:509
+#: admin/class-furgonetka-admin.php:733
 msgid "Error occurred while processing the invoice creation. Please connect module with Furgonetka.pl account."
 msgstr "Wystąpił błąd podczas przetwarzania procesu tworzenia faktury. Prosimy o połączenie modułu z kontem Furgonetka.pl."
 
-#: admin/class-furgonetka-admin.php:510
+#: admin/class-furgonetka-admin.php:734
 msgid "Error occurred while processing the invoice creation. Please reconnect module with Furgonetka.pl account."
 msgstr "Wystąpił błąd podczas przetwarzania procesu tworzenia faktury. Prosimy o ponowne połączenie modułu z kontem Furgonetka.pl."
 
-#: admin/class-furgonetka-admin.php:511
+#: admin/class-furgonetka-admin.php:735
 msgid "Error occurred while processing the invoice creation."
 msgstr "Wystąpił błąd podczas przetwarzania procesu tworzenia faktury."
 
-#: admin/class-furgonetka-admin.php:519
+#: admin/class-furgonetka-admin.php:743
 msgid "An unexpected error occurred, please try later."
 msgstr "Wystąpił nieoczekiwany błąd, spróbuj później."
 
-#: admin/class-furgonetka-admin.php:1208
+#: admin/class-furgonetka-admin.php:1432
 msgid "Configuration saved successfully."
 msgstr "Konfiguracja została pomyślnie zapisana."
 
-#: admin/class-furgonetka-admin.php:1224
-#: admin/class-furgonetka-admin.php:1242
-#: admin/class-furgonetka-admin.php:1479
+#: admin/class-furgonetka-admin.php:1448
+#: admin/class-furgonetka-admin.php:1466
+#: admin/class-furgonetka-admin.php:1703
 msgid "Add integration source problem"
 msgstr "Wystąpił problem podczas dodawania integracji"
 
-#: admin/class-furgonetka-admin.php:1595
+#: admin/class-furgonetka-admin.php:1819
 msgid "Balance GET problem"
 msgstr "Wystąpił problem podczas pobierania stanu konta."
 
-#: admin/class-furgonetka-admin.php:2048
+#: admin/class-furgonetka-admin.php:2272
 msgid "You do not have sufficient permissions to access this page."
 msgstr "Nie posiadasz uprawnień aby zobaczyć tę stronę"
 
@@ -182,10 +177,12 @@ msgstr "Punkt odbioru"
 msgid "Package"
 msgstr "Przesyłka"
 
+#: admin/class-furgonetka-admin.php:485
+#: admin/class-furgonetka-admin.php:486
 #: includes/view/furgonetka-advanced.php:5
 #: includes/view/furgonetka-advanced.php:7
 msgid "Advanced settings"
-msgstr "Zaawansowane ustawienia"
+msgstr "Ustawienia zaawansowane"
 
 #: includes/view/furgonetka-advanced.php:10
 msgid "Settings below are for advanced users with at least basic programming/web development knowledge."
@@ -326,26 +323,121 @@ msgctxt "block title"
 msgid "Furgonetka Pickup Point Block"
 msgstr "Furgonetka blok punktu odbioru"
 
-#: admin/class-furgonetka-admin.php:903
+#: admin/class-furgonetka-admin.php:1127
 msgid "To left"
 msgstr "Do lewej"
 
-#: admin/class-furgonetka-admin.php:904
+#: admin/class-furgonetka-admin.php:1128
 msgid "Center"
 msgstr "Wycentrowany"
 
-#: admin/class-furgonetka-admin.php:905
+#: admin/class-furgonetka-admin.php:1129
 msgid "To right"
 msgstr "Do prawej"
 
-#: admin/class-furgonetka-admin.php:908
+#: admin/class-furgonetka-admin.php:1132
 msgid "Automatic"
 msgstr "Automatyczny"
 
-#: admin/class-furgonetka-admin.php:909
+#: admin/class-furgonetka-admin.php:1133
 msgid "Half width"
 msgstr "Połowa szerokości"
 
-#: admin/class-furgonetka-admin.php:910
+#: admin/class-furgonetka-admin.php:1134
 msgid "Full width"
 msgstr "Pełna szerokość"
+
+#: admin/class-furgonetka-admin.php:431
+#: admin/class-furgonetka-admin.php:432
+msgid "Checkout"
+msgstr "Koszyk"
+
+#: admin/class-furgonetka-admin.php:440
+#: admin/class-furgonetka-admin.php:441
+msgid "Payment methods"
+msgstr "Metody płatności"
+
+#: admin/class-furgonetka-admin.php:449
+#: admin/class-furgonetka-admin.php:450
+msgid "Order status change"
+msgstr "Zmiana statusu"
+
+#: admin/class-furgonetka-admin.php:458
+#: admin/class-furgonetka-admin.php:459
+msgid "Orders returns"
+msgstr "Zwroty"
+
+#: admin/class-furgonetka-admin.php:467
+#: admin/class-furgonetka-admin.php:468
+msgid "Map settings"
+msgstr "Ustawienia map"
+
+#: admin/class-furgonetka-admin.php:476
+#: admin/class-furgonetka-admin.php:477
+msgid "Appearance"
+msgstr "Wizerunek"
+
+#: admin/class-furgonetka-admin.php:502
+#: admin/class-furgonetka-admin.php:503
+msgid "Address book"
+msgstr "Książka adresowa"
+
+#: admin/class-furgonetka-admin.php:511
+#: admin/class-furgonetka-admin.php:512
+msgid "Package templates"
+msgstr "Szablony przesyłek"
+
+#: admin/class-furgonetka-admin.php:520
+#: admin/class-furgonetka-admin.php:521
+msgid "Printing"
+msgstr "Drukowanie"
+
+#: admin/class-furgonetka-admin.php:529
+#: admin/class-furgonetka-admin.php:530
+msgid "Notifications"
+msgstr "Powiadomienia"
+
+#: admin/class-furgonetka-admin.php:539
+#: admin/class-furgonetka-admin.php:540
+msgid "Own agreements"
+msgstr "Umowy własne"
+
+#: admin/class-furgonetka-admin.php:566
+#: admin/class-furgonetka-admin.php:567
+msgid "Account details"
+msgstr "Dane konta"
+
+#: admin/class-furgonetka-admin.php:584
+#: admin/class-furgonetka-admin.php:585
+msgid "Terms and Conditions"
+msgstr "Zgody"
+
+#: admin/class-furgonetka-admin.php:601
+#: admin/class-furgonetka-admin.php:602
+msgid "Balance"
+msgstr "Saldo"
+
+#: admin/class-furgonetka-admin.php:610
+#: admin/class-furgonetka-admin.php:611
+msgid "My price lists"
+msgstr "Moje cenniki"
+
+#: admin/class-furgonetka-admin.php:619
+#: admin/class-furgonetka-admin.php:620
+msgid "Invoices and financial documents"
+msgstr "Faktury i dokumenty finansowe"
+
+#: admin/class-furgonetka-admin.php:628
+#: admin/class-furgonetka-admin.php:629
+msgid "List of transfers"
+msgstr "Lista przelewów"
+
+#: admin/class-furgonetka-admin.php:637
+#: admin/class-furgonetka-admin.php:638
+msgid "Complaints"
+msgstr "Reklamacje"
+
+#: admin/class-furgonetka-admin.php:575
+#: admin/class-furgonetka-admin.php:576
+msgid "Help and contact"
+msgstr "Pomoc i kontakt"
