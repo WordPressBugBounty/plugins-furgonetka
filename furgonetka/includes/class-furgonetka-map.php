@@ -7,6 +7,10 @@
  * @author     Furgonetka.pl <woocommerce@furgonetka.pl>
  */
 class Furgonetka_Map {
+    const SERVICES_ALIASES = [
+        'kiosk' => Furgonetka_Public::SERVICE_ORLEN,
+        'uap'   => Furgonetka_Public::SERVICE_UPS,
+    ];
 
     /**
      * Get map configuration
@@ -21,7 +25,12 @@ class Furgonetka_Map {
             return array();
         }
 
-        return $delivery_to_type;
+        return array_map(
+            static function ( $service ) {
+                return self::SERVICES_ALIASES[ $service ] ?? $service;
+            },
+            $delivery_to_type
+        );
     }
 
     /**

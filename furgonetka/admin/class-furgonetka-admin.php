@@ -31,6 +31,7 @@ class Furgonetka_Admin
     const PATH_FAST_SHIPPING_INIT       = '/ecommerce/packages/quick-action/init';
     const PATH_INVOICES_INIT            = '/ecommerce/invoices/quick-action/init';
     const PATH_APP_LINK_INIT            = '/ecommerce/app/link/init';
+    const PATH_CHECKOUT_CART            = '/e-commerce/checkout/cart';
 
     const API_OAUTH_URL      = 'https://api.furgonetka.pl/oauth';
 	const TEST_API_OAUTH_URL = 'https://api.sandbox.furgonetka.pl/oauth';
@@ -881,7 +882,8 @@ class Furgonetka_Admin
             'shippings',
             'payments',
             'coupons',
-            'totals'
+            'totals',
+            'v3/create-cart',
         ];
 
         $checkout_rest_urls = [];
@@ -1904,6 +1906,35 @@ class Furgonetka_Admin
         }
 
         return $response->url;
+    }
+
+    /**
+     * @return array|null
+     * @throws Exception
+     */
+    public static function create_checkout_cart( array $data )
+    {
+        $response = self::send_rest_api_request(
+            'POST',
+            self::PATH_CHECKOUT_CART,
+            self::authorization_headers(),
+            $data
+        );
+
+        if ( empty ( $response->cartUuid ) || empty( $response->cartToken ) ) {
+            if ( ! empty( $response->errors ) ) {
+                $first_error = reset( $response->errors );
+
+                throw new Exception( $first_error->path . ': ' . $first_error->message );
+            }
+
+            throw new Exception();
+        }
+
+        return [
+            'cartUuid'  => $response->cartUuid,
+            'cartToken' => $response->cartToken,
+        ];
     }
 
     /**

@@ -442,3 +442,6 @@ msgstr ""
 msgctxt "block title"
 msgid "Furgonetka Pickup Point Block"
 msgstr ""
+
+msgid "Error occurred while creating cart."
+msgstr ""

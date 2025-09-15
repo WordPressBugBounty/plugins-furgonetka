@@ -1,7 +1,11 @@
 <?php
 
+require_once plugin_dir_path( __FILE__ ) . '../trait/trait-furgonetka-logger.php';
+
 class Furgonetka_Cart
 {
+    use Furgonetka_Logger;
+
     private static $session;
 
     /**
@@ -513,5 +517,323 @@ class Furgonetka_Cart
         $woocommerce->cart->remove_coupons();
 
         return $this->response( [] );
+    }
+
+    /**
+     * @return WP_REST_Response|WP_Error
+     * @throws Exception
+     */
+    public function create_cart( $request )
+    {
+        /**
+         * Get data from cart
+         */
+        $response = $this->get_store_api_cart_response( $request );
+        $parsed = $this->parse_store_api_cart( $response->get_data(), $this->get_authorization_headers( $response ) );
+
+        /**
+         * Send request
+         */
+        try {
+            $createdCart = Furgonetka_Admin::create_checkout_cart(
+                array_merge(
+                    [
+                        'integrationUuid' => Furgonetka_Admin::get_integration_uuid(),
+                    ],
+                    $parsed
+                )
+            );
+        } catch ( Exception $e ) {
+            $this->log( $e );
+
+            return new WP_Error(
+                'furgonetka_cart_create_error',
+                __( 'Error occurred while creating cart.', 'furgonetka' ),
+                [
+                    'status' => 500,
+                ]
+            );
+        }
+
+        /**
+         * Return parsed response
+         */
+        return $this->response( $createdCart );
+    }
+
+    /**
+     * @return WP_REST_Response|WP_Error
+     * @throws Exception
+     */
+    public function get_cart( WP_REST_Request $request )
+    {
+        /**
+         * Allow authorization via Cart-Token only
+         */
+        $cart_token = $request->get_header( 'Cart-Token' );
+        $cookie     = $request->get_header( 'Cookie' );
+
+        if ( empty( $cart_token ) || ! empty( $cookie ) ) {
+            return new WP_Error( 'furgonetka_invalid_authorization', __( 'You do not have sufficient permissions to access this page.', 'furgonetka' ), array( 'status' => 400 ) );
+        }
+
+        /**
+         * Get data from cart
+         */
+        $response = $this->get_store_api_cart_response( $request );
+        $parsed   = $this->parse_store_api_cart( $response->get_data(), $this->get_authorization_headers( $response )  );
+
+        /**
+         * Return parsed response
+         */
+        return $this->response( $parsed );
+    }
+
+    /**
+     * @throws Exception
+     */
+    private function get_store_api_cart_response( WP_REST_Request $request ): WP_REST_Response
+    {
+        $new_request = new WP_REST_Request( 'GET' );
+        $new_request->set_headers( $request->get_headers() );
+
+        /** @var \Automattic\WooCommerce\Blocks\Registry\Container $container */
+        $container = \Automattic\WooCommerce\StoreApi\StoreApi::container();
+
+        /** @var \Automattic\WooCommerce\StoreApi\RoutesController $controller */
+        $controller = $container->get( \Automattic\WooCommerce\StoreApi\RoutesController::class );
+
+        /** @var \Automattic\WooCommerce\StoreApi\Routes\V1\Cart $route */
+        $route = $controller->get( \Automattic\WooCommerce\StoreApi\Routes\V1\Cart::IDENTIFIER );
+
+        return $route->get_response( $new_request );
+    }
+
+    private function get_authorization_headers(WP_REST_Response $response ): array
+    {
+        return array_intersect_key(
+            $response->get_headers(),
+            array_flip(
+                [
+                    'Cart-Token',
+                ]
+            )
+        );
+    }
+
+    private function parse_store_api_cart( array $data, array $authorization_data ): array
+    {
+        /**
+         * Prepare data
+         */
+        $totals = get_object_vars( $data[ 'totals' ] );
+
+        /**
+         * Prepare currency formatter
+         */
+        $divider      = 10 ** $totals[ 'currency_minor_unit' ];
+        $format_price = static function ($price) use ($divider) { return $price / $divider; };
+
+        /**
+         * Get configured payment gateways
+         */
+        $payment_gateways = $this->get_payment_gateways();
+
+        $payment_gateways_pay_by_link = $payment_gateways[ 'payByLink' ];
+        $payment_gateway_cod          = $payment_gateways[ 'cod' ];
+
+        /**
+         * Parse basic cart data
+         */
+        $cart = [
+            'id'            => WC()->session->get_customer_id(),
+            'currency'      => $totals[ 'currency_code' ],
+            'totalGross'    => $format_price( $totals[ 'total_items' ] + $totals[ 'total_items_tax' ] ),
+            'products'      => [],
+        ];
+
+        if (!empty($data[ 'coupons' ])) {
+            $discountCodes = array_column( $data['coupons'], 'code' );
+
+            if (!empty($discountCodes)) {
+                $cart[ 'discountCodes' ] = $discountCodes;
+                $cart[ 'discountGross' ] = $format_price( $totals[ 'total_discount' ] + $totals[ 'total_discount_tax' ] );
+            }
+        }
+        /**
+         * Parse products
+         */
+        foreach ($data[ 'items' ] ?? [] as $product_data) {
+            $product_object = wc_get_product( $product_data[ 'id' ] );
+            $product_totals = get_object_vars( $product_data[ 'totals' ] );
+
+            /**
+             * Base product data
+             */
+            $product = [
+                'id'        => $product_data[ 'id' ],
+                'name'      => $product_data[ 'name' ],
+                'quantity'  => $product_data[ 'quantity' ],
+                'imageUrl'  => $product_data[ 'images' ][ 0 ]->src ?? null,
+                'isDigital' => $product_object && $product_object->get_virtual(),
+                'unit'      => 'pc',
+            ];
+
+            if ( $product_data[ 'quantity' ] > 0 ) {
+                $total_price_with_tax = (float) ( $product_totals[ 'line_subtotal' ] ?? 0 ) + (float) ( $product_totals[ 'line_subtotal_tax' ] ?? 0 );
+                $price_with_tax_per_item = round( $total_price_with_tax / (float) $product_data[ 'quantity' ], 2 );
+
+                $product[ 'priceGross' ] = $format_price( $price_with_tax_per_item );
+            } else {
+                $product[ 'priceGross' ] = 0;
+            }
+
+            /**
+             * Attributes
+             */
+            $attributes = [];
+
+            if ( ! empty( $product_data[ 'variation' ] ) ) {
+                foreach ( $product_data[ 'variation' ] as $attribute_data) {
+                    $attributes[] = [
+                        'name' =>  $attribute_data[ 'attribute' ],
+                        'value' => $attribute_data[ 'value' ],
+                    ];
+                }
+            }
+
+            $product[ 'attributes' ] = $attributes;
+
+            /**
+             * Add parsed product
+             */
+            $cart[ 'products' ][] = $product;
+        }
+
+        /**
+         * Parse shipping methods
+         */
+        $shipping_methods = [];
+
+        if ( $data[ 'needs_shipping' ] ) {
+            $furgonetka_map_configuration = Furgonetka_Map::get_configuration();
+
+            foreach ($data[ 'shipping_rates' ][ 0 ][ 'shipping_rates' ] as $shipping_method_data) {
+                /**
+                 * Basic shipping method data
+                 */
+                $rate_id = $shipping_method_data[ 'rate_id' ];
+                $shipping_method = [
+                    'id'         => $rate_id,
+                    'name'       => $shipping_method_data[ 'name' ],
+                    'priceGross' => $format_price( (float) $shipping_method_data[ 'price' ] + (float) $shipping_method_data[ 'taxes' ] ),
+                ];
+
+                /**
+                 * Map configuration
+                 */
+                if ( ! empty( $furgonetka_map_configuration[ $rate_id ] ) ) {
+                    $shipping_method[ 'mapConfig' ] = [
+                        'courierService' => $furgonetka_map_configuration[ $rate_id ],
+                    ];
+                }
+
+                /**
+                 * Payment methods available for the current shipping method
+                 */
+                $shipping_method_payment_gateways = array_map(
+                    static function ( $payment_gateway ) {
+                        return $payment_gateway->id;
+                    },
+                    $payment_gateways_pay_by_link
+                );
+
+                if ( $payment_gateway_cod instanceof WC_Gateway_COD ) {
+                    /** @var string[] $enable_for_methods */
+                    $enable_for_methods = $payment_gateway_cod->get_option( 'enable_for_methods', [] );
+
+                    if ( in_array( $rate_id, $enable_for_methods, true ) ) {
+                        $shipping_method_payment_gateways[] = $payment_gateway_cod->id;
+                    }
+                }
+
+                $shipping_method[ 'paymentMethods' ] = [];
+
+                foreach ( $shipping_method_payment_gateways as $payment_gateway ) {
+                    $shipping_method[ 'paymentMethods' ][] = [
+                        'paymentMethodId' => $payment_gateway,
+                        'surchargeGross'  => 0,
+                    ];
+                }
+
+                /**
+                 * Add parsed shipping method
+                 */
+                $shipping_methods[] = $shipping_method;
+            }
+        }
+
+        /**
+         * Parse payment methods
+         */
+        $payment_methods = [];
+
+        /** @var Furgonetka_Gateway_Abstract $payment_gateway */
+        foreach ( $payment_gateways_pay_by_link as $payment_gateway ) {
+            $payment_methods[] = [
+                'id'       => $payment_gateway->id,
+                'name'     => $payment_gateway->title,
+                'provider' => $payment_gateway->provider,
+                'type'     => 'payByLink',
+            ];
+        }
+
+        if ( $payment_gateway_cod instanceof WC_Gateway_COD ) {
+            $payment_methods[] = [
+                'id'       => $payment_gateway_cod->id,
+                'name'     => $payment_gateway_cod->title,
+                'type'     => 'cod',
+            ];
+        }
+
+        /**
+         * Send request
+         */
+        return [
+            'authorization'   => $authorization_data,
+            'cart'            => $cart,
+            'shippingMethods' => $shipping_methods,
+            'paymentMethods'  => $payment_methods,
+        ];
+    }
+
+    /**
+     * Get payment gateways grouped by type
+     */
+    private function get_payment_gateways(): array
+    {
+        return [
+            'cod'       => $this->get_payment_gateway_cod(),
+            'payByLink' => [
+                new Furgonetka_Gateway_Autopay(),
+                new Furgonetka_Gateway_Payu(),
+                new Furgonetka_Gateway_Przelewy24(),
+                new Furgonetka_Gateway_Tpay(),
+            ],
+        ];
+    }
+
+    /**
+     * @return WC_Gateway_COD|null
+     */
+    private function get_payment_gateway_cod()
+    {
+        foreach ( WC()->payment_gateways()->payment_gateways() as $payment_gateway ) {
+            if ( $payment_gateway instanceof WC_Gateway_COD ) {
+                return $payment_gateway;
+            }
+        }
+
+        return null;
     }
 }

@@ -85,7 +85,7 @@ class Furgonetka_Public
     const SERVICE_DPD            = 'dpd';
     const SERVICE_DHL            = 'dhl';
     const SERVICE_ORLEN          = 'orlen';
-    const SERVICE_UPSACCESSPOINT = 'uap';
+    const SERVICE_UPS            = 'ups';
     const SERVICE_GLS            = 'gls';
     const SERVICE_FEDEX          = 'fedex';
 
@@ -139,8 +139,7 @@ class Furgonetka_Public
         $furgonetkaBaseUrl = Furgonetka_Admin::get_test_mode() ? 'https://sandbox.furgonetka.pl' : 'https://furgonetka.pl';
 
         if ( Furgonetka_Admin::is_checkout_active() ) {
-            $checkout_file_path = 'js/woocommerce-checkout' . ( Furgonetka_Admin::get_test_mode()
-                    ? '-sandbox' : '-prod' ) . '.js';
+            $checkout_file_path = 'js/furgonetka-checkout.js';
             wp_enqueue_script(
                 "$this->plugin_name-checkout",
                 plugin_dir_url( __FILE__ ) . $checkout_file_path,
@@ -157,7 +156,7 @@ class Furgonetka_Public
                 'portmonetka_settings',
                 array(
                     'portmonetka_uuid'   => Furgonetka_Admin::get_checkout_uuid(),
-                    'is_test_mode'       => (int) Furgonetka_Admin::is_checkout_test_mode(),
+                    'is_test_mode'       => (int) Furgonetka_Admin::get_test_mode(),
                     'product_selector'   => Furgonetka_Admin::get_portmonetka_product_selector(),
                     'cart_selector'      => Furgonetka_Admin::get_portmonetka_cart_selector(),
                     'minicart_selector'  => Furgonetka_Admin::get_portmonetka_minicart_selector(),
@@ -753,8 +752,6 @@ class Furgonetka_Public
                 $result = 'DHL BOX 24/7';
                 break;
             case self::SERVICE_ORLEN:
-                $result = 'ORLEN PACZKA Automat paczkowy';
-                break;
             case 'kiosk':
                 $result = 'ORLEN PACZKA Automat paczkowy';
                 break;
@@ -781,15 +778,14 @@ class Furgonetka_Public
                 $result = 'DHL POP';
                 break;
             case self::SERVICE_ORLEN:
-                $result = 'ORLEN PACZKA Punkt odbioru';
-                break;
             case 'kiosk':
                 $result = 'ORLEN PACZKA Punkt odbioru';
                 break;
             case self::SERVICE_FEDEX:
                 $result = 'FedEx Punkt';
                 break;
-            case self::SERVICE_UPSACCESSPOINT:
+            case self::SERVICE_UPS:
+            case 'uap':
                 $result = 'UPS Access Point';
                 break;
             case self::SERVICE_GLS:
@@ -818,6 +814,26 @@ class Furgonetka_Public
             array(
                 'methods'             => WP_REST_Server::READABLE,
                 'callback'            => array( new Furgonetka_Cart(), 'get_cart_items' ),
+                'permission_callback' => Furgonetka_Rest_Api_Permissions::PERMISSION_CALLBACK_NO_AUTHORIZATION,
+            )
+        );
+
+        register_rest_route(
+            FURGONETKA_REST_NAMESPACE,
+            '/checkout/v3/create-cart',
+            array(
+                'methods'             => WP_REST_Server::CREATABLE,
+                'callback'            => array( new Furgonetka_Cart(), 'create_cart' ),
+                'permission_callback' => Furgonetka_Rest_Api_Permissions::PERMISSION_CALLBACK_NO_AUTHORIZATION,
+            )
+        );
+
+        register_rest_route(
+            FURGONETKA_REST_NAMESPACE,
+            '/checkout/v3/get-cart',
+            array(
+                'methods'             => WP_REST_Server::READABLE,
+                'callback'            => array( new Furgonetka_Cart(), 'get_cart' ),
                 'permission_callback' => Furgonetka_Rest_Api_Permissions::PERMISSION_CALLBACK_NO_AUTHORIZATION,
             )
         );
@@ -1004,6 +1020,16 @@ class Furgonetka_Public
         $rest_prefix = trailingslashit( rest_get_url_prefix() );
         $request_uri = esc_url_raw( wp_unslash( $_SERVER['REQUEST_URI'] ) );
 
-        return strpos( $request_uri, $rest_prefix . 'furgonetka/v1/checkout' ) !== false;
+        return (
+            /**
+             * Include all checkout routes
+             */
+            strpos( $request_uri, $rest_prefix . 'furgonetka/v1/checkout' ) !== false &&
+
+            /**
+             * Exclude checkout v3 routes (session should not be altered for those endpoints)
+             */
+            strpos( $request_uri, $rest_prefix . 'furgonetka/v1/checkout/v3/' ) === false
+        );
     }
 }

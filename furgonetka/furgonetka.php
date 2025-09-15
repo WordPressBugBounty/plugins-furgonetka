@@ -11,7 +11,7 @@
  * Plugin Name:          Furgonetka.pl
  * Plugin URI:           https://furgonetka.pl
  * Description:          Połącz swój sklep z modułem Furgonetka.pl! Generuj etykiety, twórz szablony przesyłek, śledź statusy paczek. Nadawaj paczki szybko i tanio korzystając z 10 firm kurierskich.
- * Version:              1.6.8
+ * Version:              1.7.0
  * Author:               Furgonetka.pl
  * Author URI:           https://furgonetka.pl
  * License:              GPL-2.0+
@@ -37,7 +37,7 @@ if ( ! defined( 'WPINC' ) )
  * Start at version 1.0.0 and use SemVer - https://semver.org
  * Rename this for your plugin and update it as you release new versions.
  */
-define( 'FURGONETKA_VERSION', '1.6.8' );
+define( 'FURGONETKA_VERSION', '1.7.0' );
 define( 'FURGONETKA_PLUGIN_NAME', 'furgonetka' );
 define( 'FURGONETKA_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'FURGONETKA_DEBUG', false );
@@ -94,6 +94,14 @@ add_action( 'upgrader_process_complete', 'furgonetka_upgrade_completed', 10, 2 )
 add_action( 'woocommerce_add_to_cart', 'set_default_customer_address' );
 
 add_action( 'plugins_loaded', 'perform_migrations' );
+
+add_action( 'plugins_loaded', function () {
+    require_once plugin_dir_path( __FILE__ ) . '/includes/payment-gateways/class-furgonetka-gateway-abstract.php';
+    require_once plugin_dir_path( __FILE__ ) . '/includes/payment-gateways/class-furgonetka-gateway-autopay.php';
+    require_once plugin_dir_path( __FILE__ ) . '/includes/payment-gateways/class-furgonetka-gateway-payu.php';
+    require_once plugin_dir_path( __FILE__ ) . '/includes/payment-gateways/class-furgonetka-gateway-przelewy24.php';
+    require_once plugin_dir_path( __FILE__ ) . '/includes/payment-gateways/class-furgonetka-gateway-tpay.php';
+});
 
 /**
  * Set default customer address to manage shipping prices problem
@@ -202,6 +210,24 @@ add_filter(
     },
     100,
     2
+);
+
+/**
+ * Declare own gateways
+ */
+add_filter(
+    'woocommerce_payment_gateways',
+    function (array $methods) {
+        return array_merge(
+            $methods,
+            [
+                Furgonetka_Gateway_Autopay::class,
+                Furgonetka_Gateway_Payu::class,
+                Furgonetka_Gateway_Przelewy24::class,
+                Furgonetka_Gateway_Tpay::class
+            ]
+        );
+    }
 );
 
 /**

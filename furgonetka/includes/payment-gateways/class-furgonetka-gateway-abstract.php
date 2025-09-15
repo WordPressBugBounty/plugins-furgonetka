@@ -1,0 +1,51 @@
+<?php
+
+abstract class Furgonetka_Gateway_Abstract extends \WC_Payment_Gateway
+{
+    const CHECKOUT_BRANDING = 'Furgonetka Koszyk';
+
+    /** @var string */
+    public $provider;
+
+    public function __construct()
+    {
+        $this->id         = static::GATEWAY_ID;
+        $this->title      = self::get_furgonetka_gateway_title();
+        $this->has_fields = false;
+        $this->enabled    = true;
+        $this->provider   = static::GATEWAY_PROVIDER;
+    }
+
+    public function init_form_fields()
+    {
+        $this->form_fields = [];
+    }
+
+    public function process_payment( $order_id )
+    {
+        $order = wc_get_order( $order_id );
+
+        $order->update_status( 'on-hold' );
+
+        WC()->cart->empty_cart();
+
+        return [
+            'result' => 'success',
+        ];
+    }
+
+    public function is_available()
+    {
+        $_POST = array_merge($_POST, json_decode( file_get_contents( 'php://input' ), true ) ?? [] );
+
+        return filter_var(
+            $_POST['extensions']['furgonetka']['checkout_context'] ?? null,
+            FILTER_VALIDATE_BOOLEAN
+        );
+    }
+
+    private static function get_furgonetka_gateway_title(): string
+    {
+        return self::CHECKOUT_BRANDING . ' - ' . static::GATEWAY_LABEL;
+    }
+}

@@ -441,3 +441,6 @@ msgstr "Reklamacje"
 #: admin/class-furgonetka-admin.php:576
 msgid "Help and contact"
 msgstr "Pomoc i kontakt"
+
+msgid "Error occurred while creating cart."
+msgstr "Wystąpił błąd podczas tworzenia koszyka."

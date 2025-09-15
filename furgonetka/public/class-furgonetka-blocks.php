@@ -7,12 +7,22 @@ class Furgonetka_Blocks {
 	 */
 	const FIELD_SELECTED_POINT     = 'selected_point';
 	const FIELD_SELECTED_POINT_COD = 'selected_point_cod';
+	const FIELD_TAX_ID             = 'tax_id';
 
 	const FIELD_SERVICE      = 'service';
 	const FIELD_SERVICE_TYPE = 'service_type';
 	const FIELD_CODE         = 'code';
 	const FIELD_NAME         = 'name';
-	const FIELD_COD          = 'cod';
+
+	/**
+	 * Extension cart update fields & actions
+	 */
+	const FIELD_ACTION  = 'action';
+	const FIELD_PAYLOAD = 'payload';
+
+	const ACTION_SET_POINT     = 'set_point';
+	const ACTION_SET_POINT_COD = 'set_point_cod';
+	const ACTION_SET_TAX_ID    = 'set_tax_id';
 
 	/**
 	 * @var Furgonetka_Loader
@@ -41,35 +51,46 @@ class Furgonetka_Blocks {
 	}
 
 	/**
-	 * Initialize blocks backend
+	 * Initialize blocks backend (Store API)
 	 *
 	 * @return void
 	 */
 	public function init() {
 		/**
-		 * Register WooCommerce Blocks checkout integration (Store API)
+		 * Register WooCommerce Blocks checkout integration
 		 */
 		$this->add_action( 'woocommerce_blocks_checkout_block_registration', array( $this, 'register_checkout_integrations' ) );
 
 		/**
-		 * Register WooCommerce Blocks cart integration (Store API)
+		 * Register WooCommerce Blocks cart integration
 		 */
 		$this->add_action( 'woocommerce_blocks_cart_block_registration', array( $this, 'register_cart_integrations' ) );
 
 		/**
-		 * Register WooCommerce Blocks integration extension data/endpoint (Store API)
+		 * Register WooCommerce Blocks integration extension data/endpoint
 		 */
 		$this->add_action( 'woocommerce_blocks_loaded', array( $this, 'register_extension' ) );
 
 		/**
-		 * Order point validation (Store API)
+		 * Remove session data while order is processed
+		 */
+		$this->add_action( 'woocommerce_store_api_checkout_order_processed', array( $this, 'remove_tax_id_from_session' ) );
+
+		/**
+		 * Save point when payment method has changed since last Cart API request
+		 */
+		$this->add_action( 'woocommerce_store_api_checkout_order_processed', array( $this, 'save_point_to_order' ) );
+
+		/**
+		 * Checkout order validation
 		 */
 		$this->add_action( 'woocommerce_store_api_checkout_order_processed', array( $this, 'checkout_validation' ) );
 
 		/**
-		 * Order point validation (Store API)
+		 * Update order draft metadata
 		 */
 		$this->add_action( 'woocommerce_store_api_checkout_update_order_meta', array( $this, 'save_point_to_order' ) );
+		$this->add_action( 'woocommerce_store_api_checkout_update_order_meta', array( $this, 'save_tax_id_to_order' ) );
 	}
 
 	/**
@@ -177,11 +198,6 @@ class Furgonetka_Blocks {
 				'type'        => 'string',
 				'readonly'    => true,
 			),
-			self::FIELD_COD     => array(
-				'description' => __( 'Cash on delivery', 'furgonetka' ),
-				'type'        => 'string',
-				'readonly'    => true,
-			),
 		);
 
 		return array(
@@ -196,6 +212,11 @@ class Furgonetka_Blocks {
 				'type'        => 'object',
 				'readonly'    => true,
 				'properties'  => $selected_point_schema,
+			),
+			self::FIELD_TAX_ID             => array(
+				'description' => __( 'Tax ID', 'furgonetka' ),
+				'type'        => 'string',
+				'readonly'    => true,
 			),
 		);
 	}
@@ -213,44 +234,87 @@ class Furgonetka_Blocks {
 
 		$current_selection_by_service     = WC()->session->get( FURGONETKA_PLUGIN_NAME . '_pointTo' );
 		$current_selection_by_service_cod = WC()->session->get( FURGONETKA_PLUGIN_NAME . '_pointToCod' );
+		$current_tax_id                   = WC()->session->get( FURGONETKA_PLUGIN_NAME . '_taxId' );
 
 		/**
 		 * Parse session data
 		 */
-		$data     = isset( $current_selection_by_service[ $service ] ) ? $current_selection_by_service[ $service ] : array();
-		$data_cod = isset( $current_selection_by_service_cod[ $service ] ) ? $current_selection_by_service_cod[ $service ] : array();
+		$data     = $current_selection_by_service[ $service ] ?? [];
+		$data_cod = $current_selection_by_service_cod[ $service ] ?? [];
 
-		return array(
-			self::FIELD_SELECTED_POINT     => array(
-				self::FIELD_SERVICE      => isset( $data[ self::FIELD_SERVICE ] ) ? $data[ self::FIELD_SERVICE ] : '',
-				self::FIELD_SERVICE_TYPE => isset( $data[ self::FIELD_SERVICE_TYPE ] ) ? $data[ self::FIELD_SERVICE_TYPE ] : '',
-				self::FIELD_CODE         => isset( $data[ self::FIELD_CODE ] ) ? $data[ self::FIELD_CODE ] : '',
-				self::FIELD_NAME         => isset( $data[ self::FIELD_NAME ] ) ? $data[ self::FIELD_NAME ] : '',
-			),
-			self::FIELD_SELECTED_POINT_COD => array(
-				self::FIELD_SERVICE      => isset( $data_cod[ self::FIELD_SERVICE ] ) ? $data_cod[ self::FIELD_SERVICE ] : '',
-				self::FIELD_SERVICE_TYPE => isset( $data_cod[ self::FIELD_SERVICE_TYPE ] ) ? $data_cod[ self::FIELD_SERVICE_TYPE ] : '',
-				self::FIELD_CODE         => isset( $data_cod[ self::FIELD_CODE ] ) ? $data_cod[ self::FIELD_CODE ] : '',
-				self::FIELD_NAME         => isset( $data_cod[ self::FIELD_NAME ] ) ? $data_cod[ self::FIELD_NAME ] : '',
-			),
-		);
+		return [
+			self::FIELD_SELECTED_POINT     => $this->get_point_extension_data( $data ),
+			self::FIELD_SELECTED_POINT_COD => $this->get_point_extension_data( $data_cod ),
+			self::FIELD_TAX_ID             => $current_tax_id,
+		];
+	}
+
+	/**
+	 * Get currently selected point extension data
+	 */
+	private function get_point_extension_data( array $data ): array {
+		return [
+			self::FIELD_SERVICE        => $data[ self::FIELD_SERVICE ] ?? '',
+			self::FIELD_SERVICE_TYPE   => $data[ self::FIELD_SERVICE_TYPE ] ?? '',
+			self::FIELD_CODE           => $data[ self::FIELD_CODE ] ?? '',
+			self::FIELD_NAME           => $data[ self::FIELD_NAME ] ?? '',
+		];
 	}
 
 	/**
 	 * Set extension data
 	 *
-	 * @param array $data
+	 * @param mixed $actions
 	 * @return void
 	 */
-	public function set_extension_data( $data ) {
-		$this->public->save_point_to_session_internal(
-			isset( $data[ self::FIELD_SERVICE ] ) ? $data[ self::FIELD_SERVICE ] : '',
-			isset( $data[ self::FIELD_SERVICE_TYPE ] ) ? $data[ self::FIELD_SERVICE_TYPE ] : '',
-			isset( $data[ self::FIELD_CODE ] ) ? $data[ self::FIELD_CODE ] : '',
-			isset( $data[ self::FIELD_NAME ] ) ? $data[ self::FIELD_NAME ] : '',
-			isset( $data[ self::FIELD_COD ] ) ? $data[ self::FIELD_COD ] : ''
-		);
+	public function set_extension_data( $actions ) {
+		if ( ! is_array( $actions ) ) {
+			return;
+		}
+
+		foreach ( $actions as $data ) {
+			$action  = $data[ self::FIELD_ACTION ] ?? null;
+			$payload = $data[ self::FIELD_PAYLOAD ] ?? null;
+
+			switch ( $action ) {
+				case self::ACTION_SET_POINT:
+					$this->set_point( $payload, false );
+					break;
+				case self::ACTION_SET_POINT_COD:
+					$this->set_point( $payload, true );
+					break;
+				case self::ACTION_SET_TAX_ID:
+					$this->set_tax_id( $payload );
+					break;
+			}
+		}
 	}
+
+	/**
+	 * Set point to session
+	 *
+	 * @param mixed $data
+	 * @return void
+	 */
+	private function set_point( $data, bool $cod ) {
+		$this->public->save_point_to_session_internal(
+			$this->sanitize_string( $data[ self::FIELD_SERVICE ] ?? '' ),
+			$this->sanitize_string( $data[ self::FIELD_SERVICE_TYPE ] ?? '' ),
+			$this->sanitize_string( $data[ self::FIELD_CODE ] ?? '' ),
+			$this->sanitize_string( $data[ self::FIELD_NAME ] ?? '' ),
+			$cod
+		);
+    }
+
+    /**
+     * Save tax ID to session
+     *
+     * @param mixed $tax_id
+     * @return void
+     */
+    private function set_tax_id( $tax_id ) {
+		WC()->session->set( FURGONETKA_PLUGIN_NAME . '_taxId', $this->sanitize_string( $tax_id ) );
+    }
 
 	/**
 	 * Validate selected point
@@ -260,14 +324,6 @@ class Furgonetka_Blocks {
 	 * @throws \Automattic\WooCommerce\StoreApi\Exceptions\RouteException
 	 */
 	public function checkout_validation( $order ) {
-		/**
-		 * Save point when payment method has changed since last Cart API request
-		 */
-		$this->save_point_to_order( $order );
-
-		/**
-		 * Validate
-		 */
 		$service        = $this->get_selected_service();
 		$extension_data = $this->get_extension_data();
 		$data           = $order->get_payment_method() !== 'cod' ?
@@ -298,7 +354,7 @@ class Furgonetka_Blocks {
 		 * Remove point data when assigned service is invalid or empty
 		 */
 		$order_service = $this->public->get_order_shipping_method_service( $order );
-		$furgonetka_service = sanitize_text_field( wp_unslash( $data['service'] ) );
+		$furgonetka_service = $this->sanitize_string( $data['service'] );
 
 		if ( $order_service !== $furgonetka_service ) {
 			$order->delete_meta_data( '_furgonetkaPoint' );
@@ -312,25 +368,36 @@ class Furgonetka_Blocks {
 		/**
 		 * Update order
 		 */
-		$order->update_meta_data(
-			'_furgonetkaService',
-			sanitize_text_field( wp_unslash( $data['service'] ) )
-		);
+		$order->update_meta_data( '_furgonetkaPoint', $this->sanitize_string( $data[ self::FIELD_CODE ] ) );
+		$order->update_meta_data( '_furgonetkaPointName', $this->sanitize_string( $data[ self::FIELD_NAME ] ) );
+		$order->update_meta_data( '_furgonetkaService', $this->sanitize_string( $data[ self::FIELD_SERVICE ] ) );
+		$order->update_meta_data( '_furgonetkaServiceType', $this->sanitize_string( $data[ self::FIELD_SERVICE_TYPE ] ) );
+	}
 
-		$order->update_meta_data(
-			'_furgonetkaServiceType',
-			sanitize_text_field( wp_unslash( $data['service_type'] ) )
-		);
+	/**
+	 * Save tax ID from session into the order
+	 *
+	 * @param WC_Order $order
+	 * @return void
+	 */
+	public function save_tax_id_to_order( WC_Order $order ) {
+		$extension_data = $this->get_extension_data();
+		$tax_id	 = $this->sanitize_string( $extension_data[ self::FIELD_TAX_ID ] );
 
-		$order->update_meta_data(
-			'_furgonetkaPoint',
-			sanitize_text_field( wp_unslash( $data['code'] ) )
-		);
+		if ( ! empty( $tax_id ) ) {
+			$order->update_meta_data( '_billing_furgonetkaTaxId', $tax_id );
+		} else {
+			$order->delete_meta_data( '_billing_furgonetkaTaxId' );
+		}
+	}
 
-		$order->update_meta_data(
-			'_furgonetkaPointName',
-			sanitize_text_field( wp_unslash( $data['name'] ) )
-		);
+	/**
+	 * Remove tax ID from the session
+	 *
+	 * @return void
+	 */
+	public function remove_tax_id_from_session() {
+		$this->set_tax_id( null );
 	}
 
 	/**
@@ -351,5 +418,19 @@ class Furgonetka_Blocks {
 	 */
 	private function get_selected_service() {
 		return Furgonetka_Map::get_service_from_session();
+	}
+
+	/**
+	 * Sanitize given value (and cast to string when necessary)
+	 *
+	 * @param mixed $value
+	 * @return string
+	 */
+	private function sanitize_string( $value ): string {
+		if ( ! is_string( $value ) ) {
+			return '';
+		}
+
+		return sanitize_text_field( wp_unslash( $value ) );
 	}
 }
