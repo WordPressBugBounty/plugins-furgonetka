@@ -25,7 +25,7 @@ abstract class Furgonetka_Gateway_Abstract extends \WC_Payment_Gateway
     {
         $order = wc_get_order( $order_id );
 
-        $order->update_status( 'on-hold' );
+        $order->update_status( 'pending' );
 
         WC()->cart->empty_cart();
 
