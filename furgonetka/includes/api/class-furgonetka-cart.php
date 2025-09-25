@@ -539,6 +539,7 @@ class Furgonetka_Cart
                 array_merge(
                     [
                         'integrationUuid' => Furgonetka_Admin::get_integration_uuid(),
+                        'faviconUrl'      => get_site_icon_url(),
                     ],
                     $parsed
                 )
