@@ -1,12 +1,37 @@
 <?php
 
 require_once plugin_dir_path( __FILE__ ) . '../trait/trait-furgonetka-logger.php';
+require_once plugin_dir_path( __FILE__ ) . '../trait/trait-furgonetka-store-api-request.php';
 
 class Furgonetka_Cart
 {
     use Furgonetka_Logger;
+    use Furgonetka_Store_Api_Request;
 
     private static $session;
+
+    /**
+     * @return void
+     */
+    public static function define_hooks()
+    {
+        add_action( 'woocommerce_load_cart_from_session', [ self::class, 'set_current_user_from_session' ] );
+    }
+
+    /**
+     * @return void
+     */
+    public static function set_current_user_from_session()
+    {
+        if (
+            self::is_current_store_api_request_with_furgonetka_checkout_context()
+            && WC()->session instanceof \Automattic\WooCommerce\StoreApi\SessionHandler
+            && WC()->session->get_customer_id() !== 0
+            && get_current_user_id() === 0
+        ) {
+            wp_set_current_user( WC()->session->get_customer_id() );
+        }
+    }
 
     /**
      * @return array|null

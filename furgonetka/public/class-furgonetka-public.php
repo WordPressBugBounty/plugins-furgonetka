@@ -183,7 +183,8 @@ class Furgonetka_Public
                     ],
                     'pages_urls' => [
                         'cart' => parse_url(wc_get_cart_url())['path'] ?? null,
-                        'checkout' => wc_get_checkout_url()
+                        'checkout' => wc_get_checkout_url(),
+                        'native_checkout' => parse_url( wc_get_page_permalink( 'checkout' ) )[ 'path' ] ?? null,
                     ]
                 )
             );

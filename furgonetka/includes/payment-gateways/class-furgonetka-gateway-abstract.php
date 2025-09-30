@@ -1,7 +1,11 @@
 <?php
 
+require_once plugin_dir_path( __FILE__ ) . '../trait/trait-furgonetka-store-api-request.php';
+
 abstract class Furgonetka_Gateway_Abstract extends \WC_Payment_Gateway
 {
+    use Furgonetka_Store_Api_Request;
+
     const CHECKOUT_BRANDING = 'Furgonetka Koszyk';
 
     /** @var string */
@@ -36,12 +40,7 @@ abstract class Furgonetka_Gateway_Abstract extends \WC_Payment_Gateway
 
     public function is_available()
     {
-        $_POST = array_merge($_POST, json_decode( file_get_contents( 'php://input' ), true ) ?? [] );
-
-        return filter_var(
-            $_POST['extensions']['furgonetka']['checkout_context'] ?? null,
-            FILTER_VALIDATE_BOOLEAN
-        );
+        return self::is_current_store_api_request_with_furgonetka_checkout_context();
     }
 
     private static function get_furgonetka_gateway_title(): string
