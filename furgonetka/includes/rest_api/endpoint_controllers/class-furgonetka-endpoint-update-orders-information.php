@@ -56,7 +56,7 @@ class Furgonetka_Endpoint_Update_Orders_Information extends Furgonetka_Endpoint_
             array(
                 'methods'             => WP_REST_Server::CREATABLE,
                 'callback'            => array( $this, 'callback' ),
-                'permission_callback' => Furgonetka_Rest_Api_Permissions::PERMISSION_CALLBACK,
+                'permission_callback' => Furgonetka_Rest_Api_Permissions::PERMISSION_CALLBACK_MANAGE_WOOCOMMERCE,
             )
         );
     }

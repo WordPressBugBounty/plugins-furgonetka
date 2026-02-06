@@ -67,7 +67,7 @@ class Furgonetka_Endpoint_Update_Return_Info extends Furgonetka_Endpoint_Abstrac
             array(
                 'methods'             => WP_REST_Server::EDITABLE,
                 'callback'            => array( $this, 'callback' ),
-                'permission_callback' => Furgonetka_Rest_Api_Permissions::PERMISSION_CALLBACK,
+                'permission_callback' => Furgonetka_Rest_Api_Permissions::PERMISSION_CALLBACK_MANAGE_WOOCOMMERCE,
             )
         );
     }
@@ -81,7 +81,7 @@ class Furgonetka_Endpoint_Update_Return_Info extends Furgonetka_Endpoint_Abstrac
      */
     public function callback( WP_REST_Request $request )
     {
-        $route = get_option( $this->model->get_route_option_name() );
+        $route = get_option( Furgonetka_Options::OPTION_RETURNS_ROUTE );
         $data  = json_decode( $request->get_body() );
         if ( empty( $route ) ) {
             return new WP_REST_Response(

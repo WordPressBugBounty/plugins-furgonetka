@@ -25,6 +25,7 @@ class Furgonetka_Admin
     const TEST_API_REST_URL = 'https://api.sandbox.furgonetka.pl';
 
     const PATH_ACCOUNT                  = '/account';
+    const PATH_INTEGRATION_CONNECTION   = '/e-commerce/integrations/{integrationUuid}/connection';
     const PATH_CREATE_OAUTH_APPLICATION = '/ecommerce/integrations/create-oauth-application';
     const PATH_CONFIGURATIONS           = '/ecommerce/integrations/configurations';
     const PATH_PACKAGE_FORM_INIT        = '/ecommerce/packages/form/init';
@@ -32,6 +33,7 @@ class Furgonetka_Admin
     const PATH_INVOICES_INIT            = '/ecommerce/invoices/quick-action/init';
     const PATH_APP_LINK_INIT            = '/ecommerce/app/link/init';
     const PATH_CHECKOUT_CART            = '/e-commerce/checkout/cart';
+    const PATH_MAPS_REGISTER_CLIENT     = '/ecommerce/integrations/{integrationUuid}/maps/register-client';
 
     const API_OAUTH_URL      = 'https://api.furgonetka.pl/oauth';
 	const TEST_API_OAUTH_URL = 'https://api.sandbox.furgonetka.pl/oauth';
@@ -41,15 +43,8 @@ class Furgonetka_Admin
 
     const METADATA_FURGONETKA_ORDER_NUMBER = '_furgonetkaOrderNumber';
 
-    const OPTION_CHECKOUT_UUID      = 'checkout_uuid';
-    const OPTION_CHECKOUT_ACTIVE    = 'checkout_active';
-    const OPTION_CHECKOUT_TEST_MODE = 'checkout_test_mode';
-    const OPTION_ACCOUNT_TYPE       = 'account_type';
-
-    const OPTION_PRODUCT_PAGE_BUTTON_VISIBLE = 'product_page_button_visible';
-
     const OPTION_DETAILS = [
-        self::OPTION_PRODUCT_PAGE_BUTTON_VISIBLE,
+        'product_page_button_visible' => Furgonetka_Options::OPTION_CHECKOUT_PRODUCT_PAGE_BUTTON_VISIBLE,
     ];
 
     /**
@@ -675,7 +670,7 @@ class Furgonetka_Admin
         /**
          * Connection with Furgonetka.pl is not configured or token has expired
          */
-        if ( get_option( $this->plugin_name . '_expires_date' ) <= strtotime( 'now' ) ) {
+        if ( get_option( Furgonetka_Options::OPTION_EXPIRES_DATE ) <= strtotime( 'now' ) ) {
             wp_send_json_error(
                 array(
                     'redirect_url'  => self::get_plugin_admin_url(),
@@ -774,7 +769,7 @@ class Furgonetka_Admin
             $test_mode = true;
         }
 
-        update_option( $this->plugin_name . '_test_mode', $test_mode );
+        update_option( Furgonetka_Options::OPTION_TEST_MODE, $test_mode );
 
         /**
          * Edge-case when shop doesn't have SSL - flow excludes prompt and generates keys directly
@@ -834,7 +829,7 @@ class Furgonetka_Admin
 
     public static function get_checkout_uuid()
     {
-        return self::get_plugin_option( self::OPTION_CHECKOUT_UUID );
+        return get_option( Furgonetka_Options::OPTION_CHECKOUT_UUID );
     }
 
     /**
@@ -842,27 +837,22 @@ class Furgonetka_Admin
      */
     public static function get_account_type()
     {
-        return self::get_plugin_option( self::OPTION_ACCOUNT_TYPE );
+        return get_option( Furgonetka_Options::OPTION_ACCOUNT_TYPE );
     }
 
     public static function is_checkout_active()
     {
-        return (bool) self::get_plugin_option( self::OPTION_CHECKOUT_ACTIVE );
+        return (bool) get_option( Furgonetka_Options::OPTION_CHECKOUT_ACTIVE );
     }
 
     public static function is_checkout_test_mode()
     {
-        return (bool) self::get_plugin_option( self::OPTION_CHECKOUT_TEST_MODE );
+        return (bool) get_option( Furgonetka_Options::OPTION_CHECKOUT_TEST_MODE );
     }
 
     public static function is_product_page_button_visible()
     {
-        return (bool) self::get_plugin_option( self::OPTION_PRODUCT_PAGE_BUTTON_VISIBLE, true );
-    }
-
-    private static function get_plugin_option( $option_name, $default_value = false )
-    {
-        return get_option( FURGONETKA_PLUGIN_NAME . '_' . $option_name, $default_value );
+        return (bool) get_option( Furgonetka_Options::OPTION_CHECKOUT_PRODUCT_PAGE_BUTTON_VISIBLE, true );
     }
 
     public static function get_checkout_details()
@@ -897,13 +887,13 @@ class Furgonetka_Admin
 
     public function update_checkout_options( $uuid, $active, $test_mode, $details )
     {
-            update_option( $this->plugin_name . '_' . self::OPTION_CHECKOUT_UUID, sanitize_text_field( strval( $uuid ) ) );
-            update_option( $this->plugin_name . '_' . self::OPTION_CHECKOUT_ACTIVE, (int) $active );
-            update_option( $this->plugin_name . '_' . self::OPTION_CHECKOUT_TEST_MODE, (int) $test_mode );
+            update_option( Furgonetka_Options::OPTION_CHECKOUT_UUID, sanitize_text_field( strval( $uuid ) ) );
+            update_option( Furgonetka_Options::OPTION_CHECKOUT_ACTIVE, (int) $active );
+            update_option( Furgonetka_Options::OPTION_CHECKOUT_TEST_MODE, (int) $test_mode );
 
             foreach ( $details as $key => $detail ) {
-                if ( in_array( $key, self::OPTION_DETAILS, true ) ) {
-                    update_option( $this->plugin_name . '_' . $key, $detail );
+                if ( array_key_exists( $key, self::OPTION_DETAILS ) ) {
+                    update_option( self::OPTION_DETAILS[ $key ], $detail );
                 }
             }
     }
@@ -1175,6 +1165,12 @@ class Furgonetka_Admin
                 $this->save_advanced_settings();
                 break;
             case self::ACTION_RESET_CREDENTIALS:
+                try {
+                    self::delete_integration_connection();
+                } catch ( Exception $e ) {
+                    $this->log( $e->getMessage() );
+                }
+
                 $this->reset_credentials();
                 $this->redirect_to_plugin_admin_page();
         }
@@ -1252,12 +1248,14 @@ class Furgonetka_Admin
             );
             $source_id               = $integration_identifiers->sourceId ?? null;
             $integration_uuid        = $integration_identifiers->integrationUuid ?? null;
+            $map_api_key             = $integration_identifiers->mapApiKey ?? null;
 
-            if ( is_numeric( $source_id ) && is_string( $integration_uuid ) ) {
-                update_option( $this->plugin_name . '_source_id', $source_id );
-                update_option( $this->plugin_name . '_integration_uuid', $integration_uuid );
+            if ( is_numeric( $source_id ) && is_string( $integration_uuid )  && is_string( $map_api_key ) ) {
+                update_option( Furgonetka_Options::OPTION_SOURCE_ID, $source_id );
+                update_option( Furgonetka_Options::OPTION_INTEGRATION_UUID, $integration_uuid );
+                update_option( Furgonetka_Options::OPTION_MAP_API_KEY, $map_api_key );
             } else {
-                throw new Exception( 'Invalid source_id or integration_uuid' );
+                throw new Exception( 'Invalid data' );
             }
         } catch ( Exception $e ) {
             $this->log( $e );
@@ -1273,11 +1271,12 @@ class Furgonetka_Admin
      */
     private function delete_credentials_data()
     {
-        delete_option( $this->plugin_name . '_source_id' );
-        delete_option( $this->plugin_name . '_integration_uuid' );
-        delete_option( $this->plugin_name . '_access_token' );
-        delete_option( $this->plugin_name . '_refresh_token' );
-        delete_option( $this->plugin_name . '_expires_date' );
+        delete_option( Furgonetka_Options::OPTION_SOURCE_ID );
+        delete_option( Furgonetka_Options::OPTION_INTEGRATION_UUID );
+        delete_option( Furgonetka_Options::OPTION_MAP_API_KEY );
+        delete_option( Furgonetka_Options::OPTION_ACCESS_TOKEN );
+        delete_option( Furgonetka_Options::OPTION_REFRESH_TOKEN );
+        delete_option( Furgonetka_Options::OPTION_EXPIRES_DATE );
 
         Furgonetka_Api_Keys::remove_temporary_api_keys();
     }
@@ -1294,13 +1293,13 @@ class Furgonetka_Admin
         );
 
         if ( isset( $account_data->account_type ) ) {
-            update_option( $this->plugin_name . '_' . self::OPTION_ACCOUNT_TYPE, $account_data->account_type );
+            update_option( Furgonetka_Options::OPTION_ACCOUNT_TYPE, $account_data->account_type );
         }
     }
 
     private function delete_account_data(): void
     {
-        delete_option( $this->plugin_name . '_' . self::OPTION_ACCOUNT_TYPE );
+        delete_option( Furgonetka_Options::OPTION_ACCOUNT_TYPE );
     }
 
     /**
@@ -1310,12 +1309,12 @@ class Furgonetka_Admin
      */
     private function reset_credentials()
     {
-        delete_option( $this->plugin_name . '_client_ID' );
-        delete_option( $this->plugin_name . '_client_secret' );
-        delete_option( $this->plugin_name . '_test_mode' );
-        delete_option( $this->plugin_name . '_email' );
-
-        $this->delete_credentials_data();
+        Furgonetka_Options::delete_all_options(
+            [
+                Furgonetka_Options::OPTION_DELIVERY_TO_TYPE,
+                Furgonetka_Options::OPTION_MAP_API_KEY,
+            ]
+        );
     }
 
     /**
@@ -1325,7 +1324,7 @@ class Furgonetka_Admin
      */
     public static function get_portmonetka_product_selector()
     {
-        return self::get_plugin_option( 'portmonetka_product_selector' );
+        return get_option( Furgonetka_Options::OPTION_CHECKOUT_PRODUCT_SELECTOR );
     }
 
     /**
@@ -1335,7 +1334,7 @@ class Furgonetka_Admin
      */
     public static function get_portmonetka_cart_selector()
     {
-        return self::get_plugin_option( 'portmonetka_cart_selector' );
+        return get_option( Furgonetka_Options::OPTION_CHECKOUT_CART_SELECTOR );
     }
 
     /**
@@ -1345,7 +1344,7 @@ class Furgonetka_Admin
      */
     public static function get_portmonetka_minicart_selector()
     {
-        return self::get_plugin_option( 'portmonetka_minicart_selector' );
+        return get_option( Furgonetka_Options::OPTION_CHECKOUT_MINICART_SELECTOR );
     }
 
     /**
@@ -1355,7 +1354,7 @@ class Furgonetka_Admin
      */
     public static function get_portmonetka_cart_button_position()
     {
-        return self::get_plugin_option( 'portmonetka_cart_button_position' );
+        return get_option( Furgonetka_Options::OPTION_CHECKOUT_CART_BUTTON_POSITION );
     }
 
     /**
@@ -1365,7 +1364,7 @@ class Furgonetka_Admin
      */
     public static function get_portmonetka_cart_button_width()
     {
-        return self::get_plugin_option( 'portmonetka_cart_button_width' );
+        return get_option( Furgonetka_Options::OPTION_CHECKOUT_CART_BUTTON_WIDTH );
     }
 
     /**
@@ -1375,7 +1374,7 @@ class Furgonetka_Admin
      */
     public static function get_portmonetka_cart_button_css()
     {
-        return self::get_plugin_option( 'portmonetka_cart_button_css' );
+        return get_option( Furgonetka_Options::OPTION_CHECKOUT_CART_BUTTON_CSS );
     }
 
     /**
@@ -1383,7 +1382,7 @@ class Furgonetka_Admin
      */
     public static function get_portmonetka_replace_native_checkout()
     {
-        return (bool) self::get_plugin_option( 'portmonetka_replace_native_checkout' );
+        return (bool) get_option( Furgonetka_Options::OPTION_CHECKOUT_REPLACE_NATIVE_CHECKOUT );
     }
 
     /**
@@ -1421,15 +1420,15 @@ class Furgonetka_Admin
                 sanitize_text_field( wp_unslash( $_POST['portmonetka_replace_native_checkout'] ) ) : '';
         }
 
-        update_option( $this->plugin_name . '_portmonetka_product_selector', $product_selector );
-        update_option( $this->plugin_name . '_portmonetka_cart_selector', $cart_selector );
-        update_option( $this->plugin_name . '_portmonetka_minicart_selector', $minicart_selector );
+        update_option( Furgonetka_Options::OPTION_CHECKOUT_PRODUCT_SELECTOR, $product_selector );
+        update_option( Furgonetka_Options::OPTION_CHECKOUT_CART_SELECTOR, $cart_selector );
+        update_option( Furgonetka_Options::OPTION_CHECKOUT_MINICART_SELECTOR, $minicart_selector );
 
-        update_option( $this->plugin_name . '_portmonetka_cart_button_position', $button_position );
-        update_option( $this->plugin_name . '_portmonetka_cart_button_width', $button_width );
-        update_option( $this->plugin_name . '_portmonetka_cart_button_css', $button_css );
+        update_option( Furgonetka_Options::OPTION_CHECKOUT_CART_BUTTON_POSITION, $button_position );
+        update_option( Furgonetka_Options::OPTION_CHECKOUT_CART_BUTTON_WIDTH, $button_width );
+        update_option( Furgonetka_Options::OPTION_CHECKOUT_CART_BUTTON_CSS, $button_css );
 
-        update_option( $this->plugin_name . '_portmonetka_replace_native_checkout', $open_in_new_tab );
+        update_option( Furgonetka_Options::OPTION_CHECKOUT_REPLACE_NATIVE_CHECKOUT, $open_in_new_tab );
 
         $this->messages[] = esc_html__( 'Configuration saved successfully.', 'furgonetka' );
     }
@@ -1469,15 +1468,15 @@ class Furgonetka_Admin
         }
 
         $test_mode = self::get_test_mode() ? true : false;
-        update_option( $this->plugin_name . '_client_ID', $result->client_id );
-        update_option( $this->plugin_name . '_client_secret', $result->client_secret );
+        update_option( Furgonetka_Options::OPTION_CLIENT_ID, $result->client_id );
+        update_option( Furgonetka_Options::OPTION_CLIENT_SECRET, $result->client_secret );
 
         /**
          * Save wp access api data in db
          */
         Furgonetka_Api_Keys::store_temporary_api_keys( $ck, $cs );
 
-        update_option( $this->plugin_name . '_test_mode', $test_mode );
+        update_option( Furgonetka_Options::OPTION_TEST_MODE, $test_mode );
 
         $url   = self::get_test_mode() ? self::TEST_API_OAUTH_URL : self::API_OAUTH_URL;
         $query = http_build_query(
@@ -1598,7 +1597,7 @@ class Furgonetka_Admin
                 $result = self::send_rest_api_request('PATCH', $path, self::authorization_headers(), $body_params);
 
                 if ( ! $integration_uuid && ! empty( $result->integrationUuid ) ) {
-                    update_option( FURGONETKA_PLUGIN_NAME . '_integration_uuid', $result->integrationUuid );
+                    update_option( Furgonetka_Options::OPTION_INTEGRATION_UUID, $result->integrationUuid );
                 }
             } catch (\Exception $e) {
                 /** Do nothing */
@@ -1652,17 +1651,17 @@ class Furgonetka_Admin
                 if ( 200 === $http_status ) {
                     $response = json_decode( $server_output );
                     if ( isset( $response->access_token ) ) {
-                        update_option( $this->plugin_name . '_access_token', $response->access_token );
+                        update_option( Furgonetka_Options::OPTION_ACCESS_TOKEN, $response->access_token );
                     }
                     if ( isset( $response->refresh_token ) ) {
-                        update_option( $this->plugin_name . '_refresh_token', $response->refresh_token );
+                        update_option( Furgonetka_Options::OPTION_REFRESH_TOKEN, $response->refresh_token );
                     }
                     if ( isset( $response->expires_in ) ) {
                         $expires_date = strtotime( 'now' ) + $response->expires_in;
-                        update_option( $this->plugin_name . '_expires_date', $expires_date );
+                        update_option( Furgonetka_Options::OPTION_EXPIRES_DATE, $expires_date );
                     }
                     $test_mode = $test_mode ? true : false;
-                    update_option( $this->plugin_name . '_test_mode', $test_mode );
+                    update_option( Furgonetka_Options::OPTION_TEST_MODE, $test_mode );
                 } else {
                     throw new Exception( 'BAD HTTP STATUS: ' . $http_status );
                 }
@@ -1716,14 +1715,14 @@ class Furgonetka_Admin
     public function furgonetka_refresh_token()
     {
         /** Break if expires date > 7 days */
-        if ( get_option( $this->plugin_name . '_expires_date' ) > strtotime( '+7 day' ) ) {
+        if ( get_option( Furgonetka_Options::OPTION_EXPIRES_DATE ) > strtotime( '+7 day' ) ) {
             return;
         }
 
-        $test_mode     = get_option( $this->plugin_name . '_test_mode' );
-        $client_id     = get_option( $this->plugin_name . '_client_ID' );
-        $client_secret = get_option( $this->plugin_name . '_client_secret' );
-        $refresh_token = get_option( $this->plugin_name . '_refresh_token' );
+        $test_mode     = get_option( Furgonetka_Options::OPTION_TEST_MODE );
+        $client_id     = get_option( Furgonetka_Options::OPTION_CLIENT_ID );
+        $client_secret = get_option( Furgonetka_Options::OPTION_CLIENT_SECRET );
+        $refresh_token = get_option( Furgonetka_Options::OPTION_REFRESH_TOKEN );
 
         try {
             $this->refresh_token( $client_id, $client_secret, $test_mode, $refresh_token );
@@ -1786,14 +1785,14 @@ class Furgonetka_Admin
                 if ( 200 === $http_status ) {
                     $response = json_decode( $server_output );
                     if ( isset( $response->access_token ) ) {
-                        update_option( $this->plugin_name . '_access_token', $response->access_token );
+                        update_option( Furgonetka_Options::OPTION_ACCESS_TOKEN, $response->access_token );
                     }
                     if ( isset( $response->refresh_token ) ) {
-                        update_option( $this->plugin_name . '_refresh_token', $response->refresh_token );
+                        update_option( Furgonetka_Options::OPTION_REFRESH_TOKEN, $response->refresh_token );
                     }
                     if ( isset( $response->expires_in ) ) {
                         $expires_date = strtotime( 'now' ) + $response->expires_in;
-                        update_option( $this->plugin_name . '_expires_date', $expires_date );
+                        update_option( Furgonetka_Options::OPTION_EXPIRES_DATE, $expires_date );
                     }
                 } else {
                     throw new Exception( 'BAD HTTP STATUS: ' . $http_status );
@@ -1938,13 +1937,57 @@ class Furgonetka_Admin
     }
 
     /**
-     * Get email
-     *
-     * @since 1.0.0.
+     * @throws Exception
+     * @return void
      */
-    public static function get_email()
+    public static function delete_integration_connection()
     {
-        return self::check_nonce_and_get_data( 'email', '_email' );
+        /**
+         * Check required data
+         */
+        $integrationUuid = self::get_integration_uuid();
+
+        if ( ! $integrationUuid || ! self::get_access_token() ) {
+            return;
+        }
+
+        /**
+         * Remove integration connection
+         */
+        $path = str_replace('{integrationUuid}', $integrationUuid, self::PATH_INTEGRATION_CONNECTION);
+
+        self::send_rest_api_request( 'DELETE', $path, self::authorization_headers() );
+    }
+
+    public static function register_map_client()
+    {
+        /**
+         * Check required data
+         */
+        $integrationUuid = self::get_integration_uuid();
+
+        if ( ! $integrationUuid || ! self::get_access_token() ) {
+            throw new \Exception( 'No connection' );
+        }
+
+        /**
+         * Get map API key
+         */
+        $path = str_replace('{integrationUuid}', $integrationUuid, self::PATH_MAPS_REGISTER_CLIENT);
+
+        $result = self::send_rest_api_request( 'POST', $path, self::authorization_headers() );
+
+        if ( empty ( $result->apiKey ) ) {
+            if ( ! empty( $result->errors ) ) {
+                $first_error = reset( $result->errors );
+
+                throw new \Exception( $first_error->path . ': ' . $first_error->message );
+            }
+
+            throw new \Exception( 'Register map client problem' );
+        }
+
+        return $result;
     }
 
     /**
@@ -1954,21 +1997,7 @@ class Furgonetka_Admin
      */
     public static function get_client_id()
     {
-        return self::check_nonce_and_get_data( 'clientID', '_client_ID' );
-    }
-
-    /**
-     * Get client balance
-     *
-     * @since 1.0.0.
-     */
-    public static function get_client_balance()
-    {
-        try {
-            return self::get_balance();
-        } catch ( Exception $e ) {
-            return $e->getMessage();
-        }
+        return self::check_nonce_and_get_data( 'clientID' ) ?? get_option( Furgonetka_Options::OPTION_CLIENT_ID );
     }
 
     /**
@@ -1978,7 +2007,7 @@ class Furgonetka_Admin
      */
     public static function get_client_secret()
     {
-        return self::check_nonce_and_get_data( 'clientSecret', '_client_secret' );
+        return self::check_nonce_and_get_data( 'clientSecret' ) ?? get_option( Furgonetka_Options::OPTION_CLIENT_SECRET );
     }
 
     /**
@@ -1988,23 +2017,22 @@ class Furgonetka_Admin
      */
     public static function get_test_mode()
     {
-        return get_option( FURGONETKA_PLUGIN_NAME . '_test_mode' );
+        return get_option( Furgonetka_Options::OPTION_TEST_MODE );
     }
 
     /**
-     * Check nonce and get data from options table
+     * Check nonce and get data from the POST request
      *
      * @param  string $post_field_name - field name from POST table.
-     * @param  string $option_name     - option name in DB.
-     * @return mixed
+     * @return string|null
      */
-    public static function check_nonce_and_get_data( $post_field_name, $option_name )
+    public static function check_nonce_and_get_data( string $post_field_name )
     {
         return (
             isset( $_POST['_wpnonce'], $_POST[ $post_field_name ] )
             && wp_verify_nonce( sanitize_key( $_POST['_wpnonce'] ) )
         ) ? sanitize_text_field( wp_unslash( $_POST[ $post_field_name ] ) )
-            : get_option( FURGONETKA_PLUGIN_NAME . $option_name );
+            : null;
     }
 
     /**
@@ -2014,7 +2042,7 @@ class Furgonetka_Admin
      */
     public static function get_source_id()
     {
-        return get_option( FURGONETKA_PLUGIN_NAME . '_source_id' );
+        return get_option( Furgonetka_Options::OPTION_SOURCE_ID );
     }
 
     /**
@@ -2024,7 +2052,7 @@ class Furgonetka_Admin
      */
     public static function get_access_token()
     {
-        return get_option( FURGONETKA_PLUGIN_NAME . '_access_token' );
+        return get_option( Furgonetka_Options::OPTION_ACCESS_TOKEN );
     }
 
     /**
@@ -2034,7 +2062,17 @@ class Furgonetka_Admin
      */
     public static function get_integration_uuid()
     {
-        return get_option( FURGONETKA_PLUGIN_NAME . '_integration_uuid' );
+        return get_option( Furgonetka_Options::OPTION_INTEGRATION_UUID );
+    }
+
+    /**
+     * Get map token
+     *
+     * @since    1.8.1.
+     */
+    public static function get_map_api_key()
+    {
+        return get_option( Furgonetka_Options::OPTION_MAP_API_KEY );
     }
 
     /**
@@ -2156,10 +2194,12 @@ class Furgonetka_Admin
      */
     public static function is_account_active()
     {
-        if ( ! get_option( FURGONETKA_PLUGIN_NAME . '_expires_date' ) ) {
+        $expires_date = get_option( Furgonetka_Options::OPTION_EXPIRES_DATE );
+
+        if ( ! $expires_date ) {
             return false;
         }
-        if ( get_option( FURGONETKA_PLUGIN_NAME . '_expires_date' ) < strtotime( 'now' ) ) {
+        if ( $expires_date < strtotime( 'now' ) ) {
             return false;
         }
         if ( ! self::get_integration_uuid() && ! self::get_source_id() ) {

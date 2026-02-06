@@ -28,3 +28,11 @@
 if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
     exit;
 }
+
+try {
+    require_once __DIR__ . '/furgonetka.php';
+
+    Furgonetka_Options::delete_all_options();
+} catch ( Throwable $e ) {
+    /** Silence cleanup errors */
+}

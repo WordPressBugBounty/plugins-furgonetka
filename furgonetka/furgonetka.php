@@ -11,7 +11,7 @@
  * Plugin Name:          Furgonetka.pl
  * Plugin URI:           https://furgonetka.pl
  * Description:          Połącz swój sklep z modułem Furgonetka.pl! Generuj etykiety, twórz szablony przesyłek, śledź statusy paczek. Nadawaj paczki szybko i tanio korzystając z 10 firm kurierskich.
- * Version:              1.7.3
+ * Version:              1.9.1
  * Author:               Furgonetka.pl
  * Author URI:           https://furgonetka.pl
  * License:              GPL-2.0+
@@ -21,7 +21,7 @@
  * Text Domain:          furgonetka
  * Domain Path:          /languages
  * Requires Plugins:     woocommerce
- * Requires PHP:         7.0
+ * Requires PHP:         7.1
  * WC requires at least: 4.0
  * WC tested up to:      10.0.3
  */
@@ -37,13 +37,14 @@ if ( ! defined( 'WPINC' ) )
  * Start at version 1.0.0 and use SemVer - https://semver.org
  * Rename this for your plugin and update it as you release new versions.
  */
-define( 'FURGONETKA_VERSION', '1.7.3' );
+define( 'FURGONETKA_VERSION', '1.9.1' );
 define( 'FURGONETKA_PLUGIN_NAME', 'furgonetka' );
 define( 'FURGONETKA_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'FURGONETKA_DEBUG', false );
 
 /** Require the file containing the constants class */
 require_once 'includes/class-furgonetka-constants.php';
+require_once 'includes/class-furgonetka-options.php';
 
 /**
  * This function runs when WordPress completes its install/upgrade process
@@ -73,7 +74,8 @@ function furgonetka_upgrade_completed( $upgrader_object, $options )
  * Add tasks after upgrade module
  */
 function perform_migrations() {
-    $previous_plugin_version = get_option('furgonetka_version', '1.0.0');
+
+    $previous_plugin_version = get_option(Furgonetka_Options::OPTION_VERSION, '1.0.0');
 
     /** If module version is already this same, skip tasks */
     if ( get_transient( Furgonetka_Constants::TRANSIENT_PLUGIN_UPDATED ) === false || $previous_plugin_version === FURGONETKA_VERSION ) {
@@ -86,7 +88,7 @@ function perform_migrations() {
     $migrations_performer->run( $previous_plugin_version );
 
     /** Update module version, to prevent run tasks twice */
-    update_option( 'furgonetka_version', FURGONETKA_VERSION );
+    update_option( Furgonetka_Options::OPTION_VERSION, FURGONETKA_VERSION );
 }
 
 add_action( 'upgrader_process_complete', 'furgonetka_upgrade_completed', 10, 2 );

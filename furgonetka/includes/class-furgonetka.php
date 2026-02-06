@@ -302,6 +302,7 @@ class Furgonetka
         Furgonetka_Rest_Api_Permissions::define_hooks();
         Furgonetka_Capabilities::define_hooks();
         Furgonetka_Cart::define_hooks();
+        Furgonetka_Order::define_hooks();
     }
 
     /**

@@ -8,8 +8,8 @@
  */
 class Furgonetka_Rest_Api_Permissions
 {
-    /** Indicate APIs with regular, WooCommerce REST API-based authorization */
-    const PERMISSION_CALLBACK = array( self::class, 'permission_callback' );
+    /** Indicate APIs with regular, WooCommerce REST API-based authorization with permission to manage WooCommerce */
+    const PERMISSION_CALLBACK_MANAGE_WOOCOMMERCE = array( self::class, 'permission_callback_manage_woocommerce' );
 
     /** Indicate APIs without authorization */
     const PERMISSION_CALLBACK_NO_AUTHORIZATION = '__return_true';
@@ -42,7 +42,7 @@ class Furgonetka_Rest_Api_Permissions
      *
      * This callback should be used for module REST API (outside authorization)
      */
-    public static function permission_callback(): bool
+    public static function permission_callback_manage_woocommerce(): bool
     {
         /**
          * If the current endpoint is allowed within WooCommerce authorization system, this should determine API user
@@ -52,7 +52,7 @@ class Furgonetka_Rest_Api_Permissions
         /**
          * Check whether current user have required capabilities
          */
-        return Furgonetka_Capabilities::current_user_can_manage_furgonetka();
+        return current_user_can( 'manage_woocommerce' );
     }
 
     /**

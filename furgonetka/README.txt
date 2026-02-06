@@ -4,7 +4,7 @@ Donate link: https://furgonetka.pl
 Tags: delivery, kurier, paczki, courier
 Requires at least: 5.0
 Tested up to: 6.8.1
-Stable tag: 1.7.3
+Stable tag: 1.9.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Integracja WooCommerce z Furgonetka.pl pozwoli Ci nadawać przesyłki sprawdzonymi przewoźnikami takimi jak DPD, DHL, UPS, InPost, GLS, Poczta Polska, FedEx, Meest, Ambro Express oraz Paczka w RUCHu.
@@ -90,6 +90,36 @@ Tak, wtyczka umożliwia nadawanie paczek bezpośrednio z poziomu panelu WooComme
 6. Interaktywna mapa widoczna w koszyku sklepu, pozwalająca klientowi wybrać dogodny punkt odbioru podczas finalizacji zakupów.
 
 == Changelog ==
+
+= 1.9.1 =
+* Added minor fixes
+
+= 1.9.0 =
+* Added support for map API key
+
+= 1.8.3 =
+* Fixed get map configuration issue
+
+= 1.8.2 =
+* Fixed map migration
+
+= 1.8.1 =
+* Fixed PHP 7.1 compatibility
+
+= 1.8.0 =
+* Added support for points types in map configuration
+
+= 1.7.6 =
+* Furgonetka Koszyk - fixed behavior of the button on the checkout page
+
+= 1.7.5 =
+* Furgonetka Koszyk - added support for automatic cancellation of unpaid orders
+* Improved API key permission validation
+
+= 1.7.4 =
+* Changed settings persistence behavior when module is disabled or removed
+* Furgonetka Koszyk - changed payment gateway enable behavior
+* Furgonetka Koszyk - changed default order status set on order in payment gateway
 
 = 1.7.3 =
 * Furgonetka Koszyk - added assigning currently logged in user to order
@@ -328,35 +358,41 @@ Tak, wtyczka umożliwia nadawanie paczek bezpośrednio z poziomu panelu WooComme
 
 == Upgrade Notice ==
 
-= 1.0.9 =
-This version fixes a displaying flexible shipping methods bug.
+= 1.8.0 =
+This version changes map configuration format.
 
-= 1.0.10 =
-This version lets add packages numbers to orders.
+= 1.7.4 =
+This version changes behavior of the settings persistence when module is disabled or removed.
 
-= 1.0.11 =
-This version lets configure maps for GLS ParcelShop (applies to own contracts).
-
-= 1.1.0 =
-This version lets sending request that adds redirects on shop.
-
-= 1.2.0 =
-This version adds fast checkout feature - Portmonetka
-
-= 1.4.0 =
-This version adds support for WooCommerce Cart and Checkout Blocks
-
-= 1.4.1 =
-Added the ability for the customer to indicate international points on the map displayed in the store's checkout.
-
-= 1.4.2 =
-This version fixes issue with connecting account on some shops.
-
-= 1.5.0 =
-This version adds individual plugin permissions.
+= 1.6.2 =
+This version updates design and behavior of the map configuration view.
 
 = 1.6.0 =
 This version updates design and behavior of the fast checkout feature - Portmonetka.
 
-= 1.6.2 =
-This version updates design and behavior of the map configuration view.
+= 1.5.0 =
+This version adds individual plugin permissions.
+
+= 1.4.2 =
+This version fixes issue with connecting account on some shops.
+
+= 1.4.1 =
+Added the ability for the customer to indicate international points on the map displayed in the store's checkout.
+
+= 1.4.0 =
+This version adds support for WooCommerce Cart and Checkout Blocks
+
+= 1.2.0 =
+This version adds fast checkout feature - Portmonetka
+
+= 1.1.0 =
+This version lets sending request that adds redirects on shop.
+
+= 1.0.11 =
+This version lets configure maps for GLS ParcelShop (applies to own contracts).
+
+= 1.0.10 =
+This version lets add packages numbers to orders.
+
+= 1.0.9 =
+This version fixes a displaying flexible shipping methods bug.

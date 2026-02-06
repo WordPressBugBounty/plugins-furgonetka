@@ -63,11 +63,6 @@ class Furgonetka_rest_api
          */
         require_once $endpoint_controllers . 'class-furgonetka-endpoint-abstract.php';
         /**
-         * Update single order
-         */
-        require_once $endpoint_controllers . 'class-furgonetka-endpoint-update-order-information.php';
-        new Furgonetka_Endpoint_Update_Order_Information();
-        /**
          * Update multiple orders
          */
         require_once $endpoint_controllers . 'class-furgonetka-endpoint-update-orders-information.php';

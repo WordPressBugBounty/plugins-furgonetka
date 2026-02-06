@@ -9,20 +9,14 @@
 class Furgonetka_Api_Keys
 {
     /**
-     * API keys options
-     */
-    const OPTION_TEMPORARY_CONSUMER_KEY = FURGONETKA_PLUGIN_NAME . '_key_consumer_key';
-    const OPTION_TEMPORARY_CONSUMER_SECRET = FURGONETKA_PLUGIN_NAME . '_key_consumer_secret';
-
-    /**
      * Store API keys temporarily into database
      *
      * @return void
      */
     public static function store_temporary_api_keys(string $consumer_key, string $consumer_secret )
     {
-        update_option( self::OPTION_TEMPORARY_CONSUMER_KEY, $consumer_key );
-        update_option( self::OPTION_TEMPORARY_CONSUMER_SECRET, $consumer_secret );
+        update_option( Furgonetka_Options::OPTION_TEMPORARY_CONSUMER_KEY, $consumer_key );
+        update_option( Furgonetka_Options::OPTION_TEMPORARY_CONSUMER_SECRET, $consumer_secret );
     }
 
     /**
@@ -32,8 +26,8 @@ class Furgonetka_Api_Keys
      */
     public static function remove_temporary_api_keys()
     {
-        delete_option( self::OPTION_TEMPORARY_CONSUMER_KEY );
-        delete_option( self::OPTION_TEMPORARY_CONSUMER_SECRET );
+        delete_option( Furgonetka_Options::OPTION_TEMPORARY_CONSUMER_KEY );
+        delete_option( Furgonetka_Options::OPTION_TEMPORARY_CONSUMER_SECRET );
     }
 
     /**
@@ -43,7 +37,7 @@ class Furgonetka_Api_Keys
      */
     public static function get_temporary_consumer_key()
     {
-        $value = get_option( self::OPTION_TEMPORARY_CONSUMER_KEY );
+        $value = get_option( Furgonetka_Options::OPTION_TEMPORARY_CONSUMER_KEY );
 
         return is_string( $value ) ? $value : null;
     }
@@ -55,7 +49,7 @@ class Furgonetka_Api_Keys
      */
     public static function get_temporary_consumer_secret()
     {
-        $value = get_option( self::OPTION_TEMPORARY_CONSUMER_SECRET );
+        $value = get_option( Furgonetka_Options::OPTION_TEMPORARY_CONSUMER_SECRET );
 
         return is_string( $value ) ? $value : null;
     }

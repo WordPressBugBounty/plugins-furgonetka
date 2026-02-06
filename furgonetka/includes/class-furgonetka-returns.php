@@ -21,48 +21,13 @@
 class Furgonetka_Returns
 {
     /**
-     * Model data
-     *
-     * @var array
-     */
-    private $model_data;
-
-    /**
-     * Model
-     *
-     * @var Furgonetka_Returns_Model
-     */
-    private $model;
-
-    /**
-     * Register model
-     */
-    public function __construct()
-    {
-        require_once FURGONETKA_REST_DIR . 'models/class-furgonetka-returns-model.php';
-        $this->include_model();
-        $this->model_data = $this->model->get_rewrite_options();
-    }
-
-    /**
-     * Include Model
-     *
-     * @return void
-     */
-    public function include_model(): void
-    {
-        require_once FURGONETKA_REST_DIR . 'models/class-furgonetka-returns-model.php';
-        $this->model = new Furgonetka_Returns_Model();
-    }
-
-    /**
      * Init method
      *
      * @return void
      */
     public function init()
     {
-        if ( 1 === $this->model_data['active'] ) {
+        if ( get_option( Furgonetka_Options::OPTION_RETURNS_ACTIVE ) ) {
             add_action( 'init', array( $this, 'add_rewrite_route' ) );
             add_action( 'parse_request', array( $this, 'redirect' ) );
         }
@@ -76,8 +41,8 @@ class Furgonetka_Returns
     public function redirect(): void
     {
         global $wp;
-        if ( get_option( Furgonetka_Returns_Model::get_route_option_name() ) === $wp->request ) {
-            header( 'Location: ' . get_option( Furgonetka_Returns_Model::get_target_option_name() ) );
+        if ( get_option( Furgonetka_Options::OPTION_RETURNS_ROUTE ) === $wp->request ) {
+            header( 'Location: ' . get_option( Furgonetka_Options::OPTION_RETURNS_TARGET ) );
             exit();
         }
     }
@@ -100,13 +65,13 @@ class Furgonetka_Returns
     }
 
     /**
-     * Add rewriite rulez, flush rewrite rules
+     * Add rewrite rules, flush rewrite rules
      *
      * @return void
      */
     public function add_rewrite_route()
     {
-        add_rewrite_rule( '\b' . get_option( Furgonetka_Returns_Model::get_route_option_name() ) . '\b', 'index.php', 'top' );
+        add_rewrite_rule( '\b' . get_option( Furgonetka_Options::OPTION_RETURNS_ROUTE ) . '\b', 'index.php', 'top' );
         flush_rewrite_rules();
     }
 }

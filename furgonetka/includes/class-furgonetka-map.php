@@ -15,22 +15,32 @@ class Furgonetka_Map {
     /**
      * Get map configuration
      *
-     * @return array<string,string> where key is shipping rate ID (id:instance_id) and value is courier service
+     * @return array<string,mixed> where key is shipping rate ID (id:instance_id) and value is array with courier_service and points_types
      */
     public static function get_configuration(): array
     {
-        $delivery_to_type = get_option( FURGONETKA_PLUGIN_NAME . '_deliveryToType' );
+        $delivery_to_type = get_option( Furgonetka_Options::OPTION_DELIVERY_TO_TYPE );
 
         if ( ! is_array( $delivery_to_type ) ) {
             return array();
         }
 
-        return array_map(
-            static function ( $service ) {
-                return self::SERVICES_ALIASES[ $service ] ?? $service;
-            },
-            $delivery_to_type
-        );
+        foreach ( $delivery_to_type as $shipping => $item ) {
+            if ( is_string( $item ) ) {
+                $delivery_to_type[ $shipping ] = [
+                    'courier_service' => self::SERVICES_ALIASES[ $item ] ?? $item,
+                    'points_types'    => Furgonetka_Constants::POINTS_TYPES,
+                ];
+            } else if ( isset( $item[ 'courier_service' ] ) ) {
+                if ( is_array( $item[ 'courier_service' ] ) ) {
+                    $delivery_to_type[ $shipping ][ 'courier_service' ] = self::SERVICES_ALIASES[ $item[ 'courier_service' ][ 'courier_service' ] ] ?? $item[ 'courier_service' ][ 'courier_service' ];
+                } else {
+                    $delivery_to_type[ $shipping ][ 'courier_service' ] = self::SERVICES_ALIASES[ $item[ 'courier_service' ] ] ?? $item[ 'courier_service' ];
+                }
+            }
+        }
+
+        return $delivery_to_type;
     }
 
     /**
@@ -43,7 +53,27 @@ class Furgonetka_Map {
     {
         $data = array_intersect_key( $configuration, array_flip( self::get_valid_shipping_rates_ids() ) );
 
-        update_option( FURGONETKA_PLUGIN_NAME . '_deliveryToType', $data );
+        update_option( Furgonetka_Options::OPTION_DELIVERY_TO_TYPE, $data );
+    }
+
+    /**
+     * Get shipping rate configuration by by the given shipping rate ID (id:instance_id)
+     *
+     * @return array|null
+     */
+    public static function get_shipping_rate_configuration(string $id)
+    {
+        $delivery_to_type = self::get_configuration();
+        $shipping_rate_configuration = $delivery_to_type[ $id ] ?? [];
+
+        if ( ! is_array( $shipping_rate_configuration )
+            && ! array_key_exists( 'courier_service', $shipping_rate_configuration )
+            && ! array_key_exists( 'points_types', $shipping_rate_configuration )
+        ) {
+            return null;
+        }
+
+        return $shipping_rate_configuration;
     }
 
     /**
@@ -53,14 +83,26 @@ class Furgonetka_Map {
      */
     public static function get_service_by_shipping_rate_id( string $id )
     {
-        $delivery_to_type = self::get_configuration();
-        $service          = $delivery_to_type[ $id ] ?? null;
+        $shipping_rate_configuration = self::get_shipping_rate_configuration( $id );
 
-        if ( ! is_string( $service ) ) {
+        return $shipping_rate_configuration[ 'courier_service' ] ?? null;
+    }
+
+    /**
+     * Get shipping rate configuration by the currently selected shipping rate from the WooCommerce session
+     *
+     * @return array|null
+     */
+    public static function get_shipping_rate_configuration_from_session()
+    {
+        $chosen_method_array = WC()->session->get( 'chosen_shipping_methods' );
+        $shipping_method_id  = $chosen_method_array[ 0 ] ?? null;
+
+        if ( ! is_string( $shipping_method_id ) ) {
             return null;
         }
 
-        return $service;
+        return self::get_shipping_rate_configuration( $shipping_method_id );
     }
 
     /**

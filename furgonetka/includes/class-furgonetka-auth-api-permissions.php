@@ -37,7 +37,7 @@ class Furgonetka_Auth_Api_Permissions
     {
         $nonce = wc_rand_hash();
 
-        update_option( FURGONETKA_PLUGIN_NAME . '_auth_api_nonce', $nonce );
+        update_option( Furgonetka_Options::OPTION_AUTH_API_NONCE, $nonce );
 
         return $nonce;
     }
@@ -47,13 +47,13 @@ class Furgonetka_Auth_Api_Permissions
      */
     private static function verify_auth_api_nonce( $nonce ): bool
     {
-        $stored_nonce = get_option( FURGONETKA_PLUGIN_NAME . '_auth_api_nonce' );
+        $stored_nonce = get_option( Furgonetka_Options::OPTION_AUTH_API_NONCE );
 
         if ( ! $stored_nonce ) {
             return false;
         }
 
-        delete_option( FURGONETKA_PLUGIN_NAME . '_auth_api_nonce' );
+        delete_option( Furgonetka_Options::OPTION_AUTH_API_NONCE );
 
         return $nonce === $stored_nonce;
     }

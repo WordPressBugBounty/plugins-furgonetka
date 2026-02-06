@@ -64,7 +64,7 @@ var currentService = null;
 /**
  * Click in select point link
  */
-function openFurgonetkaMap( service, city, street, countryCode, mapBounds )
+function openFurgonetkaMap( service, city, street, countryCode, mapBounds, pointsTypes, mapApiKey )
 {
     var codOnly = false;
 
@@ -91,6 +91,8 @@ function openFurgonetkaMap( service, city, street, countryCode, mapBounds )
                 mapBounds: mapBounds,
                 countryCodesFilter: [countryCode],
                 pointTypesFilter: pointTypesFilter,
+                availableServiceTypes: pointsTypes,
+                apiKey: mapApiKey,
                 callback: callbackFurgonetka,
             }
         ).view();

@@ -23,14 +23,25 @@
 class Furgonetka_Deactivator
 {
     /**
-     * Short Description. (use period)
-     *
-     * Long Description.
-     *
      * @since 1.0.0
      */
     public static function deactivate()
     {
         wp_clear_scheduled_hook( 'furgonetka_daily_event' );
+
+        self::delete_integration_connection();
+        Furgonetka_Options::delete_all_options();
+    }
+
+    /**
+     * @return void
+     */
+    private static function delete_integration_connection()
+    {
+        try {
+            Furgonetka_Admin::delete_integration_connection();
+        } catch (Exception $e) {
+            /** Silence exception */
+        }
     }
 }

@@ -56,7 +56,7 @@ class Furgonetka_Map_Settings {
         }
 
         foreach ( $configuration as $key => $value ) {
-            if ( ! is_string( $key ) || ! is_string( $value ) ) {
+            if ( ! is_string( $key ) || ! is_array( $value ) || empty ( $value[ 'courier_service' ] ) || empty ( $value[ 'points_types' ] ) ) {
                 return false;
             }
         }

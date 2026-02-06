@@ -26,6 +26,14 @@ class Furgonetka_Migrations_Performer
             $this->upgrade_to_1_6_1();
         }
 
+        if ( version_compare( $previous_plugin_version, '1.8.0', '<' ) ) {
+            $this->upgrade_to_1_8_0();
+        }
+
+        if ( version_compare( $previous_plugin_version, '1.9.0', '<' ) ) {
+            $this->upgrade_to_1_9_0();
+        }
+
         Furgonetka_Capabilities::ensure_capabilities();
 
         Furgonetka_Admin::update_plugin_version( FURGONETKA_VERSION );
@@ -67,6 +75,40 @@ class Furgonetka_Migrations_Performer
             $admin->save_account_data();
         } catch ( Exception $e ) {
             $this->log( $e );
+        }
+    }
+
+    private function upgrade_to_1_8_0(): void
+    {
+        $old_map_configuration = get_option( Furgonetka_Options::OPTION_DELIVERY_TO_TYPE );
+        $new_map_configuration = [];
+        foreach ( $old_map_configuration as $shipping => $item ) {
+            $new_map_configuration[ $shipping ] = [
+                'courier_service' => $item,
+                'points_types' => Furgonetka_Constants::POINTS_TYPES,
+            ];
+        }
+
+        update_option( Furgonetka_Options::OPTION_DELIVERY_TO_TYPE, $new_map_configuration );
+    }
+
+    private function upgrade_to_1_9_0()
+    {
+        if ( ! Furgonetka_Admin::is_account_active() ) {
+            return;
+        }
+
+        try {
+            $map_identifiers = Furgonetka_Admin::register_map_client();
+            $map_api_key     = $map_identifiers->apiKey ?? null;
+        } catch ( Exception $e ) {
+            $this->log( $e );
+        }
+
+        if ( is_string( $map_api_key ) ) {
+            update_option( Furgonetka_Options::OPTION_MAP_API_KEY, $map_api_key );
+        } else {
+            $this->log( 'Invalid data' );
         }
     }
 }

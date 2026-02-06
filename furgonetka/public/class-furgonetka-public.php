@@ -434,11 +434,13 @@ class Furgonetka_Public
             wp_send_json_error();
         }
 
-        $service = $this->get_selected_service_from_session();
+        $shipping_rates_configuration = $this->get_selected_shipping_rates_configuration_from_session();
+        $service = $shipping_rates_configuration[ 'courier_service' ] ?? null;
+        $points_types = $shipping_rates_configuration[ 'points_types' ] ?? [];
         $selected_point = $this->get_selected_point_from_session( $service, 'true' === $cod );
 
         $data = array(
-            'button' => $this->generate_delivery_button( $service, 'true' === $cod ),
+            'button' => $this->generate_delivery_button( $service, 'true' === $cod, $points_types ),
             'code'   => $selected_point['code']
         );
 
@@ -464,14 +466,17 @@ class Furgonetka_Public
             return;
         }
 
-        $service = Furgonetka_Map::get_service_from_session();
+        $shipping_rates_configuration = $this->get_selected_shipping_rates_configuration_from_session();
+        $service = $shipping_rates_configuration[ 'courier_service' ] ?? null;
+        $points_types = $shipping_rates_configuration[ 'points_types' ] ?? [];
 
         if ( $service ) {
             // all variables are escaped in generate_delivery_button method.
             //phpcs:ignore
             echo '<p id="select-point-container">' . $this->generate_delivery_button(
-                $service,
-                ( WC()->session->get( 'chosen_payment_method' ) === 'cod' )
+                    $service,
+                    ( WC()->session->get( 'chosen_payment_method' ) === 'cod' ),
+                    $points_types
             ) . '</p>';
         }
     }
@@ -479,29 +484,33 @@ class Furgonetka_Public
     /**
      * Select Point button in delivery list
      *
-     * @param string $service - method type.
-     * @param mixed  $is_cod - check if is COD
-     * @since    1.0.0
+     * @param string   $service - method type.
+     * @param mixed    $is_cod - check if is COD
+     * @param string[] $points_types - points types to show on map
+     * @since   1.0.0
      * @return string
      */
-    public function generate_delivery_button( $service, $is_cod )
+    public function generate_delivery_button( $service, $is_cod, $points_types = [] )
     {
         $selected_point = $this->get_selected_point_from_session( $service, $is_cod );
         $customer       = WC()->session->get( 'customer' );
         $countryCode    = ! empty( $customer[ 'shipping_country' ] ) ? $customer[ 'shipping_country' ] : 'PL';
         $mapBounds      = strtolower( $customer[ 'shipping_country' ] ) === 'pl' ? 'pl' : 'eu';
+        $mapApiKey      = Furgonetka_Admin::get_map_api_key() ?? null;
         $change_point_label = __( 'Change point', 'furgonetka' );
         $label = empty($selected_point['name']) ? __( 'Select point', 'furgonetka' ) : $change_point_label;
 
         return sprintf(
-            '<a id="select-point" href="#" onclick=\'openFurgonetkaMap("%1$s","%4$s","%5$s","%6$s","%7$s");return false\'>%2$s</a><span id="selected-point">%3$s</span>',
+            '<a id="select-point" href="#" onclick=\'openFurgonetkaMap("%1$s","%4$s","%5$s","%6$s","%7$s", %8$s, "%9$s");return false\'>%2$s</a><span id="selected-point">%3$s</span>',
             esc_html( $service ),
             "<span id=\"select-point-label\" data-change-point-label=\"$change_point_label\">$label</span>",
             esc_html( $selected_point['name'] ),
             esc_html( $customer['shipping_city'] ),
             esc_html( $customer['shipping_address_1'] ) . ' ' . esc_html( $customer['shipping_address_2'] ),
             esc_html( $countryCode ),
-            $mapBounds
+            $mapBounds,
+            json_encode( $points_types ),
+            $mapApiKey
         );
     }
 
@@ -540,6 +549,16 @@ class Furgonetka_Public
     public function get_selected_service_from_session()
     {
         return Furgonetka_Map::get_service_from_session();
+    }
+
+    /**
+     * Get currently selected service based on session and configuration
+     *
+     * @return string|null
+     */
+    public function get_selected_shipping_rates_configuration_from_session()
+    {
+        return Furgonetka_Map::get_shipping_rate_configuration_from_session();
     }
 
     /**
@@ -885,7 +904,7 @@ class Furgonetka_Public
             array(
                 'methods'             => WP_REST_Server::CREATABLE,
                 'callback'            => array( new Furgonetka_Cart(), 'get_cart_shipping_method' ),
-                'permission_callback' => Furgonetka_Rest_Api_Permissions::PERMISSION_CALLBACK,
+                'permission_callback' => Furgonetka_Rest_Api_Permissions::PERMISSION_CALLBACK_MANAGE_WOOCOMMERCE,
             )
         );
 
@@ -915,7 +934,7 @@ class Furgonetka_Public
             array(
                 'methods'             => WP_REST_Server::CREATABLE,
                 'callback'            => array( new Furgonetka_Settings(), 'updateSettings' ),
-                'permission_callback' => Furgonetka_Rest_Api_Permissions::PERMISSION_CALLBACK,
+                'permission_callback' => Furgonetka_Rest_Api_Permissions::PERMISSION_CALLBACK_MANAGE_WOOCOMMERCE,
             )
         );
 
@@ -935,7 +954,7 @@ class Furgonetka_Public
             array(
                 'methods'             => WP_REST_Server::READABLE,
                 'callback'            => array( new Furgonetka_Map_Settings(), 'get_zones' ),
-                'permission_callback' => Furgonetka_Rest_Api_Permissions::PERMISSION_CALLBACK,
+                'permission_callback' => Furgonetka_Rest_Api_Permissions::PERMISSION_CALLBACK_MANAGE_WOOCOMMERCE,
             )
         );
 
@@ -946,12 +965,12 @@ class Furgonetka_Public
                 array(
                     'methods'             => WP_REST_Server::READABLE,
                     'callback'            => array( new Furgonetka_Map_Settings(), 'get_configuration' ),
-                    'permission_callback' => Furgonetka_Rest_Api_Permissions::PERMISSION_CALLBACK,
+                    'permission_callback' => Furgonetka_Rest_Api_Permissions::PERMISSION_CALLBACK_MANAGE_WOOCOMMERCE,
                 ),
                 array(
                     'methods'             => WP_REST_Server::CREATABLE,
                     'callback'            => array( new Furgonetka_Map_Settings(), 'post_configuration' ),
-                    'permission_callback' => Furgonetka_Rest_Api_Permissions::PERMISSION_CALLBACK,
+                    'permission_callback' => Furgonetka_Rest_Api_Permissions::PERMISSION_CALLBACK_MANAGE_WOOCOMMERCE,
                     'args'                => array(
                         'configuration' => array(
                             'description'       => 'Map configuration',
@@ -969,7 +988,7 @@ class Furgonetka_Public
             array(
                 'methods'             => WP_REST_Server::READABLE,
                 'callback'            => array( new Furgonetka_Order(), 'get_order_statuses'),
-                'permission_callback' => Furgonetka_Rest_Api_Permissions::PERMISSION_CALLBACK,
+                'permission_callback' => Furgonetka_Rest_Api_Permissions::PERMISSION_CALLBACK_MANAGE_WOOCOMMERCE,
             )
         );
     }

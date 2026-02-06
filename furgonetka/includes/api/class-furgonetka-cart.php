@@ -758,9 +758,10 @@ class Furgonetka_Cart
                 /**
                  * Map configuration
                  */
-                if ( ! empty( $furgonetka_map_configuration[ $rate_id ] ) ) {
+                if ( ! empty( $furgonetka_map_configuration[ $rate_id ][ 'courier_service' ] ) ) {
                     $shipping_method[ 'mapConfig' ] = [
-                        'courierService' => $furgonetka_map_configuration[ $rate_id ],
+                        'courierService' => $furgonetka_map_configuration[ $rate_id ][ 'courier_service' ],
+                        'pointsTypes' => $furgonetka_map_configuration[ $rate_id ][ 'points_types' ],
                     ];
                 }
 
