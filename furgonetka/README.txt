@@ -1,13 +1,14 @@
-=== Furgonetka.pl: Integracja z WooCommerce ===
+=== Furgonetka.pl: Przesyłki & Narzędzia e-commerce ===
 Contributors: Furgonetka
 Donate link: https://furgonetka.pl
 Tags: delivery, kurier, paczki, courier
 Requires at least: 5.0
 Tested up to: 6.8.1
-Stable tag: 1.9.1
+Stable tag: 1.9.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
-Integracja WooCommerce z Furgonetka.pl pozwoli Ci nadawać przesyłki sprawdzonymi przewoźnikami takimi jak DPD, DHL, UPS, InPost, GLS, Poczta Polska, FedEx, Meest, Ambro Express oraz Paczka w RUCHu.
+
+Nadawaj przesyłki, udostępnij mapę punktów odbioru, obsługuj zwroty, wystawiaj faktury KSeF, aktualizuj statusy zamówień.
 
 == Description ==
 
@@ -37,7 +38,7 @@ Zobacz, co oferuje platforma Furgonetka w 30-sekundowym filmiku
 
 https://www.youtube.com/watch?v=aNTJeOXkeNc
 
-Do korzystania z wtyczki “Furgonetka.pl: Integracja z WooCommerce” wymagane jest posiadanie konta na [Furgonetka.pl](https://furgonetka.pl).
+Do korzystania z wtyczki “Furgonetka.pl: Przesyłki & Narzędzia e-commerce” wymagane jest posiadanie konta na [Furgonetka.pl](https://furgonetka.pl).
 
 Wsparcie techniczne dla integracji:
 Tel.: + 48 22 112 08 35 (kolejka nr 2)
@@ -47,7 +48,7 @@ E-mail: ecommerce@furgonetka.pl
 
 Zainstaluj wtyczkę w panelu administracyjnym WordPressa:
 
-* **Krok 1.** Pobierz moduł bezpośrednio ze strony WordPress: Furgonetka.pl: Integracja z WooCommerce, a następnie przejdź w panelu WooCommerce do zakładki „Wtyczki” -> „Dodaj nową” i zainstaluj ją, korzystając z przycisku „Wyślij” wtyczkę na serwer.
+* **Krok 1.** Pobierz moduł bezpośrednio ze strony WordPress: Furgonetka.pl: Przesyłki & Narzędzia e-commerce, a następnie przejdź w panelu WooCommerce do zakładki „Wtyczki” -> „Dodaj nową” i zainstaluj ją, korzystając z przycisku „Wyślij” wtyczkę na serwer.
 Wtyczkę możesz również pobrać z repozytorium wtyczek w Wordpress wybierając opcję „Wtyczki” -> „Dodaj nową”. Aby odnaleźć wtyczkę, wpisz frazę "furgonetka". Na karcie wtyczki wybierz opcję „Zainstaluj”.
 
 * **Krok 2.** Po potwierdzeniu poprawnej instalacji wtyczkę należy włączyć, klikając przycisk „Włącz”
@@ -90,6 +91,10 @@ Tak, wtyczka umożliwia nadawanie paczek bezpośrednio z poziomu panelu WooComme
 6. Interaktywna mapa widoczna w koszyku sklepu, pozwalająca klientowi wybrać dogodny punkt odbioru podczas finalizacji zakupów.
 
 == Changelog ==
+
+= 1.9.2 =
+* Changed the label from "Invoices and financial documents" to "Invoices from Furgonetka" in the side menu
+* Updated README file
 
 = 1.9.1 =
 * Added minor fixes

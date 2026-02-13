@@ -612,8 +612,8 @@ class Furgonetka_Admin
 
             add_submenu_page(
                 'furgonetka',
-                __('Invoices and financial documents', 'furgonetka'),
-                __('Invoices and financial documents', 'furgonetka'),
+                __('Invoices from Furgonetka', 'furgonetka'),
+                __('Invoices from Furgonetka', 'furgonetka'),
                 Furgonetka_Capabilities::CAPABILITY_MANAGE_FURGONETKA,
                 self::PAGE_FURGONETKA_INVOICES_AND_FINANCIAL_DOCUMENTS,
                 array( $this, 'get_furgonetka_iframe' )

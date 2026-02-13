@@ -169,7 +169,7 @@ msgstr ""
 
 #: admin/class-furgonetka-admin.php:619
 #: admin/class-furgonetka-admin.php:620
-msgid "Invoices and financial documents"
+msgid "Invoices from Furgonetka"
 msgstr ""
 
 #: admin/class-furgonetka-admin.php:628

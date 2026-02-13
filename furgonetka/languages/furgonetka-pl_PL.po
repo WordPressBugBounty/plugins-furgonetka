@@ -422,11 +422,6 @@ msgstr "Saldo"
 msgid "My price lists"
 msgstr "Moje cenniki"
 
-#: admin/class-furgonetka-admin.php:619
-#: admin/class-furgonetka-admin.php:620
-msgid "Invoices and financial documents"
-msgstr "Faktury i dokumenty finansowe"
-
 #: admin/class-furgonetka-admin.php:628
 #: admin/class-furgonetka-admin.php:629
 msgid "List of transfers"
@@ -441,3 +436,8 @@ msgstr "Reklamacje"
 #: admin/class-furgonetka-admin.php:576
 msgid "Help and contact"
 msgstr "Pomoc i kontakt"
+
+#: admin/class-furgonetka-admin.php:619
+#: admin/class-furgonetka-admin.php:620
+msgid "Invoices from Furgonetka"
+msgstr "Faktury od Furgonetki"
