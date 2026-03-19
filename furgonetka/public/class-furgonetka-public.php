@@ -190,6 +190,10 @@ class Furgonetka_Public
             );
         }
 
+        if ( is_checkout() || ( function_exists( 'has_block' ) && has_block( 'woocommerce/checkout' ) ) ) {
+            wp_enqueue_script( 'furgonetka_map', $furgonetkaBaseUrl . '/js/dist/map/map.js', array(), '1.0', true );
+        }
+
         if ( ! is_checkout() ) {
             return;
         }
@@ -203,8 +207,6 @@ class Furgonetka_Public
             filemtime( plugin_dir_path( __FILE__ ) . $file_path ),
             false
         );
-
-        wp_enqueue_script( 'furgonetka_map', $furgonetkaBaseUrl . '/js/dist/map/map.js"', array(), '1.0', true );
 
         wp_localize_script(
             $this->plugin_name,
@@ -497,11 +499,12 @@ class Furgonetka_Public
         $countryCode    = ! empty( $customer[ 'shipping_country' ] ) ? $customer[ 'shipping_country' ] : 'PL';
         $mapBounds      = strtolower( $customer[ 'shipping_country' ] ) === 'pl' ? 'pl' : 'eu';
         $mapApiKey      = Furgonetka_Admin::get_map_api_key() ?? null;
+        $mapEnv         = Furgonetka_Admin::get_test_mode() ? 'sandbox' : 'production';
         $change_point_label = __( 'Change point', 'furgonetka' );
         $label = empty($selected_point['name']) ? __( 'Select point', 'furgonetka' ) : $change_point_label;
 
         return sprintf(
-            '<a id="select-point" href="#" onclick=\'openFurgonetkaMap("%1$s","%4$s","%5$s","%6$s","%7$s", %8$s, "%9$s");return false\'>%2$s</a><span id="selected-point">%3$s</span>',
+            '<a id="select-point" href="#" onclick=\'openFurgonetkaMap("%1$s","%4$s","%5$s","%6$s","%7$s", %8$s, "%9$s", "%10$s");return false\'>%2$s</a><span id="selected-point">%3$s</span>',
             esc_html( $service ),
             "<span id=\"select-point-label\" data-change-point-label=\"$change_point_label\">$label</span>",
             esc_html( $selected_point['name'] ),
@@ -510,7 +513,8 @@ class Furgonetka_Public
             esc_html( $countryCode ),
             $mapBounds,
             json_encode( $points_types ),
-            $mapApiKey
+            $mapApiKey,
+            $mapEnv
         );
     }
 

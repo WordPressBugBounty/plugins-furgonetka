@@ -80,6 +80,7 @@ class Furgonetka_Pickup_Point_Block_Integration implements \Automattic\WooCommer
 		return array(
 			'furgonetka_shipping_rates_configuration' => Furgonetka_Map::get_configuration(),
 			'furgonetka_map_api_key' => Furgonetka_Admin::get_map_api_key() ?? null,
+			'furgonetka_map_env' => Furgonetka_Admin::get_test_mode() ? 'sandbox' : 'production',
 		);
 	}
 
