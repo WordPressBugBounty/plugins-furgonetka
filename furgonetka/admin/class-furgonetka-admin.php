@@ -1076,7 +1076,8 @@ class Furgonetka_Admin
         $welcome_screen_url .= http_build_query(
             array(
                 'origin' => get_home_url(),
-                'type' => 'woocommerce',
+                'type'   => 'woocommerce',
+                'lang'   => self::get_user_lang(),
             )
         );
 
@@ -1484,6 +1485,7 @@ class Furgonetka_Admin
                 'client_id'    => $result->client_id,
                 'redirect_uri' => self::get_redirect_uri(),
                 'state'        => self::get_oauth_state(),
+                'lang'         => self::get_user_lang(),
             )
         );
         $url  .= '/authorize?response_type=code&' . $query;
@@ -1823,6 +1825,22 @@ class Furgonetka_Admin
         return $response->user->balance;
     }
 
+    private static function get_user_lang(): string
+    {
+        return get_user_locale() === 'pl_PL' ? 'pl_PL' : 'en_GB';
+    }
+
+    private static function append_params_to_url( string $url, array $params ): string
+    {
+        if ( empty( $params ) ) {
+            return $url;
+        }
+
+        $separator = ( strpos( $url, '?' ) === false ) ? '?' : '&';
+
+        return $url . $separator . http_build_query( $params );
+    }
+
     /**
      * @param mixed $order_id - order ID
      * @param string $action  - action
@@ -1886,7 +1904,7 @@ class Furgonetka_Admin
             $order_data->save();
         }
 
-        return $result->url;
+        return self::append_params_to_url( $result->url, [ 'lang' => self::get_user_lang() ] );
     }
 
     public static function get_app_link_url(string $page)
@@ -1904,7 +1922,7 @@ class Furgonetka_Admin
             throw new Exception();
         }
 
-        return $response->url;
+        return self::append_params_to_url( $response->url, [ 'lang' => self::get_user_lang() ] );
     }
 
     /**

@@ -3,8 +3,8 @@ Contributors: Furgonetka
 Donate link: https://furgonetka.pl
 Tags: delivery, kurier, paczki, courier
 Requires at least: 5.0
-Tested up to: 6.8.1
-Stable tag: 1.9.3
+Tested up to: 7.0
+Stable tag: 1.9.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -91,6 +91,9 @@ Tak, wtyczka umożliwia nadawanie paczek bezpośrednio z poziomu panelu WooComme
 6. Interaktywna mapa widoczna w koszyku sklepu, pozwalająca klientowi wybrać dogodny punkt odbioru podczas finalizacji zakupów.
 
 == Changelog ==
+
+= 1.9.4 =
+* Added support for User Language Preferences
 
 = 1.9.3 =
 * Fixed map script loading for pickup point block outside default checkout page
