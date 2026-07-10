@@ -606,9 +606,21 @@ class Furgonetka_Public
         $point_name   = esc_html( $order->get_meta( '_furgonetkaPointName' ) );
 
         if ( ! empty( $service ) ) {
-            $service_name = self::get_service_name( $service, $service_type );
+            $service_name         = self::get_service_name( $service, $service_type );
             $displayed_point_name = esc_html( $point_name ) ? esc_html( $point_name ) : esc_html( $point );
-            $this->view->render_point_information( $service_name, $displayed_point_name );
+            $rendered_point_information = $this->view->get_rendered_point_information( $service_name, $displayed_point_name );
+
+            echo apply_filters(
+                'furgonetka_add_point_information',
+                $rendered_point_information,
+                array(
+                    'service'              => $service,
+                    'service_type'         => $service_type,
+                    'service_name'         => $service_name,
+                    'point'                => $point,
+                    'point_name'           => $point_name,
+                )
+            );
         }
     }
 

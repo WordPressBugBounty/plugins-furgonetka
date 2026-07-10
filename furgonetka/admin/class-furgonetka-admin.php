@@ -86,6 +86,10 @@ class Furgonetka_Admin
     const PAGE_FURGONETKA_LIST_OF_TRANSFERS                = 'furgonetka_list_of_transfers';
     const PAGE_FURGONETKA_MY_PRICE_LISTS                   = 'furgonetka_my_price_lists';
     const PAGE_FURGONETKA_INVOICES_AND_FINANCIAL_DOCUMENTS = 'furgonetka_invoices_and_financial_documents';
+    const PAGE_FURGONETKA_SEPARATOR_1                      = 'furgonetka_separator_1';
+    const PAGE_FURGONETKA_SEPARATOR_2                      = 'furgonetka_separator_2';
+    const PAGE_FURGONETKA_SEPARATOR_3                      = 'furgonetka_separator_3';
+    const PAGE_FURGONETKA_SEPARATOR_4                      = 'furgonetka_separator_4';
 
     /**
      * Actions available for the pages above
@@ -419,7 +423,8 @@ class Furgonetka_Admin
                 '-',
                 '-',
                 Furgonetka_Capabilities::CAPABILITY_MANAGE_FURGONETKA,
-                ''
+                self::PAGE_FURGONETKA_SEPARATOR_1,
+                array( $this, 'get_furgonetka_iframe_separator' )
             );
 
             add_submenu_page(
@@ -490,7 +495,8 @@ class Furgonetka_Admin
                 '-',
                 '-',
                 Furgonetka_Capabilities::CAPABILITY_MANAGE_FURGONETKA,
-                ''
+                self::PAGE_FURGONETKA_SEPARATOR_2,
+                array( $this, 'get_furgonetka_iframe_separator' )
             );
 
             add_submenu_page(
@@ -554,7 +560,8 @@ class Furgonetka_Admin
                 '-',
                 '-',
                 Furgonetka_Capabilities::CAPABILITY_MANAGE_FURGONETKA,
-                ''
+                self::PAGE_FURGONETKA_SEPARATOR_3,
+                array( $this, 'get_furgonetka_iframe_separator' )
             );
 
             add_submenu_page(
@@ -589,7 +596,8 @@ class Furgonetka_Admin
                 '-',
                 '-',
                 Furgonetka_Capabilities::CAPABILITY_MANAGE_FURGONETKA,
-                ''
+                self::PAGE_FURGONETKA_SEPARATOR_4,
+                array( $this, 'get_furgonetka_iframe_separator' )
             );
 
             add_submenu_page(
@@ -1185,10 +1193,21 @@ class Furgonetka_Admin
         );
     }
 
-    public function get_furgonetka_iframe()
+    public function get_furgonetka_iframe( $full_page_name = null )
     {
-        $full_page_name = $this->get_sanitized_query_param( self::PARAM_PAGE );
+        if ( $full_page_name === null ) {
+            $full_page_name = $this->get_sanitized_query_param( self::PARAM_PAGE );
+        }
+
         $this->render_furgonetka_app_link( $full_page_name );
+    }
+
+    /**
+     * Callback for the menu separator submenu items.
+     */
+    public function get_furgonetka_iframe_separator()
+    {
+        $this->get_furgonetka_iframe( self::PAGE_FURGONETKA_PANEL_SETTINGS );
     }
 
     /**

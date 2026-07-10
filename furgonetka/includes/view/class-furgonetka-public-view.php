@@ -65,23 +65,27 @@ class Furgonetka_Public_View
      * @param mixed $point_information
      *
      * @since 1.4.6
+     *
+     * @return string
      */
-    public function render_point_information( $service, $point )
+    public function get_rendered_point_information( $service, $point )
     {
-        ?>
-        <section class="woocommerce-order-details">
-            <h2 class="woocommerce-order-details__title">
-                <?php esc_attr_e( 'Pickup point', 'furgonetka' ); ?>
-            </h2>
-            <p class="woocommerce-order-details__point">
-                <strong>
-                    <?php echo esc_html( $service ); ?>
-                </strong>
-                <br>
-                <?php echo esc_html( $point ); ?>
-            </p>
-        </section>
-        <?php
+        return sprintf(
+            <<<HTML
+<section class="woocommerce-order-details">
+    <h2 class="woocommerce-order-details__title">%s</h2>
+    <p class="woocommerce-order-details__point">
+        <strong>%s</strong>
+        <br>
+        %s
+    </p>
+</section>
+HTML
+,
+            esc_attr__( 'Pickup point', 'furgonetka' ),
+            esc_html( $service ),
+            esc_html( $point )
+        );
     }
 
     /**

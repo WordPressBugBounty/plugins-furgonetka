@@ -76,7 +76,21 @@ class furgonetka_admin_metaboxes
         $service_type = esc_html( $order->get_meta( '_furgonetkaServiceType' ) );
 
         if ( $service ) {
-            echo esc_html( Furgonetka_Public::get_service_name( $service, $service_type ) ) . '<br/>' . ( esc_html( $point_name ) ? esc_html( $point_name ) : esc_html( $point ) );
+            $service_name               = Furgonetka_Public::get_service_name( $service, $service_type );
+            $displayed_point_name       = esc_html( $point_name ) ? esc_html( $point_name ) : esc_html( $point );
+            $rendered_point_information = esc_html( $service_name ) . '<br/>' . $displayed_point_name;
+
+            echo apply_filters(
+                'furgonetka_admin_add_point_information',
+                $rendered_point_information,
+                array(
+                    'service'              => $service,
+                    'service_type'         => $service_type,
+                    'service_name'         => $service_name,
+                    'point'                => $point,
+                    'point_name'           => $point_name,
+                )
+            );
         }
     }
 
