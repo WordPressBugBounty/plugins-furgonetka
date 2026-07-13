@@ -1195,7 +1195,7 @@ class Furgonetka_Admin
 
     public function get_furgonetka_iframe( $full_page_name = null )
     {
-        if ( $full_page_name === null ) {
+        if ( empty( $full_page_name ) ) {
             $full_page_name = $this->get_sanitized_query_param( self::PARAM_PAGE );
         }
 
