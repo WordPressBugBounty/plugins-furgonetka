@@ -41,6 +41,9 @@ class Furgonetka_Admin
     const SHOP_URL      = 'https://shop.furgonetka.pl';
     const TEST_SHOP_URL = 'https://shop.sandbox.furgonetka.pl';
 
+    const FURGONETKA_BASE_URL = 'https://furgonetka.pl';
+    const TEST_FURGONETKA_BASE_URL = 'https://sandbox.furgonetka.pl';
+
     const METADATA_FURGONETKA_ORDER_NUMBER = '_furgonetkaOrderNumber';
 
     const OPTION_DETAILS = [
@@ -2324,6 +2327,16 @@ class Furgonetka_Admin
     public static function get_furgonetka_shop_base_url()
     {
         return FURGONETKA_DEBUG ? self::TEST_SHOP_URL : self::SHOP_URL;
+    }
+
+    /**
+     * Get Furgonetka base URL
+     *
+     * @return string
+     */
+    public static function get_furgonetka_base_url()
+    {
+        return self::get_test_mode() ? self::TEST_FURGONETKA_BASE_URL : self::FURGONETKA_BASE_URL;
     }
 
     /**

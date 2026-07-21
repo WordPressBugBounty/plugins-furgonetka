@@ -136,7 +136,7 @@ class Furgonetka_Public
      */
     public function enqueue_scripts()
     {
-        $furgonetkaBaseUrl = Furgonetka_Admin::get_test_mode() ? 'https://sandbox.furgonetka.pl' : 'https://furgonetka.pl';
+        $furgonetkaBaseUrl = Furgonetka_Admin::get_furgonetka_base_url();
 
         if ( Furgonetka_Admin::is_checkout_active() ) {
             $checkout_file_path = 'js/furgonetka-checkout.js';
@@ -213,6 +213,14 @@ class Furgonetka_Public
             'settings',
             array(
                 'ajaxurl' => admin_url( 'admin-ajax.php' ),
+            )
+        );
+
+        wp_localize_script(
+            $this->plugin_name,
+            'furgonetka_public_i18n',
+            array(
+                'mapLoadErrorMessage' => __( 'There was a problem loading the map. Please try again.', 'furgonetka' ),
             )
         );
     }
@@ -651,6 +659,51 @@ class Furgonetka_Public
     {
         $this->add_point_information( $order );
         $this->add_tracking_information( $order );
+    }
+
+    /**
+     * Add Furgonetka.pl return link to "My orders" order actions
+     *
+     * @param array $actions
+     * @param WC_Order $order
+     *
+     * @return array
+     * @since 1.9.7
+     */
+    public function add_woocommerce_my_account_my_orders_actions( $actions, $order )
+    {
+        if ( $order && ! $order->has_status( array( 'cancelled', 'refunded', 'pending', 'failed', 'checkout-draft' ) ) ) {
+            $actions[ 'furgonetka_return' ] = array(
+                'url'  => $this->get_returns_url( $order, 'woocommerce-my-account' ),
+                'name' => __( 'Request a return', 'furgonetka' ),
+            );
+        }
+
+        return $actions;
+    }
+
+    /**
+     * Create returns URL for the given order
+     *
+     * @param WC_Order $order
+     *
+     * @return string
+     * @since 1.9.7
+     */
+    private function get_returns_url( $order, $source )
+    {
+        $base_url   = Furgonetka_Admin::get_furgonetka_base_url();
+        $identifier = parse_url( get_home_url(), PHP_URL_HOST ) ?: Furgonetka_Admin::get_integration_uuid() ?: '-';
+
+        $params = array(
+            'integrationUuid' => Furgonetka_Admin::get_integration_uuid(),
+            'orderId'         => $order->get_id(),
+            'orderNumber'     => $order->get_order_number(),
+            'userEmail'       => $order->get_billing_email(),
+            'source'          => $source,
+        );
+
+        return $base_url . '/zwrot-zakupow/' . $identifier . '?' . http_build_query( $params );
     }
 
     public static function add_checkout_button_product()

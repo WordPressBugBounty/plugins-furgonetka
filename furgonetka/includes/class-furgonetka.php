@@ -394,6 +394,13 @@ class Furgonetka
             'add_point_information',
             20
         );
+        $this->loader->add_filter(
+            'woocommerce_my_account_my_orders_actions',
+            $this->plugin_public,
+            'add_woocommerce_my_account_my_orders_actions',
+            10,
+            2
+        );
 
         if ( $this->plugin_admin::is_checkout_active() && $this->plugin_admin::get_portmonetka_replace_native_checkout() ) {
             $callback = [ $this->plugin_public, 'woocommerce_get_checkout_url_filter' ];

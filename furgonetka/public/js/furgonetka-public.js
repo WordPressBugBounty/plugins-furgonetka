@@ -72,7 +72,7 @@ function openFurgonetkaMap( service, city, street, countryCode, mapBounds, point
         codOnly = true;
     }
 
-    if ( typeof ( window.Furgonetka.Map ) === 'function' ) {
+    if ( window.Furgonetka !== undefined && typeof ( window.Furgonetka.Map ) === 'function' ) {
         var pointTypesFilter = [];
 
         if ( codOnly ) {
@@ -99,7 +99,7 @@ function openFurgonetkaMap( service, city, street, countryCode, mapBounds, point
         ).view();
         return false;
     } else {
-        alert( "Wystąpił problem z załadowaniem mapy. Spróbuj ponownie." );
+        alert( furgonetka_public_i18n.mapLoadErrorMessage );
     }
 }
 
