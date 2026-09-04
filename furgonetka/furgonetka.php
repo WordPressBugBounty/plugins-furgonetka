@@ -11,7 +11,7 @@
  * Plugin Name:          Furgonetka.pl
  * Plugin URI:           https://furgonetka.pl
  * Description:          Połącz swój sklep z modułem Furgonetka.pl! Generuj etykiety, twórz szablony przesyłek, śledź statusy paczek. Nadawaj paczki szybko i tanio korzystając z 10 firm kurierskich.
- * Version:              1.9.7
+ * Version:              1.9.8
  * Author:               Furgonetka.pl
  * Author URI:           https://furgonetka.pl
  * License:              GPL-2.0+
@@ -23,7 +23,7 @@
  * Requires Plugins:     woocommerce
  * Requires PHP:         7.1
  * WC requires at least: 4.0
- * WC tested up to:      10.0.3
+ * WC tested up to:      11.1.0
  */
 
 // If this file is called directly, abort.
@@ -37,7 +37,7 @@ if ( ! defined( 'WPINC' ) )
  * Start at version 1.0.0 and use SemVer - https://semver.org
  * Rename this for your plugin and update it as you release new versions.
  */
-define( 'FURGONETKA_VERSION', '1.9.7' );
+define( 'FURGONETKA_VERSION', '1.9.8' );
 define( 'FURGONETKA_PLUGIN_NAME', 'furgonetka' );
 define( 'FURGONETKA_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'FURGONETKA_DEBUG', false );
@@ -152,7 +152,7 @@ function get_customer_shop_country() {
  */
 function activate_furgonetka()
 {
-    if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', get_option( 'active_plugins' ) ), true ) ) {
+    if ( furgonetka_is_woocommerce_active() ) {
         try {
             require_once FURGONETKA_PLUGIN_DIR . 'includes/class-furgonetka-activator.php';
             Furgonetka_Activator::activate();
@@ -253,16 +253,20 @@ add_action( 'before_woocommerce_init', function() {
  */
 function run_furgonetka()
 {
-    if (
-        in_array(
-            'woocommerce/woocommerce.php',
-            apply_filters( 'active_plugins', get_option( 'active_plugins' ) ),
-            true
-        )
-    ) {
+    if ( furgonetka_is_woocommerce_active() ) {
         $plugin = new Furgonetka();
         $plugin->run();
     }
+}
+
+/**
+ * Check whether WooCommerce is active, including network-activated on multisite
+ */
+function furgonetka_is_woocommerce_active()
+{
+    require_once ABSPATH . 'wp-admin/includes/plugin.php';
+
+    return is_plugin_active( 'woocommerce/woocommerce.php' );
 }
 
 run_furgonetka();
