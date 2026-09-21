@@ -30,7 +30,7 @@ class Furgonetka_Deactivator
         wp_clear_scheduled_hook( 'furgonetka_daily_event' );
 
         self::delete_integration_connection();
-        Furgonetka_Options::delete_all_options();
+        Furgonetka_Options::delete_all_options( Furgonetka_Options::PRESERVED_OPTIONS );
     }
 
     /**

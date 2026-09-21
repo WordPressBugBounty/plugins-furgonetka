@@ -91,6 +91,16 @@ class Furgonetka_Options {
     );
 
     /**
+     * Options preserved when the account is disconnected or the plugin is deactivated
+     */
+    const PRESERVED_OPTIONS = array(
+        self::OPTION_DELIVERY_TO_TYPE,
+        self::OPTION_MAP_API_KEY,
+        self::OPTION_TEST_MODE,
+        self::OPTION_VERSION,
+    );
+
+    /**
      * Delete all plugin's options
      *
      * @param string[] $exclude - options to exclude

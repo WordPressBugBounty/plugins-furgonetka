@@ -1332,12 +1332,7 @@ class Furgonetka_Admin
      */
     private function reset_credentials()
     {
-        Furgonetka_Options::delete_all_options(
-            [
-                Furgonetka_Options::OPTION_DELIVERY_TO_TYPE,
-                Furgonetka_Options::OPTION_MAP_API_KEY,
-            ]
-        );
+        Furgonetka_Options::delete_all_options( Furgonetka_Options::PRESERVED_OPTIONS );
     }
 
     /**
