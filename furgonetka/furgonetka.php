@@ -11,7 +11,7 @@
  * Plugin Name:          Furgonetka.pl
  * Plugin URI:           https://furgonetka.pl
  * Description:          Połącz swój sklep z modułem Furgonetka.pl! Generuj etykiety, twórz szablony przesyłek, śledź statusy paczek. Nadawaj paczki szybko i tanio korzystając z 10 firm kurierskich.
- * Version:              1.9.9
+ * Version:              1.9.10
  * Author:               Furgonetka.pl
  * Author URI:           https://furgonetka.pl
  * License:              GPL-2.0+
@@ -23,7 +23,7 @@
  * Requires Plugins:     woocommerce
  * Requires PHP:         7.1
  * WC requires at least: 4.0
- * WC tested up to:      11.1.0
+ * WC tested up to:      11.2.1
  */
 
 // If this file is called directly, abort.
@@ -37,7 +37,7 @@ if ( ! defined( 'WPINC' ) )
  * Start at version 1.0.0 and use SemVer - https://semver.org
  * Rename this for your plugin and update it as you release new versions.
  */
-define( 'FURGONETKA_VERSION', '1.9.9' );
+define( 'FURGONETKA_VERSION', '1.9.10' );
 define( 'FURGONETKA_PLUGIN_NAME', 'furgonetka' );
 define( 'FURGONETKA_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'FURGONETKA_DEBUG', false );
